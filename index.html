@@ -160,6 +160,7 @@
     .next-btn.ready:active { transform: scale(0.99); }
 
     /* ── RESULT ── */
+    #s-result { align-items: flex-start; overflow-y: auto; padding-top: 3rem; padding-bottom: 3rem; }
     .result-wrap {
       max-width: 480px; width: 100%;
       display: flex; flex-direction: column; gap: 0.6rem;
@@ -195,6 +196,29 @@
       transition: border-color 0.2s, color 0.2s, transform 0.2s;
     }
     .res-again:hover { border-color: #444; color: #aaa; transform: scale(1.04); }
+
+    /* ── STATS ── */
+    .stats {
+      margin-top: 2rem;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 0.8rem; width: 100%;
+      opacity: 0; transform: translateY(12px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .stats.visible { opacity: 1; transform: translateY(0); }
+    .stat-card {
+      background: #0f0f0f; border: 1px solid #161616;
+      border-radius: 10px; padding: 1rem 1.1rem;
+      display: flex; flex-direction: column; gap: 0.3rem;
+    }
+    .stat-val {
+      font-size: clamp(1.4rem, 5vw, 2rem);
+      font-weight: 900; letter-spacing: -0.03em; color: #fff; line-height: 1;
+    }
+    .stat-label {
+      font-size: 0.62rem; letter-spacing: 0.15em;
+      text-transform: uppercase; color: #333; font-weight: 400;
+    }
   </style>
 </head>
 <body>
@@ -275,6 +299,24 @@
       <span class="res-feels-label">відчувається як</span>
       <span class="res-feels-num" id="res-feels">0</span>
     </div>
+    <div class="stats" id="stats">
+      <div class="stat-card">
+        <div class="stat-val" id="stat-days">—</div>
+        <div class="stat-label">днів</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" id="stat-weeks">—</div>
+        <div class="stat-label">тижнів</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" id="stat-months">—</div>
+        <div class="stat-label">місяців</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" id="stat-seasons">—</div>
+        <div class="stat-label">сезонів</div>
+      </div>
+    </div>
     <button class="res-again" id="btn-again">↺ ще раз</button>
   </div>
 </div>
@@ -284,29 +326,59 @@
   const AudioCtx = window.AudioContext || window.webkitAudioContext;
   let actx = null;
   function initAudio() { if (!actx) actx = new AudioCtx(); }
-  function tick(freq = 880, dur = 0.03) {
+
+  // ── Касовий апарат ──
+  // Кожна клавіша: короткий металевий "клік" + дзвінок
+  function cashKey(volume = 1) {
     if (!actx) return;
+    const t = actx.currentTime;
+
+    // 1) Механічний удар клавіші — шум з bandpass
+    const keyDur = 0.04;
+    const kBuf = actx.createBuffer(1, Math.floor(actx.sampleRate * keyDur), actx.sampleRate);
+    const kData = kBuf.getChannelData(0);
+    for (let i = 0; i < kData.length; i++)
+      kData[i] = (Math.random() * 2 - 1) * Math.exp(-i / (kData.length * 0.15));
+    const kSrc = actx.createBufferSource(); kSrc.buffer = kBuf;
+    const kBp = actx.createBiquadFilter(); kBp.type = 'bandpass'; kBp.frequency.value = 2400; kBp.Q.value = 1.2;
+    const kG = actx.createGain(); kG.gain.setValueAtTime(0.12 * volume, t);
+    kSrc.connect(kBp); kBp.connect(kG); kG.connect(actx.destination);
+    kSrc.start(t); kSrc.stop(t + keyDur);
+
+    // 2) Металевий дзвінок — синус із загасанням
+    const ringDur = 0.12;
     const o = actx.createOscillator();
-    const g = actx.createGain();
-    o.connect(g); g.connect(actx.destination);
-    o.frequency.value = freq;
-    o.type = 'square';
-    g.gain.setValueAtTime(0.04, actx.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.0001, actx.currentTime + dur);
-    o.start(); o.stop(actx.currentTime + dur);
+    const oG = actx.createGain();
+    o.type = 'sine';
+    o.frequency.setValueAtTime(1320, t);
+    o.frequency.exponentialRampToValueAtTime(880, t + 0.015);
+    oG.gain.setValueAtTime(0.07 * volume, t);
+    oG.gain.exponentialRampToValueAtTime(0.0001, t + ringDur);
+    o.connect(oG); oG.connect(actx.destination);
+    o.start(t); o.stop(t + ringDur);
   }
+
+  // Фінальний "дзінь" каси — вищий і довший
+  function cashRegister() {
+    if (!actx) return;
+    const t = actx.currentTime;
+    [1760, 2093, 2637].forEach((freq, i) => {
+      const o = actx.createOscillator();
+      const g = actx.createGain();
+      o.type = 'sine'; o.frequency.value = freq;
+      g.gain.setValueAtTime(0, t + i * 0.07);
+      g.gain.linearRampToValueAtTime(0.09, t + i * 0.07 + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + i * 0.07 + 0.4);
+      o.connect(g); g.connect(actx.destination);
+      o.start(t + i * 0.07); o.stop(t + i * 0.07 + 0.4);
+    });
+  }
+
+  function tick(_, __) { cashKey(0.5); }
   function btnSound() {
     if (!actx) return;
-    // soft click: sine burst
-    const o = actx.createOscillator();
-    const g = actx.createGain();
-    o.connect(g); g.connect(actx.destination);
-    o.frequency.setValueAtTime(520, actx.currentTime);
-    o.frequency.exponentialRampToValueAtTime(280, actx.currentTime + 0.08);
-    o.type = 'sine';
-    g.gain.setValueAtTime(0.08, actx.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.0001, actx.currentTime + 0.1);
-    o.start(); o.stop(actx.currentTime + 0.1);
+    cashKey(0.8);
+    setTimeout(() => cashKey(0.5), 40);
   }
 
   // ── Magnetic button ──
@@ -463,8 +535,8 @@
     const btn = document.getElementById('month-next');
     if (!btn.classList.contains('ready')) return;
     initAudio(); tick(900, 0.04);
-    dayVal = Math.min(dayVal, maxDay());
-    setDay(dayVal);
+    // don't pre-fill day — leave placeholder
+    if (dayVal !== null) dayVal = Math.min(dayVal, maxDay());
     goTo('s-day');
   });
 
@@ -502,40 +574,95 @@
   }
 
   function animateCounter(el, target, onTick) {
-    const duration = 1600;
-    const start = performance.now();
-    function frame(now) {
-      const t = Math.min((now - start) / duration, 1);
-      const eased = t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
-      const cur = Math.round(eased * target);
-      el.textContent = cur;
-      if (onTick) onTick(cur);
+    // Розклад часу: кожен наступний крок займає більше часу —
+    // перші 80% значень = перші 40% тривалості, останні 20% = 60%
+    const DURATION = 2200;
+    // Будуємо таблицю "значення → час" щоб перші цифри летіли, останні тяглися
+    function valueToTime(v) {
+      // x = v/target (0..1), повертає t (0..1) у часі
+      // використовуємо зворотну ease-out cubic: t = 1-(1-x)^(1/3) → не те
+      // Хочемо: на початку швидко (багато значень за мало часу),
+      //         наприкінці повільно (кожна цифра по довгому)
+      // Використовуємо x^3 (ease-in для часу = ease-out для значення)
+      const x = v / target;
+      return Math.pow(x, 2.8);  // час = значення^2.8
+    }
+
+    let lastVal = -1;
+    let lastFlipTime = 0;
+
+    function frame(ts) {
+      if (!frame.startTs) frame.startTs = ts;
+      const elapsed = ts - frame.startTs;
+      const t = Math.min(elapsed / DURATION, 1);
+
+      // обернена функція: знаходимо значення для поточного часу t
+      // t = (v/target)^2.8  →  v = target * t^(1/2.8)
+      const cur = t === 1 ? target : Math.floor(target * Math.pow(t, 1 / 2.8));
+
+      if (cur !== lastVal) {
+        lastVal = cur;
+        el.textContent = cur;
+        // звук тільки якщо пройшло достатньо часу (уповільнення = довші паузи)
+        const now = performance.now();
+        const minGap = 30 + (cur / target) * 180; // від 30мс до 210мс між звуками
+        if (now - lastFlipTime >= minGap) {
+          lastFlipTime = now;
+          if (onTick) onTick(cur);
+        }
+      }
+
       if (t < 1) requestAnimationFrame(frame);
+      else { el.textContent = target; if (onTick) onTick(target); }
     }
     requestAnimationFrame(frame);
   }
 
+  function calcStats() {
+    const dob = new Date(state.year, state.month - 1, state.day);
+    const totalDays = Math.floor((NOW - dob) / 86400000);
+    const totalMonths = (NOW.getFullYear() - state.year) * 12
+      + (NOW.getMonth() - (state.month - 1))
+      - (NOW.getDate() < state.day ? 1 : 0);
+    return {
+      days:    totalDays.toLocaleString('uk-UA'),
+      weeks:   Math.floor(totalDays / 7).toLocaleString('uk-UA'),
+      months:  totalMonths.toLocaleString('uk-UA'),
+      seasons: Math.floor(totalDays / 91).toLocaleString('uk-UA'),
+    };
+  }
+
   function showResult() {
-    const age = calcAge();
-    // random offset between 3 and 7
-    const offset = 3 + Math.floor(Math.random() * 5); // 3,4,5,6,7
+    const age   = calcAge();
+    const offset = 3 + Math.floor(Math.random() * 5);
     const feels  = Math.max(0, age - offset);
+    const stats  = calcStats();
 
     document.getElementById('res-num').textContent = '0';
     document.getElementById('res-feels').textContent = '0';
+    document.getElementById('stats').classList.remove('visible');
+    ['stat-days','stat-weeks','stat-months','stat-seasons'].forEach(id => {
+      document.getElementById(id).textContent = '—';
+    });
+
     goTo('s-result');
 
-    let lastTick = -1;
     setTimeout(() => {
       animateCounter(document.getElementById('res-num'), age, cur => {
-        if (cur !== lastTick) {
-          lastTick = cur;
-          tick(400 + cur * 8, 0.02);
-        }
+        cashKey(0.45 + (cur / (age || 1)) * 0.45);
       });
       setTimeout(() => {
         animateCounter(document.getElementById('res-feels'), feels, null);
       }, 400);
+      // статистика з'являється після лічильника
+      setTimeout(() => {
+        document.getElementById('stat-days').textContent    = stats.days;
+        document.getElementById('stat-weeks').textContent   = stats.weeks;
+        document.getElementById('stat-months').textContent  = stats.months;
+        document.getElementById('stat-seasons').textContent = stats.seasons;
+        document.getElementById('stats').classList.add('visible');
+        cashRegister();
+      }, 2700);
     }, 300);
   }
 </script>
