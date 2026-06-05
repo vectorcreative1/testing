@@ -942,7 +942,8 @@
 
   function showResult() {
     const age   = calcAge();
-    const offset = 3 + Math.floor(Math.random() * 5);
+    const base   = age > 40 ? 8 : 3;
+    const offset = base + Math.floor(Math.random() * 5);
     const feels  = Math.max(0, age - offset);
     const stats  = calcStats();
     const fun    = calcFunStats(stats.totalDays);
