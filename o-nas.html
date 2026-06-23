@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>O nas — We Are Endless</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Special+Gothic+Expanded+One&family=Poppins:wght@300;400;500&family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75,700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --black: #000; --white: #fff; --red: #e3151a; --yellow: #f3e600; }
+    html { scroll-behavior: smooth; overflow-y: scroll; overflow-x: hidden; }
+    body { margin: 0; padding: 0; background: var(--black); color: var(--white); font-family: 'Poppins', sans-serif; overflow-x: hidden; }
+
+    /* ─── NAV ─── */
+    #main-nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 300;
+      display: flex; align-items: flex-end; justify-content: space-between;
+      padding: 0 clamp(2.5rem, 5.5vw, 6rem) 1.4rem;
+      height: 110px; background: transparent;
+    }
+    body.menu-open-state .nav-logo { opacity: 0; pointer-events: none; }
+    .nav-logo { display: flex; align-items: center; text-decoration: none; transition: opacity 0.2s; }
+    .nav-logo-img { height: 38px; width: auto; display: block; }
+    .nav-menu-btn {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: radial-gradient(circle at 38% 35%, rgba(80,110,160,0.55) 0%, rgba(10,10,20,0.75) 55%, rgba(0,0,0,0.85) 100%);
+      border: 1px solid rgba(255,255,255,0.18);
+      backdrop-filter: blur(18px) saturate(1.4); -webkit-backdrop-filter: blur(18px) saturate(1.4);
+      box-shadow: inset 0 1px 1px rgba(255,255,255,0.2), inset 0 -1px 2px rgba(0,0,0,0.6), 0 8px 32px rgba(0,0,0,0.4);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: transform 0.2s, background 0.3s;
+    }
+    .menu-open.nav-menu-btn { background: var(--black); border-color: transparent; backdrop-filter: none; -webkit-backdrop-filter: none; }
+    .nav-menu-btn:hover { transform: scale(1.06); }
+    .hamburger { display: flex; flex-direction: column; gap: 5px; }
+    .hamburger span { display: block; height: 1.5px; background: var(--white); transition: width 0.3s cubic-bezier(0.23,1,0.32,1), transform 0.35s cubic-bezier(0.23,1,0.32,1), opacity 0.3s; }
+    .hamburger span:nth-child(1) { width: 22px; }
+    .hamburger span:nth-child(2) { width: 14px; }
+    .hamburger span:nth-child(3) { width: 18px; }
+    .nav-menu-btn:hover .hamburger span { width: 22px; }
+    .menu-open .hamburger span { width: 22px; }
+    .menu-open .hamburger span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .menu-open .hamburger span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .menu-open .hamburger span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+    /* ─── MENU OVERLAY ─── */
+    .menu-overlay {
+      position: fixed;
+      top: clamp(0.8rem, 1.5vw, 1.5rem); left: clamp(0.8rem, 1.5vw, 1.5rem); right: clamp(0.8rem, 1.5vw, 1.5rem);
+      z-index: 200; pointer-events: none;
+      transform: translateY(calc(-100% - 2rem));
+      transition: transform 0.55s cubic-bezier(0.23,1,0.32,1);
+    }
+    .menu-overlay.is-open { transform: translateY(0); pointer-events: all; }
+    .menu-shell {
+      position: relative; border-radius: 28px; overflow: hidden;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.5);
+      height: 82vh; min-height: 500px; display: flex; align-items: center;
+    }
+    .menu-bg-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; z-index: 0; }
+    .menu-close { display: none; }
+    .menu-panel {
+      position: relative; z-index: 3; width: 100%; height: 100%;
+      display: flex; align-items: stretch; justify-content: space-between;
+      padding: 0 clamp(4rem, 8vw, 8rem) 0 36%; gap: clamp(3rem, 6vw, 7rem);
+    }
+    .menu-inner { display: flex; flex-direction: column; justify-content: center; padding: clamp(4rem, 9vh, 7rem) 0 clamp(3rem, 6vh, 5rem); }
+    .menu-contact { display: flex; flex-direction: column; justify-content: center; padding-top: 18%; padding-bottom: clamp(3rem, 6vh, 5rem); flex: 0 0 auto; }
+    .menu-brand, .menu-links a {
+      font-family: 'Special Gothic Expanded One', sans-serif;
+      font-size: clamp(2.8rem, 6.5vh, 5rem);
+      line-height: 1.5; text-decoration: none; display: block;
+      transition: letter-spacing 0.3s cubic-bezier(0.23,1,0.32,1), opacity 0.2s;
+    }
+    .menu-brand { color: var(--red); }
+    .menu-brand:hover { letter-spacing: 0.03em; opacity: 0.7; }
+    .menu-links { list-style: none; padding: 0; margin: 0; }
+    .menu-links a { color: var(--red); }
+    .menu-links a:hover { letter-spacing: 0.03em; opacity: 0.7; }
+    .menu-links a.current { color: var(--black); }
+    .menu-brand.current { color: var(--black); }
+    .menu-brand { opacity: 0; transform: translateY(16px); transition: opacity 0.4s, transform 0.4s, letter-spacing 0.3s, color 0.2s; }
+    .menu-links li { opacity: 0; transform: translateY(16px); transition: opacity 0.4s, transform 0.4s; }
+    .menu-overlay.is-open .menu-brand { opacity:1; transform:none; transition-delay:0.12s; }
+    .menu-overlay.is-open .menu-links li:nth-child(1) { opacity:1; transform:none; transition-delay:0.2s; }
+    .menu-overlay.is-open .menu-links li:nth-child(2) { opacity:1; transform:none; transition-delay:0.28s; }
+    .menu-overlay.is-open .menu-links li:nth-child(3) { opacity:1; transform:none; transition-delay:0.36s; }
+    .menu-contact-label { font-family: 'Special Gothic Expanded One', sans-serif; font-size: 0.6rem; letter-spacing: 0.3em; text-transform: uppercase; color: #999; margin-bottom: 1rem; }
+    .menu-contact p { font-family: 'Special Gothic Expanded One', sans-serif; font-size: 22px; color: var(--black); line-height: 1.5; margin: 0 0 1rem; }
+    .menu-contact a { color: inherit; text-decoration: none; display: block; }
+    .menu-contact a:hover { color: var(--red); }
+    .menu-social-row { display: flex; gap: 0.65rem; margin-top: 1.2rem; }
+    .menu-social-btn { display: inline-flex; align-items: center; justify-content: center; transition: transform 0.2s, opacity 0.2s; }
+    .menu-social-btn:hover { transform: scale(1.1); opacity: 0.85; }
+    .menu-social-btn img { width: 44px; height: 44px; display: block; }
+
+    /* ─── HERO ─── */
+    .hero {
+      position: relative;
+      height: 100vh; min-height: 600px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center; overflow: hidden;
+    }
+    .hero-video {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: contain; z-index: 0;
+    }
+    .hero-overlay {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,0.55); z-index: 1;
+    }
+    .corner-waves {
+      position: absolute; top: 0; right: 0;
+      width: clamp(280px, 35vw, 480px);
+      z-index: 2; pointer-events: none;
+    }
+    .hero-content {
+      position: relative; z-index: 3;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    @keyframes heroSlideIn {
+      from { opacity: 0; transform: translateY(50px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .hero-title {
+      font-family: 'Special Gothic Expanded One', sans-serif;
+      font-size: clamp(2.5rem, 7.5vw, 7rem);
+      letter-spacing: -0.02em; line-height: 1;
+      text-transform: uppercase; color: var(--white);
+      animation: heroSlideIn 0.9s cubic-bezier(0.23,1,0.32,1) 0.15s both;
+    }
+    .hero-title span { color: var(--red); }
+    .hero-sub {
+      margin-top: 1.5rem;
+      font-family: 'Special Gothic Expanded One', sans-serif;
+      font-size: clamp(0.55rem, 1.1vw, 0.72rem);
+      letter-spacing: 0.38em; text-transform: uppercase;
+      color: rgba(255,255,255,0.45);
+    }
+
+    /* ─── TEAM SECTION ─── */
+    .team-section {
+      background: var(--black);
+      padding: clamp(3rem, 6vh, 5rem) 0 clamp(4rem, 8vh, 6rem);
+    }
+    .section-label {
+      font-family: 'Special Gothic Expanded One', sans-serif;
+      font-size: 0.6rem; letter-spacing: 0.4em; text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+      padding: 0 clamp(1.5rem, 5vw, 4rem);
+      margin-bottom: 2.5rem;
+      display: block;
+    }
+
+    /* ─── TEAM CARDS ─── */
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+    }
+    @media (max-width: 700px) { .team-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 440px) { .team-grid { grid-template-columns: 1fr; } }
+
+    .flip-card {
+      position: relative;
+      aspect-ratio: 3/4;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .flip-card img.card-photo {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+      transition: transform 0.55s cubic-bezier(0.23,1,0.32,1);
+    }
+    .flip-card:hover img.card-photo { transform: scale(1.06); }
+
+    /* always-visible name strip at bottom */
+    .flip-front-info {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 2.5rem 1.4rem 1.4rem;
+      background: linear-gradient(to top, rgba(0,0,0,0.88) 0%, transparent 100%);
+      transition: opacity 0.35s;
+    }
+    .flip-card:hover .flip-front-info { opacity: 0; }
+    .card-linkedin {
+      position: absolute; bottom: 1.2rem; right: 1.2rem;
+      width: clamp(28px, 3.5vw, 42px); height: clamp(28px, 3.5vw, 42px);
+      display: flex; align-items: center; justify-content: center;
+      text-decoration: none; transition: transform 0.2s;
+      z-index: 5;
+    }
+    .card-linkedin:hover { transform: scale(1.12); }
+    .card-linkedin img { width: 100%; height: 100%; display: block; }
+    .flip-name {
+      font-family: 'Special Gothic Expanded One', sans-serif;
+      font-size: clamp(1rem, 2vw, 1.5rem);
+      text-transform: uppercase; color: var(--white);
+      letter-spacing: 0.02em; line-height: 1;
+    }
+    .flip-title {
+      font-family: 'Special Gothic Expanded One', sans-serif;
+      font-size: clamp(0.5rem, 0.9vw, 0.68rem);
+      letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--red); margin-top: 0.4rem;
+    }
+
+    /* hover overlay */
+    .card-overlay {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,0);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: clamp(1.2rem, 2.5vw, 2rem);
+      text-align: center;
+      transition: background 0.4s cubic-bezier(0.23,1,0.32,1);
+    }
+    .flip-card:hover .card-overlay { background: rgba(0,0,0,0.82); }
+    .card-overlay-inner {
+      opacity: 0; transform: translateY(12px);
+      transition: opacity 0.35s 0.1s, transform 0.4s 0.08s cubic-bezier(0.23,1,0.32,1);
+    }
+    .flip-card:hover .card-overlay-inner { opacity: 1; transform: translateY(0); }
+    .card-avatar {
+      width: clamp(56px, 8vw, 88px);
+      height: clamp(56px, 8vw, 88px);
+      border-radius: 50%; overflow: hidden;
+      border: 2px solid var(--red);
+      margin: 0 auto 1rem; flex-shrink: 0;
+    }
+    .card-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .card-overlay-name {
+      font-family: 'Special Gothic Expanded One', sans-serif;
+      font-size: clamp(0.9rem, 1.8vw, 1.3rem);
+      text-transform: uppercase; color: var(--white);
+      letter-spacing: 0.02em; line-height: 1; margin-bottom: 0.35rem;
+    }
+    .card-overlay-title {
+      font-family: 'Special Gothic Expanded One', sans-serif;
+      font-size: clamp(0.42rem, 0.72vw, 0.56rem);
+      letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--red); margin-bottom: 1rem;
+    }
+    .card-overlay-bio {
+      font-family: 'Poppins', sans-serif;
+      font-size: clamp(0.72rem, 1.05vw, 0.88rem);
+      font-weight: 500;
+      color: rgba(255,255,255,0.85);
+      line-height: 1.6;
+    }
+
+    /* ─── NEWS ─── */
+    .news-section { background: var(--black); padding: clamp(4rem, 8vh, 7rem) clamp(1.5rem, 5vw, 4rem); }
+    .news-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 3rem; max-width: 1100px; margin-left: auto; margin-right: auto; }
+    @media (max-width: 600px) { .news-grid { grid-template-columns: 1fr; } }
+    .news-card { display: flex; flex-direction: column; text-decoration: none; border-radius: 20px; overflow: visible; background: var(--white); position: relative; transition: box-shadow 0.4s cubic-bezier(0.23,1,0.32,1); }
+    .news-card:hover { box-shadow: 0 24px 60px rgba(0,0,0,0.5); }
+    .news-thumb { width: 100%; aspect-ratio: 1/1; overflow: visible; position: relative; flex-shrink: 0; }
+    .news-thumb-img { width: 100%; height: 100%; overflow: hidden; border-radius: 20px 20px 0 0; }
+    .news-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.5s cubic-bezier(0.23,1,0.32,1); }
+    .news-card:hover .news-thumb img { transform: scale(1.04); }
+    .news-thumb-arrow { position: absolute; right: 1.1rem; bottom: -22px; width: 44px; height: 44px; border-radius: 50%; background: var(--red); display: flex; align-items: center; justify-content: center; z-index: 4; box-shadow: 0 4px 14px rgba(0,0,0,0.3); transition: background 0.3s, transform 0.3s; }
+    .news-card:hover .news-thumb-arrow { background: #c00; transform: scale(1.1); }
+    .news-thumb-arrow svg { fill: white; width: 16px; height: 16px; }
+    .news-body { padding: 1.6rem 1.4rem 1.4rem; flex: 1; }
+    .news-date { font-size: 0.78rem; font-weight: 600; color: var(--red); margin-bottom: 0.7rem; }
+    .news-title { font-size: 0.88rem; line-height: 1.6; color: #111; }
+    .news-link { text-decoration: underline; }
+    .news-cta { display: flex; justify-content: center; margin-top: 3rem; }
+
+    /* ─── PROJECTS ─── */
+    .projects-section { background: var(--black); padding: clamp(4rem, 8vh, 7rem) 0 0; }
+    .projects-header { padding: 0 clamp(1.5rem, 5vw, 4rem); margin-bottom: 1.5rem; }
+    .projects-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; }
+    @media (max-width: 768px) { .projects-grid { grid-template-columns: 1fr; } }
+    .project-card { position: relative; overflow: hidden; cursor: pointer; aspect-ratio: 16/9; }
+    .project-bg { position: absolute; inset: 0; transition: transform 0.6s cubic-bezier(0.23,1,0.32,1); }
+    .project-bg img { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
+    .project-card:hover .project-bg { transform: scale(1.05); }
+    .project-info { position: absolute; bottom: 0; left: 0; right: 0; padding: 1.2rem 1.5rem; background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 50%, transparent 100%); opacity: 0; transform: translateY(8px); transition: opacity 0.35s, transform 0.35s, background 0.4s; }
+    .project-card:hover .project-info { opacity: 1; transform: translateY(0); background: linear-gradient(to top, rgba(0,0,0,0.97) 0%, rgba(0,0,0,0.55) 50%, transparent 100%); }
+    .project-client { font-family: 'Special Gothic Expanded One', sans-serif; font-size: 0.55rem; letter-spacing: 0.35em; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-bottom: 0.25rem; }
+    .project-name { font-family: 'Special Gothic Expanded One', sans-serif; font-size: clamp(0.85rem, 1.6vw, 1.3rem); text-transform: uppercase; color: var(--white); line-height: 1.1; }
+    .projects-cta { display: flex; justify-content: center; padding: 1rem 0; position: relative; z-index: 10; margin-top: clamp(0rem, 1vw, 1rem); margin-bottom: clamp(-2rem, -3vw, -4rem); }
+
+    /* ─── CO ROBIMY ─── */
+    .robimy-section { background: var(--white); overflow: visible; padding: clamp(2rem, 4vh, 3rem) 0 clamp(4rem, 8vh, 6rem); position: relative; }
+    .parallax-text-wrap { overflow: visible; pointer-events: none; }
+    .parallax-text-wrap.bottom-overlap {
+      position: relative; z-index: 10;
+      margin-bottom: clamp(-4rem, -6vw, -7rem);
+    }
+    .co-robimy-float {
+      position: absolute;
+      left: 0; right: 0;
+      overflow: visible;
+      pointer-events: none;
+      z-index: 5;
+    }
+    .co-robimy-float .parallax-text { display: block; }
+    .co-robimy-spray {
+      position: absolute;
+      left: clamp(2rem,8vw,8rem); top: -18%;
+      width: clamp(160px,22vw,340px);
+      transform: rotate(-2deg);
+    }
+    .parallax-text {
+      font-family: 'Special Gothic Expanded One', sans-serif;
+      font-size: clamp(7rem, 20vw, 18rem);
+      letter-spacing: -0.02em; text-transform: uppercase;
+      white-space: nowrap; display: inline-block;
+      line-height: 0.9;
+    }
+    .co-gradient {
+      display: block;
+      background-image: linear-gradient(to bottom, var(--red) 25%, #fff 25%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+    }
+    .parallax-text.red-text { color: var(--red); }
+    .services-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: clamp(2rem, 4vw, 4rem);
+      padding: clamp(3rem, 6vh, 5rem) clamp(3rem, 8vw, 8rem);
+      max-width: 1200px; margin: 0 auto;
+    }
+    @media (max-width: 600px) { .services-grid { grid-template-columns: 1fr; } }
+    .service-item { text-align: center; }
+    .service-icon { width: clamp(72px, 9vw, 110px); height: clamp(72px, 9vw, 110px); margin: 0 auto 1.2rem; position: relative; }
+    .service-icon img { width: 100%; height: 100%; object-fit: contain; }
+    .service-name {
+      font-family: 'Special Gothic Expanded One', sans-serif;
+      font-size: clamp(1rem, 2.5vw, 1.5rem);
+      text-transform: uppercase; color: var(--black);
+      letter-spacing: 0.02em; margin-bottom: 1rem;
+    }
+    .service-desc {
+      font-family: 'Poppins', sans-serif;
+      font-size: clamp(0.78rem, 1.1vw, 0.88rem);
+      color: rgba(0,0,0,0.55); line-height: 1.75; text-align: center;
+    }
+    .wave-divider { display: block; width: 100%; overflow: hidden; line-height: 0; position: relative; z-index: 1; }
+    .wave-divider svg { width: 100%; display: block; }
+
+    /* large red marquee on black before team */
+    .kluczowe-band { background: var(--black); overflow: hidden; padding: clamp(1rem, 2vh, 2rem) 0; position: relative; z-index: 1; }
+
+    /* ─── FOOTER ─── */
+    .footer-cta {
+      position: relative; overflow: hidden;
+      padding: clamp(8rem, 18vh, 13rem) clamp(1.5rem, 5vw, 4rem) clamp(3rem, 5vh, 4rem);
+      text-align: center;
+      margin-top: clamp(-7rem, -11vw, -14rem);
+    }
+    .footer-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+    .footer-overlay { position: absolute; inset: 0; background: transparent; z-index: 1; }
+    .footer-content { position: relative; z-index: 2; }
+    .footer-avatar { width: 82px; height: 82px; border-radius: 50%; overflow: hidden; margin: 0 auto 2rem; border: 2px solid rgba(255,255,255,0.18); }
+    .footer-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .footer-title { font-family: 'Special Gothic Expanded One', sans-serif; font-size: 55px; letter-spacing: -0.02em; line-height: 0.92; text-transform: uppercase; color: var(--white); margin-bottom: 2.8rem; }
+    .footer-contacts { display: flex; justify-content: center; align-items: center; gap: 3rem; margin-bottom: 2.5rem; flex-wrap: wrap; }
+    .footer-contacts .contact-phone-email { text-align: right; }
+    .footer-contacts .contact-address { text-align: left; }
+    .footer-contacts a, .footer-contacts address { font-family: 'Special Gothic Expanded One', sans-serif; font-size: clamp(0.85rem, 1.4vw, 1rem); color: var(--white); text-decoration: none; line-height: 1.6; font-style: normal; transition: color 0.2s; }
+    .footer-contacts a:hover { color: var(--yellow); }
+    .contact-sep { width: 2px; height: 44px; background: var(--red); }
+    .footer-socials { display: flex; justify-content: center; gap: 0.9rem; margin-bottom: 3rem; }
+    .social-btn { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; transition: transform 0.25s, opacity 0.25s; }
+    .social-btn:hover { transform: scale(1.12); opacity: 0.85; }
+    .social-btn img { width: 46px; height: 46px; display: block; }
+    .footer-copy { font-size: 0.68rem; letter-spacing: 0.1em; color: rgba(255,255,255,0.18); }
+    .drip { position: absolute; pointer-events: none; z-index: 2; }
+
+    /* ─── PILL BUTTON ─── */
+    .btn-pill {
+      display: inline-flex; align-items: center; justify-content: space-between;
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: clamp(0.95rem, 1.5vw, 1.1rem);
+      font-weight: 700;
+      font-stretch: condensed;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      background: var(--red); color: var(--black);
+      text-decoration: none; border: none;
+      padding: 1rem 1.4rem 1rem 2rem; border-radius: 50px;
+      min-width: clamp(200px, 22vw, 280px);
+      cursor: pointer; position: relative; overflow: hidden;
+      transition: color 0.4s cubic-bezier(0.23,1,0.32,1);
+    }
+    .btn-pill > * { position: relative; z-index: 1; }
+    .btn-arrow-img { width: 14px; height: 12px; display: block; flex-shrink: 0; transition: transform 0.25s; }
+    .btn-pill:hover .btn-arrow-img { transform: translateX(4px); }
+    .btn-spacer { width: 20px; flex-shrink: 0; }
+    .btn-pill::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: var(--yellow);
+      border-radius: inherit;
+      transform: translateX(-102%);
+      transition: transform 0.45s cubic-bezier(0.23,1,0.32,1);
+    }
+    .btn-pill:hover::after { transform: translateX(0); }
+    .btn-pill:hover { color: var(--black); }
+    .btn-arrow { display: inline-block; transition: transform 0.3s; }
+    .btn-pill:hover .btn-arrow { transform: translateX(5px); }
+
+    /* ─── REVEAL ─── */
+    .reveal { opacity: 0; transform: translateY(35px); transition: opacity 0.7s cubic-bezier(0.23,1,0.32,1), transform 0.7s cubic-bezier(0.23,1,0.32,1); }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+
+<!-- ═══ NAV ═══ -->
+<nav id="main-nav">
+  <a href="index.html" class="nav-logo">
+    <img src="assets/favicon.svg" alt="ENDLESS" class="nav-logo-img"/>
+  </a>
+  <div class="nav-menu-btn" id="menu-toggle" role="button" aria-label="Menu" aria-expanded="false">
+    <div class="hamburger"><span></span><span></span><span></span></div>
+  </div>
+</nav>
+
+<!-- ═══ MENU OVERLAY ═══ -->
+<div class="menu-overlay" id="menu-overlay" aria-hidden="true">
+  <div class="menu-shell">
+    <img class="menu-bg-img" src="assets/bg_menu.jpg" alt="">
+    <button class="menu-close" id="menu-close" aria-label="Zamknij menu"></button>
+    <div class="menu-panel">
+      <div class="menu-inner">
+        <a href="index.html" class="menu-brand">Endless</a>
+        <ul class="menu-links">
+          <li><a href="o-nas.html" class="current">O nas</a></li>
+          <li><a href="projekty.html">Projekty</a></li>
+          <li><a href="press.html">Press</a></li>
+        </ul>
+      </div>
+      <div class="menu-contact">
+        <div class="menu-contact-label">Kontakt</div>
+        <p><a href="tel:+48501218473">+48 501 218 473</a><a href="mailto:tomek@weareendless.pl">tomek@weareendless.pl</a></p>
+        <p>al. Niepodległości 124<br>00-608 Warszawa</p>
+        <div class="menu-social-row">
+          <a href="https://www.linkedin.com/in/franek-toeplitz-b03a22165/" target="_blank" rel="noopener" class="menu-social-btn"><img src="assets/icon_Linkedin.svg" alt="LinkedIn"></a>
+          <a href="https://www.instagram.com/endless_warsaw/" target="_blank" rel="noopener" class="menu-social-btn"><img src="assets/icon_insta.svg" alt="Instagram"></a>
+          <a href="https://www.tiktok.com/@weareendless" target="_blank" rel="noopener" class="menu-social-btn"><img src="assets/icon_tiktok.svg" alt="TikTok"></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero">
+  <video class="hero-video" autoplay muted loop playsinline>
+    <source src="assets/bg_octopus.mp4" type="video/mp4"/>
+  </video>
+  <div class="hero-overlay"></div>
+  <img class="corner-waves" src="assets/top_wave.svg" alt="" aria-hidden="true"/>
+  <img src="assets/yellow_element_7.png" alt="" aria-hidden="true" style="position:absolute;top:clamp(3rem,6vh,6rem);right:clamp(6rem,12vw,14rem);width:clamp(80px,11vw,150px);pointer-events:none;z-index:2;transform:rotate(10deg);"/>
+  <div class="hero-content">
+    <h1 class="hero-title">
+      <picture>
+        <source srcset="assets/h1_kim_jestesmy_mobile.svg" media="(max-width: 600px)"/>
+        <img src="assets/h1_kim_jestesmy.svg" alt="KIM JESTEŚMY" style="width:clamp(260px,55vw,800px);height:auto;display:block;margin:0 auto;"/>
+      </picture>
+    </h1>
+    <p class="hero-sub reveal" style="transition-delay:0.2s">Poznaj ludzi za kampaniami</p>
+  </div>
+</section>
+
+<!-- CO ROBIMY -->
+<div class="co-robimy-float" id="co-robimy-float">
+  <span class="parallax-text co-gradient" id="txt-robimy">CO ROBIMY&nbsp;&nbsp;CO ROBIMY&nbsp;&nbsp;</span>
+</div>
+<img src="assets/yellow_element_8.png" alt="" aria-hidden="true" id="co-robimy-spray-img" style="position:absolute;pointer-events:none;left:clamp(2rem,8vw,8rem);width:clamp(160px,22vw,340px);transform:rotate(-2deg);z-index:6;">
+
+<!-- ═══ CO ROBIMY ═══ -->
+<section class="robimy-section">
+  <div class="services-grid" style="padding-top: clamp(8rem, 18vw, 22rem);">
+    <div class="service-item reveal">
+      <div class="service-icon">
+        <img src="assets/icon_strateria.svg" alt="Strategia">
+      </div>
+      <div class="service-name">Strategia</div>
+      <p class="service-desc">Nie zgadujemy. Szukamy prawdziwego powodu, dla którego ludzie mają wybrać właśnie Ciebie. I budujemy na tym coś, czego konkurencja nie skopiuje z dnia na dzień.</p>
+    </div>
+    <div class="service-item reveal" style="transition-delay:0.1s">
+      <div class="service-icon">
+        <img src="assets/icon_kreacja.svg" alt="Kreacja">
+      </div>
+      <div class="service-name">Kreacja</div>
+      <p class="service-desc">Robimy rzeczy, które się pamięta. Nie dlatego, że są głośne – ale dlatego, że są trafne. Tam, gdzie inni zatrzymują się na „wystarczy", my zaczynamy naprawdę pracować.</p>
+    </div>
+    <div class="service-item reveal" style="transition-delay:0.2s">
+      <div class="service-icon">
+        <img src="assets/icon_produkcja.svg" alt="Produkcja">
+      </div>
+      <div class="service-name">Produkcja</div>
+      <p class="service-desc">Od pomysłu do ekranu bez gubienia energii po drodze. Kontrolujemy każdy etap, żeby to, co powstało w głowie, wyglądało równie dobrze na żywo.</p>
+    </div>
+  </div>
+  <img style="position:absolute;right:clamp(1rem,4vw,3rem);top:0;width:clamp(70px,10vw,130px);pointer-events:none;" src="assets/yellow_element_2.png" alt="" aria-hidden="true">
+</section>
+
+<!-- wave: white → black -->
+<div class="wave-divider" style="background:var(--white);">
+  <svg viewBox="0 0 1440 100" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+    <path d="M0,60 C180,120 360,0 540,50 C720,100 900,10 1080,60 C1200,95 1350,30 1440,50 L1440,100 L0,100 Z" fill="black"/>
+    <path d="M0,80 C140,50 300,110 480,70 C660,30 840,100 1020,65 C1160,38 1320,82 1440,60 L1440,100 L0,100 Z" fill="black" opacity="0.6"/>
+  </svg>
+</div>
+
+<!-- KLUCZOWE OSOBY band -->
+<div class="kluczowe-band">
+  <div class="parallax-text-wrap">
+    <span class="parallax-text red-text" id="txt-kluczowe">KLUCZOWE OSOBY&nbsp;&nbsp;KLUCZOWE OSOBY&nbsp;&nbsp;</span>
+  </div>
+</div>
+
+<!-- ═══ TEAM ═══ -->
+<section class="team-section">
+  <span class="section-label reveal">KLUCZOWE OSOBY</span>
+  <div class="team-grid">
+
+    <!-- 1 -->
+    <div class="flip-card reveal">
+      <img class="card-photo" src="assets/team_franek.jpg" alt="Franek Toeplitz">
+      <div class="flip-front-info">
+        <div class="flip-name">Franek Toeplitz</div>
+        <div class="flip-title">Creative Director &amp; Partner</div>
+      </div>
+      <a class="card-linkedin" href="https://www.linkedin.com/in/franek-toeplitz-b03a22165/" target="_blank" rel="noopener" aria-label="LinkedIn">
+        <img src="assets/icon_Linkedin.svg" alt="LinkedIn">
+      </a>
+      <div class="card-overlay">
+        <div class="card-overlay-inner">
+          <div class="card-avatar"><img src="assets/team_franek.jpg" alt=""></div>
+          <div class="card-overlay-name">Franek Toeplitz</div>
+          <div class="card-overlay-title">Creative Director &amp; Partner</div>
+          <p class="card-overlay-bio">W reklamie od 2004 roku — w polskich i zagranicznych agencjach. Założyciel agencji strategicznej One Eleven, zdobywca kilkudziesięciu nagród na najważniejszych festiwalach branżowych. Kiedy nie boksuje się z pomysłami to boksuje na treningach; albo pisze scenariusze.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2 -->
+    <div class="flip-card reveal" style="transition-delay:0.08s">
+      <img class="card-photo" src="assets/team_tomek.jpg" alt="Tomasz Dembiński">
+      <div class="flip-front-info">
+        <div class="flip-name">Tomasz Dembiński</div>
+        <div class="flip-title">CEO</div>
+      </div>
+      <a class="card-linkedin" href="#" target="_blank" rel="noopener" aria-label="LinkedIn">
+        <img src="assets/icon_Linkedin.svg" alt="LinkedIn">
+      </a>
+      <div class="card-overlay">
+        <div class="card-overlay-inner">
+          <div class="card-avatar"><img src="assets/team_tomek.jpg" alt=""></div>
+          <div class="card-overlay-name">Tomasz Dembiński</div>
+          <div class="card-overlay-title">CEO</div>
+          <p class="card-overlay-bio">Przez 23 lata w reklamie Tomasz przeszedł wszystkie szczeble kariery od junior account managera do CEO. Jako szef agencji San Markos, a później Walk zarządzał kilkudziesięcioosobowymi zespołami. Ostatnio jeździ elektrykiem, ale pali się tylko do roboty.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3 -->
+    <div class="flip-card reveal" style="transition-delay:0.16s">
+      <img class="card-photo" src="assets/team_zenia.jpg" alt="Ievgen Vector">
+      <div class="flip-front-info">
+        <div class="flip-name">Ievgen Vector</div>
+        <div class="flip-title">Creative Director</div>
+      </div>
+      <a class="card-linkedin" href="#" target="_blank" rel="noopener" aria-label="LinkedIn">
+        <img src="assets/icon_Linkedin.svg" alt="LinkedIn">
+      </a>
+      <div class="card-overlay">
+        <div class="card-overlay-inner">
+          <div class="card-avatar"><img src="assets/team_zenia.jpg" alt=""></div>
+          <div class="card-overlay-name">Ievgen Vector</div>
+          <div class="card-overlay-title">Creative Director</div>
+          <p class="card-overlay-bio">Ievgen ma ponad 16 lat doświadczenia w reklamie. Współtworzone przez niego kampanie były nagradzane na festiwalach Effie, Golden Drum, MIX Awards, ADC Awards. W ostatnich latach dużo uwagi poświęca rozwiązaniom AI, prowadząc treningi dotyczące implementacji AI dla biznesów oraz zespołów kreatywnych.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4 -->
+    <div class="flip-card reveal" style="transition-delay:0.08s">
+      <img class="card-photo" src="assets/team_marta.jpg" alt="Marta Bresińska">
+      <div class="flip-front-info">
+        <div class="flip-name">Marta Bresińska</div>
+        <div class="flip-title">Managing Director</div>
+      </div>
+      <a class="card-linkedin" href="#" target="_blank" rel="noopener" aria-label="LinkedIn">
+        <img src="assets/icon_Linkedin.svg" alt="LinkedIn">
+      </a>
+      <div class="card-overlay">
+        <div class="card-overlay-inner">
+          <div class="card-avatar"><img src="assets/team_marta.jpg" alt=""></div>
+          <div class="card-overlay-name">Marta Bresińska</div>
+          <div class="card-overlay-title">Managing Director</div>
+          <p class="card-overlay-bio">Po 16 latach tworzenia i zarządzania działami client service w sieciowych i lokalnych agencjach reklamowych dziś jest Managing Directorką w tej zdecydowanie najciekawszej. Po Excelach przerzuca się na płótno malarskie balansując pomiędzy popartem, postimpresjonizmem, a surrealizmem.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5 -->
+    <div class="flip-card reveal" style="transition-delay:0.16s">
+      <img class="card-photo" src="assets/team_piotr.jpg" alt="Piotr Fuk">
+      <div class="flip-front-info">
+        <div class="flip-name">Piotr Fuk</div>
+        <div class="flip-title">Senior Art Director</div>
+      </div>
+      <div class="card-overlay">
+        <div class="card-overlay-inner">
+          <div class="card-avatar"><img src="assets/team_piotr.jpg" alt=""></div>
+          <div class="card-overlay-name">Piotr Fuk</div>
+          <div class="card-overlay-title">Senior Art Director</div>
+          <p class="card-overlay-bio">Z branżą związany jest od ponad 30 lat. Swoją drogę zawodową budował w agencjach-ikonach. Od D'Arcy i G7, przez Brain, Team One i 303, Saatchi &amp; Saatchi, aż po Havas i Freundschaft. Współtworzył projekty, które na trwałe zapisały się w historii polskiej komunikacji marketingowej.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6 -->
+    <div class="flip-card reveal" style="transition-delay:0.24s">
+      <img class="card-photo" src="assets/team_renata.jpg" alt="Renata Carenzo">
+      <div class="flip-front-info">
+        <div class="flip-name">Renata Carenzo</div>
+        <div class="flip-title">Senior Copywriter</div>
+      </div>
+      <div class="card-overlay">
+        <div class="card-overlay-inner">
+          <div class="card-avatar"><img src="assets/team_renata.jpg" alt=""></div>
+          <div class="card-overlay-name">Renata Carenzo</div>
+          <div class="card-overlay-title">Senior Copywriter</div>
+          <p class="card-overlay-bio">Literaturoznawczyni z blisko 20-letnim doświadczeniem jako copywriterka w sieciowych agencjach reklamowych. Poza reklamą działa w świecie kulinariów – jako stylistka jedzenia i autorka konceptów restauracyjnych. Jest także autorką książki DOBRO.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7 -->
+    <div class="flip-card reveal" style="transition-delay:0.16s">
+      <img class="card-photo" src="assets/team_piotr2.jpg" alt="Piotr">
+      <div class="flip-front-info">
+        <div class="flip-name">Piotr</div>
+        <div class="flip-title">Senior Art Director</div>
+      </div>
+      <div class="card-overlay">
+        <div class="card-overlay-inner">
+          <div class="card-avatar"><img src="assets/team_piotr2.jpg" alt=""></div>
+          <div class="card-overlay-name">Piotr</div>
+          <div class="card-overlay-title">Senior Art Director</div>
+          <p class="card-overlay-bio">Opis do uzupełnienia.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 8 -->
+    <div class="flip-card reveal" style="transition-delay:0.24s">
+      <img class="card-photo" src="assets/team_kasia.jpg" alt="Katarzyna Popielarczyk">
+      <div class="flip-front-info">
+        <div class="flip-name">Katarzyna Popielarczyk</div>
+        <div class="flip-title">Account Director</div>
+      </div>
+      <div class="card-overlay">
+        <div class="card-overlay-inner">
+          <div class="card-avatar"><img src="assets/team_kasia.jpg" alt=""></div>
+          <div class="card-overlay-name">Katarzyna Popielarczyk</div>
+          <div class="card-overlay-title">Account Director</div>
+          <p class="card-overlay-bio">Przeszła wszystkie stopnie kariery w działach client service czuwając nad komunikacją największych marek. Poza reklamą hoduje zawodowo rośliny doniczkowe, dlatego Maranta leuconeura fascinator nie ma dla niej żadnych tajemnic.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 9 -->
+    <div class="flip-card reveal" style="transition-delay:0.32s">
+      <img class="card-photo" src="assets/team_sylwia.jpg" alt="Sylwia">
+      <div class="flip-front-info">
+        <div class="flip-name">Sylwia</div>
+        <div class="flip-title">Account Manager</div>
+      </div>
+      <div class="card-overlay">
+        <div class="card-overlay-inner">
+          <div class="card-avatar"><img src="assets/team_sylwia.jpg" alt=""></div>
+          <div class="card-overlay-name">Sylwia</div>
+          <div class="card-overlay-title">Account Manager</div>
+          <p class="card-overlay-bio">Opis do uzupełnienia.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 10 -->
+    <div class="flip-card reveal" style="transition-delay:0.24s">
+      <img class="card-photo" src="assets/team_marta2.jpg" alt="Marta">
+      <div class="flip-front-info">
+        <div class="flip-name">Marta</div>
+        <div class="flip-title">Copywriter</div>
+      </div>
+      <div class="card-overlay">
+        <div class="card-overlay-inner">
+          <div class="card-avatar"><img src="assets/team_marta2.jpg" alt=""></div>
+          <div class="card-overlay-name">Marta</div>
+          <div class="card-overlay-title">Copywriter</div>
+          <p class="card-overlay-bio">Opis do uzupełnienia.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 11 -->
+    <div class="flip-card reveal" style="transition-delay:0.32s">
+      <img class="card-photo" src="assets/team_tomasz2.jpg" alt="Tomasz Rajski">
+      <div class="flip-front-info">
+        <div class="flip-name">Tomasz Rajski</div>
+        <div class="flip-title">DTP</div>
+      </div>
+      <div class="card-overlay">
+        <div class="card-overlay-inner">
+          <div class="card-avatar"><img src="assets/team_tomasz2.jpg" alt=""></div>
+          <div class="card-overlay-name">Tomasz Rajski</div>
+          <div class="card-overlay-title">DTP</div>
+          <p class="card-overlay-bio">Od kilkunastu lat czaruje w DTP zarządzając i koordynując przenoszeniem pomysłów na druk. Niezastąpione wsparcie dla kreacji i client service. Ukojenia szuka w kwiatach doniczkowych.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 12 -->
+    <div class="flip-card reveal" style="transition-delay:0.4s">
+      <img class="card-photo" src="assets/team_magda.jpg" alt="Magda">
+      <div class="flip-front-info">
+        <div class="flip-name">Magda</div>
+        <div class="flip-title">Project Director</div>
+      </div>
+      <div class="card-overlay">
+        <div class="card-overlay-inner">
+          <div class="card-avatar"><img src="assets/team_magda.jpg" alt=""></div>
+          <div class="card-overlay-name">Magda</div>
+          <div class="card-overlay-title">Project Director</div>
+          <p class="card-overlay-bio">Opis do uzupełnienia.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 13 -->
+    <div class="flip-card reveal" style="transition-delay:0.32s; grid-column: 2;">
+      <img class="card-photo" src="assets/team_dagmara.jpg" alt="Dagmara Balcer">
+      <div class="flip-front-info">
+        <div class="flip-name">Dagmara Balcer</div>
+        <div class="flip-title">Junior Account Manager</div>
+      </div>
+      <div class="card-overlay">
+        <div class="card-overlay-inner">
+          <div class="card-avatar"><img src="assets/team_dagmara.jpg" alt=""></div>
+          <div class="card-overlay-name">Dagmara Balcer</div>
+          <div class="card-overlay-title">Junior Account Manager</div>
+          <p class="card-overlay-bio">Choć z wykształcenia jest graficzką i fotografką to w Endless zajmuje się koordynacją zadań w dziale client service. Uwielbia offroad i dzięki temu każdy projekt potrafi wyprowadzić na prostą.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══ NEWS ═══ -->
+<section class="news-section">
+  <p class="section-label reveal" style="text-align:center;color:rgba(255,255,255,0.35);">CO SIĘ U NAS DZIEJE?</p>
+  <div class="news-grid">
+    <a class="news-card reveal" href="#">
+      <div class="news-thumb">
+        <div class="news-thumb-img"><img src="assets/news_1.png" alt=""></div>
+        <div class="news-thumb-arrow">
+          <svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/><style>path{stroke:white;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}</style></svg>
+        </div>
+      </div>
+      <div class="news-body">
+        <div class="news-date">12.06.2026</div>
+        <div class="news-title">Pierwsza i na pewno nie ostatnia produkcja full AI Endless! Nasza praca z AI to jednak dużo więcej niż samo promptowanie. Tak jak przy każdej produkcji, zaczęliśmy od scenariusza, znaleźliśmy reżysera (dzięki, <span class="news-link">Mikołaj Sadowski</span> 🙌), przeszliśmy przez…</div>
+      </div>
+    </a>
+    <a class="news-card reveal" href="#" style="transition-delay:0.1s">
+      <div class="news-thumb">
+        <div class="news-thumb-img"><img src="assets/news_2.png" alt=""></div>
+        <div class="news-thumb-arrow">
+          <svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/><style>path{stroke:white;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}</style></svg>
+        </div>
+      </div>
+      <div class="news-body">
+        <div class="news-date">12.06.2026</div>
+        <div class="news-title">Cieszymy się, że razem ze <span class="news-link">Sporting Agency</span> zaczynamy współpracę przy projekcie dla <span class="news-link">Superbet</span>! Szczegóły już niedługo!</div>
+      </div>
+    </a>
+    <a class="news-card reveal" href="#" style="transition-delay:0.2s">
+      <div class="news-thumb">
+        <div class="news-thumb-img"><img src="assets/news_3.png" alt=""></div>
+        <div class="news-thumb-arrow">
+          <svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/><style>path{stroke:white;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}</style></svg>
+        </div>
+      </div>
+      <div class="news-body">
+        <div class="news-date">12.06.2026</div>
+        <div class="news-title">Duma to mało powiedziane. Współtworzenie kampanii dla Ministerstwa Cyfryzacji — <span class="news-link">Ministerstwo Cyfryzacji</span>, która porusza tak ważny temat reprezentacji kobiet w zawodach cyfrowych, to dla nas coś więcej niż kolejny projekt.</div>
+      </div>
+    </a>
+  </div>
+  <div class="news-cta reveal">
+    <a href="press.html" class="btn-pill"><span class="btn-spacer"></span><span>PRESS</span><img class="btn-arrow-img" src="assets/arrow.svg" alt=""></a>
+  </div>
+</section>
+
+<!-- ═══ PROJECTS ═══ -->
+<section class="projects-section">
+  <div class="projects-header">
+    <p class="section-label reveal" style="color:rgba(255,255,255,0.35);">WYBRANE PROJEKTY</p>
+  </div>
+  <div class="projects-grid">
+    <div class="project-card reveal">
+      <div class="project-bg"><img src="assets/work_1.png" alt="Buduj cyfrową formę"></div>
+      <div class="project-info"><div class="project-client">DIGITAL</div><div class="project-name">BUDUJ CYFROWĄ FORMĘ</div></div>
+    </div>
+    <div class="project-card reveal" style="transition-delay:0.08s">
+      <div class="project-bg"><img src="assets/work_2.png" alt="Superbet"></div>
+      <div class="project-info"><div class="project-client">SUPERBET</div><div class="project-name">MISTRZOSTWA W TWOICH RĘKACH</div></div>
+    </div>
+    <div class="project-card reveal" style="transition-delay:0.16s">
+      <div class="project-bg"><img src="assets/work_3.png" alt="Spokój ducha gratis"></div>
+      <div class="project-info"><div class="project-client">INSURANCE</div><div class="project-name">SPOKÓJ DUCHA GRATIS</div></div>
+    </div>
+    <div class="project-card reveal" style="transition-delay:0.24s">
+      <div class="project-bg"><img src="assets/work_4.jpg" alt="Flamin Hot"></div>
+      <div class="project-info"><div class="project-client">FLAMIN' HOT</div><div class="project-name">ARE NOT</div></div>
+    </div>
+    <div class="project-card reveal" style="transition-delay:0.32s">
+      <div class="project-bg"><img src="assets/work_5.png" alt="Vectra Netflix 1670"></div>
+      <div class="project-info"><div class="project-client">VECTRA × NETFLIX</div><div class="project-name">1670 SEZON 2</div></div>
+    </div>
+    <div class="project-card reveal" style="transition-delay:0.4s">
+      <div class="project-bg"><img src="assets/work_6.png" alt="Project 6"></div>
+      <div class="project-info"><div class="project-client">DIGITAL</div><div class="project-name">BUDUJ CYFROWĄ FORMĘ</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="projects-cta reveal">
+  <a href="projekty.html" class="btn-pill"><span class="btn-spacer"></span><span>PROJEKTY</span><img class="btn-arrow-img" src="assets/arrow.svg" alt=""></a>
+</div>
+
+<!-- ═══ FOOTER ═══ -->
+<section class="footer-cta">
+  <video class="footer-video" autoplay muted loop playsinline>
+    <source src="assets/footer.mp4" type="video/mp4"/>
+  </video>
+  <div class="footer-overlay"></div>
+  <img class="drip" style="right:3%;top:3%;width:clamp(90px,12vw,160px);" src="assets/yellow_element_3.png" alt="" aria-hidden="true">
+  <img class="drip" style="left:1.5%;bottom:6%;width:clamp(120px,18vw,240px);" src="assets/yellow_element_4.png" alt="" aria-hidden="true">
+  <div class="footer-content">
+    <div class="footer-avatar"><img src="assets/tomek_bottom.jpg" alt=""></div>
+    <h2 class="footer-title reveal">MASZ PYTANIA?<br/>NAPISZ LUB ZADZWOŃ!</h2>
+    <div class="footer-contacts reveal" style="transition-delay:0.2s">
+      <div class="contact-phone-email">
+        <a href="tel:+48501218473">+48 501 218 473</a><br/>
+        <a href="mailto:tomek@weareendless.pl">tomek@weareendless.pl</a>
+      </div>
+      <div class="contact-sep"></div>
+      <address class="contact-address">
+        al. Niepodległości 124<br/>00-608 Warszawa
+      </address>
+    </div>
+    <div class="footer-socials reveal" style="transition-delay:0.35s">
+      <a href="https://www.linkedin.com/in/franek-toeplitz-b03a22165/" target="_blank" rel="noopener" class="social-btn"><img src="assets/icon_Linkedin.svg" alt="LinkedIn"></a>
+      <a href="https://www.instagram.com/endless_warsaw/" target="_blank" rel="noopener" class="social-btn"><img src="assets/icon_insta.svg" alt="Instagram"></a>
+      <a href="https://www.tiktok.com/@weareendless" target="_blank" rel="noopener" class="social-btn"><img src="assets/icon_tiktok.svg" alt="TikTok"></a>
+    </div>
+    <p class="footer-copy">Copyright© 2026 Endless. All Rights Reserved</p>
+  </div>
+</section>
+
+<script>
+/* Reveal */
+const revealIO = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); revealIO.unobserve(e.target); } });
+}, { threshold: 0.08 });
+document.querySelectorAll('.reveal').forEach(el => revealIO.observe(el));
+
+/* Menu */
+const menuToggle = document.getElementById('menu-toggle');
+const menuOverlay = document.getElementById('menu-overlay');
+const menuClose = document.getElementById('menu-close');
+function openMenu() { menuOverlay.classList.add('is-open'); menuOverlay.setAttribute('aria-hidden','false'); menuToggle.setAttribute('aria-expanded','true'); menuToggle.classList.add('menu-open'); document.body.classList.add('menu-open-state'); }
+function closeMenu() { menuOverlay.classList.remove('is-open'); menuOverlay.setAttribute('aria-hidden','true'); menuToggle.setAttribute('aria-expanded','false'); menuToggle.classList.remove('menu-open'); document.body.classList.remove('menu-open-state'); }
+menuToggle.addEventListener('click', () => menuOverlay.classList.contains('is-open') ? closeMenu() : openMenu());
+menuClose.addEventListener('click', closeMenu);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
+
+/* Parallax text */
+const txRobimy      = document.getElementById('txt-robimy');
+const txKluczowe    = document.getElementById('txt-kluczowe');
+const coRobimy      = document.getElementById('co-robimy-float');
+const robimySection = document.querySelector('.robimy-section');
+const sprayImg      = document.getElementById('co-robimy-spray-img');
+
+function updateGradient() {
+  if (!txRobimy || !coRobimy || !robimySection) return;
+  const secTop   = robimySection.getBoundingClientRect().top + window.scrollY;
+  const floatTop = parseFloat(coRobimy.style.top) || 0;
+  const floatH   = coRobimy.offsetHeight || 1;
+  const rel      = secTop - floatTop;
+  const pct      = Math.max(0, Math.min(100, (rel / floatH) * 100));
+  txRobimy.style.backgroundImage = `linear-gradient(to bottom, #e3151a ${pct}%, #000 ${pct}%)`;
+}
+
+function positionRobimy() {
+  if (!coRobimy || !robimySection) return;
+  const secTop = robimySection.getBoundingClientRect().top + window.scrollY;
+  const textH  = coRobimy.offsetHeight || window.innerWidth * 0.2;
+  const topPx  = secTop - textH * 0.25;
+  coRobimy.style.top = topPx + 'px';
+  if (sprayImg) sprayImg.style.top = (topPx - textH * 0.18) + 'px';
+  updateGradient();
+}
+
+function parallax() {
+  const vH = window.innerHeight;
+  if (txRobimy && coRobimy) {
+    const r  = coRobimy.getBoundingClientRect();
+    const p  = (vH - r.top) / (vH + r.height);
+    txRobimy.style.marginLeft = `${-5 + p * 30}%`;
+  }
+  if (txKluczowe) {
+    const r = txKluczowe.parentElement.getBoundingClientRect();
+    const p = (vH - r.top) / (vH + r.height);
+    txKluczowe.style.transform = `translateX(${20 - p * 40}%)`;
+  }
+}
+window.addEventListener('scroll', parallax, { passive: true });
+window.addEventListener('resize', positionRobimy);
+positionRobimy();
+parallax();
+</script>
+</body>
+</html>

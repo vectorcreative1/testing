@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Projekty — We Are Endless</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Special+Gothic+Expanded+One&family=Poppins:wght@300;400;500&family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75,700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black: #000;
+      --white: #fff;
+      --red:   #e3151a;
+      --yellow:#f3e600;
+    }
+
+    html { scroll-behavior: smooth; overflow-y: scroll; }
+    body { margin: 0; padding: 0; background: var(--black); color: var(--white); font-family: 'Poppins', sans-serif; overflow-x: hidden; }
+
+    /* ─── NAV ─── */
+    #main-nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 300;
+      display: flex; align-items: flex-end; justify-content: space-between;
+      padding: 0 clamp(2.5rem, 5.5vw, 6rem) 1.4rem;
+      height: 110px; background: transparent;
+    }
+    body.menu-open-state .nav-logo { opacity: 0; pointer-events: none; }
+    .nav-logo { display: flex; align-items: center; text-decoration: none; transition: opacity 0.2s; }
+    .nav-logo-img { height: 38px; width: auto; display: block; }
+    .nav-menu-btn {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: radial-gradient(circle at 38% 35%, rgba(80,110,160,0.55) 0%, rgba(10,10,20,0.75) 55%, rgba(0,0,0,0.85) 100%);
+      border: 1px solid rgba(255,255,255,0.18);
+      backdrop-filter: blur(18px) saturate(1.4); -webkit-backdrop-filter: blur(18px) saturate(1.4);
+      box-shadow: inset 0 1px 1px rgba(255,255,255,0.2), inset 0 -1px 2px rgba(0,0,0,0.6), 0 8px 32px rgba(0,0,0,0.4);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: transform 0.2s, background 0.3s;
+    }
+    .menu-open.nav-menu-btn { background: var(--black); border-color: transparent; backdrop-filter: none; -webkit-backdrop-filter: none; }
+    .nav-menu-btn:hover { transform: scale(1.06); }
+    .hamburger { display: flex; flex-direction: column; gap: 5px; }
+    .hamburger span { display: block; height: 1.5px; background: var(--white); transition: width 0.3s cubic-bezier(0.23,1,0.32,1), transform 0.35s cubic-bezier(0.23,1,0.32,1), opacity 0.3s; }
+    .hamburger span:nth-child(1) { width: 22px; }
+    .hamburger span:nth-child(2) { width: 14px; }
+    .hamburger span:nth-child(3) { width: 18px; }
+    .nav-menu-btn:hover .hamburger span { width: 22px; }
+    .menu-open .hamburger span { width: 22px; }
+    .menu-open .hamburger span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .menu-open .hamburger span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .menu-open .hamburger span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+    /* ─── MENU OVERLAY ─── */
+    .menu-overlay {
+      position: fixed;
+      top: clamp(0.8rem, 1.5vw, 1.5rem);
+      left: clamp(0.8rem, 1.5vw, 1.5rem);
+      right: clamp(0.8rem, 1.5vw, 1.5rem);
+      z-index: 200; pointer-events: none;
+      transform: translateY(calc(-100% - 2rem));
+      transition: transform 0.55s cubic-bezier(0.23,1,0.32,1);
+    }
+    .menu-overlay.is-open { transform: translateY(0); pointer-events: all; }
+    .menu-shell {
+      position: relative; border-radius: 28px; overflow: hidden;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.5);
+      height: 82vh; min-height: 500px;
+      display: flex; align-items: center;
+    }
+    .menu-bg-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; z-index: 0; }
+    .menu-photo-spray { position: absolute; bottom: 8%; left: 3%; width: clamp(80px, 11vw, 140px); pointer-events: none; z-index: 2; }
+    .menu-photo { display: none; }
+    .menu-panel {
+      position: relative; z-index: 3; width: 100%; height: 100%;
+      display: flex; align-items: stretch; justify-content: space-between;
+      padding: 0 clamp(4rem, 8vw, 8rem) 0 36%;
+      gap: clamp(3rem, 6vw, 7rem);
+    }
+    .menu-inner { align-self: flex-start; }
+    .menu-close { display: none; }
+    .menu-inner { display: flex; flex-direction: column; }
+    .menu-inner {
+      display: flex; flex-direction: column; justify-content: center;
+      padding: clamp(4rem, 9vh, 7rem) 0 clamp(3rem, 6vh, 5rem);
+    }
+    .menu-contact {
+      display: flex; flex-direction: column; justify-content: center;
+      padding-top: 18%;
+      padding-bottom: clamp(3rem, 6vh, 5rem);
+    }
+    .menu-brand, .menu-links a {
+      font-family: 'Special Gothic Expanded One', sans-serif;
+      font-size: clamp(2.8rem, 6.5vh, 5rem);
+      line-height: 1.5; text-decoration: none; display: block;
+      transition: letter-spacing 0.3s cubic-bezier(0.23,1,0.32,1), opacity 0.2s;
+    }
+    .menu-brand { color: var(--red); margin-bottom: 0; }
+    .menu-brand:hover { letter-spacing: 0.03em; opacity: 0.7; }
+    .menu-links { list-style: none; padding: 0; margin: 0; }
+    .menu-links a { color: var(--red); }
+    .menu-links a:hover { letter-spacing: 0.03em; opacity: 0.7; }
+    .menu-links a.current { color: var(--black); }
+    .menu-brand.current { color: var(--black); }
+    .menu-brand { opacity: 0; transform: translateY(16px); transition: opacity 0.4s, transform 0.4s, letter-spacing 0.3s, color 0.2s; }
+    .menu-links li { opacity: 0; transform: translateY(16px); transition: opacity 0.4s, transform 0.4s; }
+    .menu-overlay.is-open .menu-brand   { opacity:1; transform:none; transition-delay:0.12s; }
+    .menu-overlay.is-open .menu-links li:nth-child(1) { opacity:1; transform:none; transition-delay:0.2s; }
+    .menu-overlay.is-open .menu-links li:nth-child(2) { opacity:1; transform:none; transition-delay:0.28s; }
+    .menu-overlay.is-open .menu-links li:nth-child(3) { opacity:1; transform:none; transition-delay:0.36s; }
+    .menu-contact { flex: 0 0 auto; }
+    .menu-contact-label { font-family: 'Special Gothic Expanded One', sans-serif; font-size: 0.6rem; letter-spacing: 0.3em; text-transform: uppercase; color: #999; margin-bottom: 1rem; }
+    .menu-contact p { font-family: 'Special Gothic Expanded One', sans-serif; font-size: 22px; color: var(--black); line-height: 1.5; margin: 0 0 1rem; }
+    .menu-contact a { color: inherit; text-decoration: none; display: block; }
+    .menu-contact a:hover { color: var(--red); }
+    .menu-social-row { display: flex; gap: 0.65rem; margin-top: 1.2rem; }
+    .menu-social-btn { display: inline-flex; align-items: center; justify-content: center; transition: transform 0.2s, opacity 0.2s; }
+    .menu-social-btn:hover { transform: scale(1.1); opacity: 0.85; }
+    .menu-social-btn img { width: 44px; height: 44px; display: block; }
+
+    /* ─── HERO HEADER ─── */
+    .hero {
+      position: relative;
+      height: 55vh; min-height: 380px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center; overflow: hidden;
+    }
+    .hero-video {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: contain; z-index: 0;
+    }
+    .hero-overlay {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,0.55); z-index: 1;
+    }
+    .corner-waves {
+      position: absolute; top: 0; right: 0;
+      width: clamp(280px, 35vw, 480px);
+      z-index: 2; pointer-events: none;
+    }
+    .hero-content {
+      position: relative; z-index: 3;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    @keyframes heroSlideIn {
+      from { opacity: 0; transform: translateY(50px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .hero-title {
+      font-family: 'Special Gothic Expanded One', sans-serif;
+      font-size: clamp(2.5rem, 7.5vw, 7rem);
+      letter-spacing: -0.02em; line-height: 1;
+      text-transform: uppercase; color: var(--white);
+      animation: heroSlideIn 0.9s cubic-bezier(0.23,1,0.32,1) 0.15s both;
+    }
+    .hero-title span { color: var(--red); }
+    .hero-sub {
+      margin-top: 1.5rem;
+      font-family: 'Special Gothic Expanded One', sans-serif;
+      font-size: clamp(0.55rem, 1.1vw, 0.72rem);
+      letter-spacing: 0.38em; text-transform: uppercase;
+      color: rgba(255,255,255,0.45);
+    }
+
+    /* ─── PROJECTS GRID ─── */
+    .all-projects-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0;
+    }
+    @media (max-width: 560px) { .all-projects-grid { grid-template-columns: 1fr; } }
+
+    .project-card {
+      position: relative; overflow: hidden;
+      cursor: pointer; aspect-ratio: 16/9;
+    }
+    .project-bg {
+      position: absolute; inset: 0;
+      background-size: cover; background-position: center;
+      transition: transform 0.6s cubic-bezier(0.23,1,0.32,1);
+    }
+    .project-bg img {
+      width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;
+    }
+    .project-card:hover .project-bg { transform: scale(1.05); }
+    .project-info {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 1.2rem 1.5rem;
+      background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%);
+      opacity: 0; transform: translateY(8px);
+      transition: opacity 0.35s, transform 0.35s;
+    }
+    .project-card:hover .project-info { opacity: 1; transform: translateY(0); }
+    .project-client {
+      font-family: 'Special Gothic Expanded One', sans-serif;
+      font-size: 0.55rem; letter-spacing: 0.35em; text-transform: uppercase;
+      color: rgba(255,255,255,0.5); margin-bottom: 0.25rem;
+    }
+    .project-name {
+      font-family: 'Special Gothic Expanded One', sans-serif;
+      font-size: clamp(0.85rem, 1.6vw, 1.3rem);
+      text-transform: uppercase; color: var(--white); line-height: 1.1;
+    }
+
+    /* ─── FOOTER ─── */
+    .footer-cta {
+      position: relative; overflow: hidden;
+      margin-top: clamp(-7rem, -11vw, -14rem);
+      padding: clamp(6rem, 14vh, 10rem) clamp(1.5rem, 5vw, 4rem) clamp(3rem, 5vh, 4rem);
+      text-align: center;
+    }
+    .footer-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+    .footer-overlay { position: absolute; inset: 0; background: transparent; z-index: 1; }
+    .footer-content { position: relative; z-index: 2; }
+    .footer-avatar { width: 82px; height: 82px; border-radius: 50%; overflow: hidden; margin: 0 auto 2rem; border: 2px solid rgba(255,255,255,0.18); background: #333; }
+    .footer-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .footer-title {
+      font-family: 'Special Gothic Expanded One', sans-serif;
+      font-size: clamp(2.5rem, 7vw, 6.5rem);
+      letter-spacing: -0.02em; line-height: 0.92;
+      text-transform: uppercase; color: var(--white); margin-bottom: 2.8rem;
+    }
+    .footer-contacts { display: flex; justify-content: center; align-items: center; gap: 3rem; margin-bottom: 2.5rem; flex-wrap: wrap; }
+    .footer-contacts a, .footer-contacts address {
+      font-family: 'Special Gothic Expanded One', sans-serif;
+      font-size: clamp(0.85rem, 1.4vw, 1rem);
+      color: var(--white); text-decoration: none; line-height: 1.6; font-style: normal; transition: color 0.2s;
+    }
+    .footer-contacts a:hover { color: var(--yellow); }
+    .contact-sep { width: 1px; height: 44px; background: rgba(255,255,255,0.18); }
+    .footer-socials { display: flex; justify-content: center; gap: 0.9rem; margin-bottom: 3rem; }
+    .social-btn { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; transition: transform 0.25s, opacity 0.25s; }
+    .social-btn:hover { transform: scale(1.12); opacity: 0.85; }
+    .social-btn img { width: 46px; height: 46px; display: block; }
+    .footer-copy { font-size: 0.68rem; letter-spacing: 0.1em; color: rgba(255,255,255,0.18); }
+    .drip { position: absolute; pointer-events: none; z-index: 2; }
+
+    /* ─── PILL BUTTON ─── */
+    .btn-pill {
+      display: inline-flex; align-items: center; justify-content: space-between;
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: clamp(0.95rem, 1.5vw, 1.1rem);
+      font-weight: 700;
+      font-stretch: condensed;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      background: var(--red); color: var(--black);
+      text-decoration: none; border: none;
+      padding: 1rem 1.4rem 1rem 2rem; border-radius: 50px;
+      min-width: clamp(200px, 22vw, 280px);
+      cursor: pointer; position: relative; overflow: hidden;
+      transition: color 0.4s cubic-bezier(0.23,1,0.32,1);
+    }
+    .btn-pill > * { position: relative; z-index: 1; }
+    .btn-arrow-img { width: 14px; height: 12px; display: block; flex-shrink: 0; transition: transform 0.25s; }
+    .btn-pill:hover .btn-arrow-img { transform: translateX(4px); }
+    .btn-spacer { width: 20px; flex-shrink: 0; }
+    .btn-pill::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: var(--yellow);
+      border-radius: inherit;
+      transform: translateX(-102%);
+      transition: transform 0.45s cubic-bezier(0.23,1,0.32,1);
+    }
+    .btn-pill:hover::after { transform: translateX(0); }
+    .btn-pill:hover { color: var(--black); }
+    .btn-arrow { display: inline-block; transition: transform 0.3s; }
+    .btn-pill:hover .btn-arrow { transform: translateX(5px); }
+
+    /* ─── REVEAL ─── */
+    .reveal { opacity: 0; transform: translateY(35px); transition: opacity 0.7s cubic-bezier(0.23,1,0.32,1), transform 0.7s cubic-bezier(0.23,1,0.32,1); }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+
+<!-- ═══ NAV ═══ -->
+<nav id="main-nav">
+  <a href="index.html" class="nav-logo">
+    <img src="assets/favicon.svg" alt="ENDLESS" class="nav-logo-img"/>
+  </a>
+  <div class="nav-menu-btn" id="menu-toggle" role="button" aria-label="Menu" aria-expanded="false">
+    <div class="hamburger"><span></span><span></span><span></span></div>
+  </div>
+</nav>
+
+<!-- ═══ MENU OVERLAY ═══ -->
+<div class="menu-overlay" id="menu-overlay" aria-hidden="true">
+  <div class="menu-shell">
+    <img class="menu-bg-img" src="assets/bg_menu.jpg" alt="">
+    <button class="menu-close" id="menu-close" aria-label="Zamknij menu"></button>
+    <div class="menu-panel">
+      <div class="menu-inner">
+        <a href="index.html" class="menu-brand">Endless</a>
+        <ul class="menu-links">
+          <li><a href="o-nas.html">O nas</a></li>
+          <li><a href="projekty.html">Projekty</a></li>
+          <li><a href="press.html">Press</a></li>
+        </ul>
+      </div>
+      <div class="menu-contact">
+        <div class="menu-contact-label">Kontakt</div>
+        <p><a href="tel:+48501218473">+48 501 218 473</a><a href="mailto:tomek@weareendless.pl">tomek@weareendless.pl</a></p>
+        <p>al. Niepodległości 124<br>00-608 Warszawa</p>
+        <div class="menu-social-row">
+          <a href="https://www.linkedin.com/in/franek-toeplitz-b03a22165/" target="_blank" rel="noopener" class="menu-social-btn" aria-label="LinkedIn"><img src="assets/icon_Linkedin.svg" alt="LinkedIn"></a>
+          <a href="https://www.instagram.com/endless_warsaw/" target="_blank" rel="noopener" class="menu-social-btn" aria-label="Instagram"><img src="assets/icon_insta.svg" alt="Instagram"></a>
+          <a href="https://www.tiktok.com/@weareendless" target="_blank" rel="noopener" class="menu-social-btn" aria-label="TikTok"><img src="assets/icon_tiktok.svg" alt="TikTok"></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero">
+  <video class="hero-video" autoplay muted loop playsinline>
+    <source src="assets/bg_knight.mp4" type="video/mp4"/>
+  </video>
+  <div class="hero-overlay"></div>
+  <img class="corner-waves" src="assets/top_wave.svg" alt="" aria-hidden="true"/>
+  <div class="hero-content">
+    <h1 class="hero-title">
+      <picture>
+        <source srcset="assets/h1_projekty_mobile.svg" media="(max-width: 600px)"/>
+        <img src="assets/h1_projekty.svg" alt="PROJEKTY" style="width:clamp(200px,40vw,620px);height:auto;display:block;margin:0 auto;"/>
+      </picture>
+    </h1>
+    <p class="hero-sub reveal" style="transition-delay:0.2s">Zobacz co zrobiliśmy</p>
+  </div>
+</section>
+
+<!-- ═══ PROJECTS GRID ═══ -->
+<main>
+  <div class="all-projects-grid">
+
+    <div class="project-card reveal">
+      <div class="project-bg"><img src="assets/work_1.png" alt="Buduj cyfrową formę"></div>
+      <div class="project-info">
+        <div class="project-client">DIGITAL</div>
+        <div class="project-name">BUDUJ CYFROWĄ FORMĘ</div>
+      </div>
+    </div>
+
+    <div class="project-card reveal" style="transition-delay:0.05s">
+      <div class="project-bg"><img src="assets/work_2.png" alt="Superbet"></div>
+      <div class="project-info">
+        <div class="project-client">SUPERBET</div>
+        <div class="project-name">MISTRZOSTWA W TWOICH RĘKACH</div>
+      </div>
+    </div>
+
+    <div class="project-card reveal" style="transition-delay:0.1s">
+      <div class="project-bg"><img src="assets/work_3.png" alt="Spokój ducha gratis"></div>
+      <div class="project-info">
+        <div class="project-client">INSURANCE</div>
+        <div class="project-name">SPOKÓJ DUCHA GRATIS</div>
+      </div>
+    </div>
+
+    <div class="project-card reveal" style="transition-delay:0.15s">
+      <div class="project-bg"><img src="assets/work_4.jpg" alt="Flamin Hot"></div>
+      <div class="project-info">
+        <div class="project-client">FLAMIN' HOT</div>
+        <div class="project-name">ARE NOT</div>
+      </div>
+    </div>
+
+    <div class="project-card reveal" style="transition-delay:0.2s">
+      <div class="project-bg"><img src="assets/work_5.png" alt="Vectra Netflix 1670"></div>
+      <div class="project-info">
+        <div class="project-client">VECTRA × NETFLIX</div>
+        <div class="project-name">1670 SEZON 2</div>
+      </div>
+    </div>
+
+    <div class="project-card reveal" style="transition-delay:0.25s">
+      <div class="project-bg"><img src="assets/work_6.png" alt="Project 6"></div>
+      <div class="project-info">
+        <div class="project-client">DIGITAL</div>
+        <div class="project-name">BUDUJ CYFROWĄ FORMĘ</div>
+      </div>
+    </div>
+
+    <div class="project-card reveal" style="transition-delay:0.05s">
+      <div class="project-bg"><img src="assets/Królewska-oferta-w-Vectrze.gif" alt="Królewska oferta w Vectrze"></div>
+      <div class="project-info">
+        <div class="project-client">VECTRA</div>
+        <div class="project-name">KRÓLEWSKA OFERTA</div>
+      </div>
+    </div>
+
+    <div class="project-card reveal" style="transition-delay:0.1s">
+      <div class="project-bg"><img src="assets/SuperBet-SuperBooster-15_1920x1080_TV_-23LUFS_2026_06_03-prev-(1).gif" alt="SuperBet SuperBooster"></div>
+      <div class="project-info">
+        <div class="project-client">SUPERBET</div>
+        <div class="project-name">SUPERBOOSTER</div>
+      </div>
+    </div>
+
+    <div class="project-card reveal" style="transition-delay:0.15s">
+      <div class="project-bg"><img src="assets/Mistrzowska-oferta-sportowa---pakiety-sportowe-przez-rok-za-0zł.gif" alt="Mistrzowska oferta sportowa"></div>
+      <div class="project-info">
+        <div class="project-client">VECTRA</div>
+        <div class="project-name">PAKIETY SPORTOWE</div>
+      </div>
+    </div>
+
+    <div class="project-card reveal" style="transition-delay:0.2s">
+      <div class="project-bg"><img src="assets/Vectra-jest-w-związku-z-Netflixem---Internet-i-Telewizja-+-Netflix.gif" alt="Vectra Netflix"></div>
+      <div class="project-info">
+        <div class="project-client">VECTRA × NETFLIX</div>
+        <div class="project-name">W ZWIĄZKU Z NETFLIXEM</div>
+      </div>
+    </div>
+
+    <div class="project-card reveal" style="transition-delay:0.25s">
+      <div class="project-bg"><img src="assets/Kosmiczna-oferta---Disney+-na-rok-w-prezencie!.gif" alt="Disney+ w prezencie"></div>
+      <div class="project-info">
+        <div class="project-client">VECTRA × DISNEY+</div>
+        <div class="project-name">KOSMICZNA OFERTA</div>
+      </div>
+    </div>
+
+    <div class="project-card reveal" style="transition-delay:0.3s">
+      <div class="project-bg"><img src="assets/1670---piękne-czasy!-Internet-+-Telewizja-z-Vectra-a-Netflix-w-prezencie!.gif" alt="1670 piękne czasy"></div>
+      <div class="project-info">
+        <div class="project-client">VECTRA × NETFLIX</div>
+        <div class="project-name">1670 — PIĘKNE CZASY</div>
+      </div>
+    </div>
+
+    <div class="project-card reveal" style="transition-delay:0.05s">
+      <div class="project-bg"><img src="assets/Zamów-Internet-w-abonamencie-i-miej-go-Zazerro-złotych-do-końca-roku!.gif" alt="Internet za zero złotych"></div>
+      <div class="project-info">
+        <div class="project-client">VECTRA</div>
+        <div class="project-name">INTERNET ZA ZERO</div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- ═══ FOOTER / CTA ═══ -->
+<section class="footer-cta">
+  <video class="footer-video" autoplay muted loop playsinline>
+    <source src="assets/footer.mp4" type="video/mp4"/>
+  </video>
+  <div class="footer-overlay"></div>
+
+  <img class="drip" style="right:3%;top:3%;width:clamp(90px,12vw,160px);" src="assets/yellow_element_3.png" alt="" aria-hidden="true">
+  <img class="drip" style="left:1.5%;bottom:6%;width:clamp(120px,18vw,240px);" src="assets/yellow_element_4.png" alt="" aria-hidden="true">
+
+  <div class="footer-content">
+    <div class="footer-avatar"><img src="assets/tomek_bottom.jpg" alt=""></div>
+
+    <h2 class="footer-title reveal">
+      MASZ PYTANIA?<br/>NAPISZ LUB ZADZWOŃ!
+    </h2>
+
+    <div class="footer-contacts reveal" style="transition-delay:0.2s">
+      <div>
+        <a href="tel:+48501218473">+48 501 218 473</a><br/>
+        <a href="mailto:tomek@weareendless.pl">tomek@weareendless.pl</a>
+      </div>
+      <div class="contact-sep"></div>
+      <address>
+        al. Niepodległości 124<br/>00-608 Warszawa
+      </address>
+    </div>
+
+    <div class="footer-socials reveal" style="transition-delay:0.35s">
+      <a href="https://www.linkedin.com/in/franek-toeplitz-b03a22165/" target="_blank" rel="noopener" class="social-btn" aria-label="LinkedIn"><img src="assets/icon_Linkedin.svg" alt="LinkedIn"></a>
+      <a href="https://www.instagram.com/endless_warsaw/" target="_blank" rel="noopener" class="social-btn" aria-label="Instagram"><img src="assets/icon_insta.svg" alt="Instagram"></a>
+      <a href="https://www.tiktok.com/@weareendless" target="_blank" rel="noopener" class="social-btn" aria-label="TikTok"><img src="assets/icon_tiktok.svg" alt="TikTok"></a>
+    </div>
+
+    <p class="footer-copy">Copyright© 2026 Endless. All Rights Reserved</p>
+  </div>
+</section>
+
+<script>
+/* Reveal on scroll */
+const revealIO = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); revealIO.unobserve(e.target); } });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => revealIO.observe(el));
+
+/* Nav scroll */
+const nav = document.getElementById('main-nav');
+function updateNav() { nav.classList.toggle('scrolled', window.scrollY > 50); }
+window.addEventListener('scroll', updateNav, { passive: true });
+updateNav();
+
+/* Menu overlay */
+const menuToggle = document.getElementById('menu-toggle');
+const menuOverlay = document.getElementById('menu-overlay');
+const menuClose = document.getElementById('menu-close');
+
+function openMenu() {
+  menuOverlay.classList.add('is-open');
+  menuOverlay.setAttribute('aria-hidden', 'false');
+  menuToggle.setAttribute('aria-expanded', 'true');
+  menuToggle.classList.add('menu-open');
+  document.body.classList.add('menu-open-state');
+}
+function closeMenu() {
+  menuOverlay.classList.remove('is-open');
+  menuOverlay.setAttribute('aria-hidden', 'true');
+  menuToggle.setAttribute('aria-expanded', 'false');
+  menuToggle.classList.remove('menu-open');
+  document.body.classList.remove('menu-open-state');
+}
+
+menuToggle.addEventListener('click', () => {
+  menuOverlay.classList.contains('is-open') ? closeMenu() : openMenu();
+});
+
+/* Mark current page link */
+const currentPath = location.pathname.split('/').pop() || 'index.html';
+document.querySelectorAll('.menu-links a, .menu-brand').forEach(a => {
+  const raw = a.getAttribute('href') || '';
+  if (!raw || raw === '#') return;
+  const href = raw.split('/').pop().split('#')[0] || 'index.html';
+  if (href === currentPath) a.classList.add('current');
+});
+menuClose.addEventListener('click', closeMenu);
+menuOverlay.addEventListener('click', e => {
+  if (e.target === menuOverlay || e.target.closest('.menu-photo')) closeMenu();
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
+</script>
+</body>
+</html>

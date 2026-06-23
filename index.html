@@ -1,1203 +1,1208 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="pl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Твій вік</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>We Are Endless — Agencja Digital</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Special+Gothic+Expanded+One&family=Poppins:wght@300;400;500&family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75,700&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    :root {
+      --black: #000;
+      --white: #fff;
+      --red:   #e3151a;
+      --yellow:#f3e600;
+    }
+
+    html { scroll-behavior: smooth; margin: 0; padding: 0; overflow-y: scroll; }
+
     body {
-      background: #0a0a0a;
-      color: #e0e0e0;
-      font-family: 'Space Grotesk', sans-serif;
-      font-weight: 300;
-      min-height: 100dvh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
+      margin: 0; padding: 0;
+      background: var(--black);
+      color: var(--white);
+      font-family: 'Poppins', sans-serif;
+      overflow-x: hidden;
     }
 
-    /* ── Background blobs ── */
-    .bg {
-      position: fixed; inset: 0;
-      pointer-events: none; z-index: 0;
+    /* ─── NAV ─── */
+    /* ─── NAV ─── */
+    #main-nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 300;
+      display: flex; align-items: flex-end; justify-content: space-between;
+      padding: 0 clamp(2.5rem, 5.5vw, 6rem) 1.4rem;
+      height: 110px; background: transparent;
+    }
+    body.menu-open-state .nav-logo { opacity: 0; pointer-events: none; }
+    .nav-logo { display: flex; align-items: center; text-decoration: none; transition: opacity 0.2s; }
+    .nav-logo-img { height: 38px; width: auto; display: block; }
+    .nav-menu-btn {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: radial-gradient(circle at 38% 35%, rgba(80,110,160,0.55) 0%, rgba(10,10,20,0.75) 55%, rgba(0,0,0,0.85) 100%);
+      border: 1px solid rgba(255,255,255,0.18);
+      backdrop-filter: blur(18px) saturate(1.4); -webkit-backdrop-filter: blur(18px) saturate(1.4);
+      box-shadow: inset 0 1px 1px rgba(255,255,255,0.2), inset 0 -1px 2px rgba(0,0,0,0.6), 0 8px 32px rgba(0,0,0,0.4);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: transform 0.2s, background 0.3s;
+    }
+    .menu-open.nav-menu-btn { background: var(--black); border-color: transparent; backdrop-filter: none; -webkit-backdrop-filter: none; }
+    .nav-menu-btn:hover { transform: scale(1.06); }
+    .hamburger { display: flex; flex-direction: column; gap: 5px; }
+    .hamburger span { display: block; height: 1.5px; background: var(--white); transition: width 0.3s cubic-bezier(0.23,1,0.32,1), transform 0.35s cubic-bezier(0.23,1,0.32,1), opacity 0.3s; }
+    .hamburger span:nth-child(1) { width: 22px; }
+    .hamburger span:nth-child(2) { width: 14px; }
+    .hamburger span:nth-child(3) { width: 18px; }
+    .nav-menu-btn:hover .hamburger span { width: 22px; }
+    .menu-open .hamburger span { width: 22px; }
+    .menu-open .hamburger span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .menu-open .hamburger span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .menu-open .hamburger span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+    /* ─── MENU OVERLAY — slides down from top ─── */
+    .menu-overlay {
+      position: fixed;
+      top: clamp(0.8rem, 1.5vw, 1.5rem);
+      left: clamp(0.8rem, 1.5vw, 1.5rem);
+      right: clamp(0.8rem, 1.5vw, 1.5rem);
+      z-index: 200;
+      pointer-events: none;
+      transform: translateY(calc(-100% - 2rem));
+      transition: transform 0.55s cubic-bezier(0.23,1,0.32,1);
+    }
+    .menu-overlay.is-open { transform: translateY(0); pointer-events: all; }
+
+    /* single full-width shell with photo as bg */
+    .menu-shell {
+      position: relative;
+      border-radius: 28px;
       overflow: hidden;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.5);
+      height: 82vh; min-height: 500px;
+      display: flex; align-items: center;
     }
-    .blob {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(90px);
-      opacity: 0;
-      animation: blobMove var(--dur, 40s) ease-in-out infinite alternate;
-      will-change: transform, opacity;
+    .menu-bg-img {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center top;
+      display: block; z-index: 0;
     }
-    .blob-1 {
-      width: 60vw; height: 60vw;
-      top: -20%; left: -15%;
-      background: radial-gradient(circle, #1a3a6a 0%, transparent 70%);
-      opacity: 0.65;
+    .menu-photo-spray {
+      position: absolute; bottom: 8%; left: 3%;
+      width: clamp(80px, 11vw, 140px); pointer-events: none; z-index: 2;
     }
-    .blob-2 {
-      width: 50vw; height: 50vw;
-      bottom: -15%; right: -10%;
-      background: radial-gradient(circle, #0f3020 0%, transparent 70%);
-      opacity: 0.55;
+    /* panel sits over the photo — content shifted right */
+    .menu-panel {
+      position: relative; z-index: 3;
+      width: 100%; height: 100%;
+      display: flex; align-items: stretch; justify-content: space-between;
+      padding: 0 clamp(4rem, 8vw, 8rem) 0 36%;
+      gap: clamp(3rem, 6vw, 7rem);
     }
-    .blob-3 {
-      width: 38vw; height: 38vw;
-      top: 35%; left: 50%;
-      background: radial-gradient(circle, #3a1a08 0%, transparent 70%);
-      opacity: 0.45;
+    .menu-inner {
+      display: flex; flex-direction: column; justify-content: center;
+      padding: clamp(4rem, 9vh, 7rem) 0 clamp(3rem, 6vh, 5rem);
     }
-    .blob-4 {
-      width: 32vw; height: 32vw;
-      top: 15%; right: 10%;
-      background: radial-gradient(circle, #1a1040 0%, transparent 70%);
-      opacity: 0.5;
+    .menu-contact {
+      display: flex; flex-direction: column; justify-content: center;
+      padding-top: 18%;
+      padding-bottom: clamp(3rem, 6vh, 5rem);
+    }
+    /* hide old photo div */
+    .menu-photo { display: none; }
+
+    /* close btn — hidden */
+    .menu-close { display: none; }
+
+    /* links block */
+    .menu-inner { display: flex; flex-direction: column; }
+    .menu-lower { display: flex; gap: clamp(3rem, 6vw, 7rem); align-items: flex-start; }
+    .menu-nav { flex: 0 0 auto; }
+
+    /* ALL items same size, same line-height = equal spacing */
+    .menu-brand, .menu-links a {
+      font-family: 'Special Gothic Expanded One', sans-serif;
+      font-size: clamp(2.8rem, 6.5vh, 5rem);
+      line-height: 1.5;
+      text-decoration: none; display: block;
+      transition: letter-spacing 0.3s cubic-bezier(0.23,1,0.32,1), opacity 0.2s;
+    }
+    .menu-brand { color: var(--red); margin-bottom: 0; }
+    .menu-brand:hover { letter-spacing: 0.03em; opacity: 0.7; }
+    .menu-links { list-style: none; padding: 0; margin: 0; }
+    .menu-links a { color: var(--red); }
+    .menu-links a:hover { letter-spacing: 0.03em; opacity: 0.7; }
+    .menu-links a.current { color: var(--black); }
+    .menu-brand.current { color: var(--black); }
+
+    /* stagger animation */
+    .menu-brand { opacity: 0; transform: translateY(16px); transition: opacity 0.4s, transform 0.4s, letter-spacing 0.3s, color 0.2s; }
+    .menu-links li { opacity: 0; transform: translateY(16px); transition: opacity 0.4s, transform 0.4s; }
+    .menu-overlay.is-open .menu-brand   { opacity:1; transform:none; transition-delay:0.12s; }
+    .menu-overlay.is-open .menu-links li:nth-child(1) { opacity:1; transform:none; transition-delay:0.2s; }
+    .menu-overlay.is-open .menu-links li:nth-child(2) { opacity:1; transform:none; transition-delay:0.28s; }
+    .menu-overlay.is-open .menu-links li:nth-child(3) { opacity:1; transform:none; transition-delay:0.36s; }
+
+    .menu-contact { flex: 0 0 auto; }
+    .menu-contact-label {
+      font-family: 'Special Gothic Expanded One', sans-serif;
+      font-size: 0.6rem; letter-spacing: 0.3em; text-transform: uppercase;
+      color: #999; margin-bottom: 1rem;
+    }
+    .menu-contact p {
+      font-family: 'Special Gothic Expanded One', sans-serif;
+      font-size: 22px; color: var(--black);
+      line-height: 1.5; margin: 0 0 1rem;
+    }
+    .menu-contact a { color: inherit; text-decoration: none; display: block; }
+    .menu-contact a:hover { color: var(--red); }
+    .menu-social-row { display: flex; gap: 0.65rem; margin-top: 1.2rem; }
+    .menu-social-btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      transition: transform 0.2s, opacity 0.2s;
+    }
+    .menu-social-btn:hover { transform: scale(1.1); opacity: 0.85; }
+    .menu-social-btn img { width: 44px; height: 44px; display: block; }
+
+    @media (max-width: 640px) {
+      .menu-photo { display: none; }
+      .menu-panel { padding: 2.5rem 2rem 3rem; }
+      .menu-lower { flex-direction: column; gap: 2rem; }
+      .menu-contact { min-width: unset; }
+      .menu-links a { font-size: clamp(2.4rem, 10vw, 3.2rem); }
     }
 
-    /* ── screens ── */
-    .screen {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
+    /* ─── HERO ─── */
+    .hero {
+      position: relative;
+      height: 85vh; min-height: 560px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center;
+      overflow: hidden;
+    }
+    .hero-video {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      z-index: 0;
+    }
+    .hero-overlay {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,0.55);
       z-index: 1;
-      justify-content: center;
-      padding: 2rem 1.5rem;
-      transition: opacity 0.45s ease, transform 0.45s ease;
     }
-    .screen.out-up    { opacity: 0; transform: translateY(-40px); pointer-events: none; }
-    .screen.out-down  { opacity: 0; transform: translateY(40px);  pointer-events: none; }
-    .screen.in        { opacity: 1; transform: translateY(0);      pointer-events: auto; }
+    .corner-waves {
+      position: absolute; top: 0; right: 0;
+      width: clamp(280px, 35vw, 480px);
+      z-index: 2; pointer-events: none;
+    }
+    .hero-content {
+      position: relative; z-index: 3;
+      display: flex; flex-direction: column;
+      align-items: center;
+    }
+    .hero-octopus {
+      width: clamp(160px, 28vw, 300px);
+      margin-bottom: -1.5rem;
+      z-index: 2;
+      filter: drop-shadow(0 0 60px rgba(0,0,0,0.9));
+      animation: floatOctopus 6s ease-in-out infinite;
+    }
+    @keyframes floatOctopus {
+      0%, 100% { transform: translateY(0) rotate(-1deg); }
+      50%       { transform: translateY(-14px) rotate(1deg); }
+    }
+    @keyframes heroSlideIn {
+      from { opacity: 0; transform: translateY(50px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .hero-title {
+      font-family: 'Special Gothic Expanded One', sans-serif;
+      font-size: clamp(2.5rem, 7.5vw, 7rem);
+      letter-spacing: -0.02em; line-height: 1;
+      text-transform: uppercase;
+      color: var(--white);
+      margin-top: 2rem;
+      animation: heroSlideIn 0.9s cubic-bezier(0.23,1,0.32,1) 0.15s both;
+    }
+    .hero-sub {
+      margin-top: 1.5rem;
+      font-family: 'Special Gothic Expanded One', sans-serif;
+      font-size: clamp(0.55rem, 1.1vw, 0.72rem);
+      letter-spacing: 0.38em; text-transform: uppercase;
+      color: rgba(255,255,255,0.45);
+    }
+    .scroll-hint {
+      position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
+      z-index: 3;
+      display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+    }
+    .scroll-hint span {
+      font-size: 0.58rem; letter-spacing: 0.3em; text-transform: uppercase;
+      color: rgba(255,255,255,0.25);
+    }
+    .scroll-line {
+      width: 1px; height: 40px;
+      background: linear-gradient(to bottom, rgba(255,255,255,0.4), transparent);
+      animation: scrollPulse 1.8s ease-in-out infinite;
+    }
+    @keyframes scrollPulse {
+      0%,100% { opacity: 0.3; transform: scaleY(0.7); transform-origin: top; }
+      50%      { opacity: 1;   transform: scaleY(1);   transform-origin: top; }
+    }
 
-    /* ── INTRO ── */
-    .intro {
-      max-width: 520px; width: 100%;
-      display: flex; flex-direction: column; gap: 2.5rem;
+    /* ─── SHOWREEL ─── */
+    .showreel-section {
+      background: var(--white);
+      overflow: visible;
+      position: relative;
     }
-    .eyebrow {
-      font-size: 0.7rem; letter-spacing: 0.2em;
-      text-transform: uppercase; color: #666;
+    .showreel-black-area {
+      background: var(--black);
+      min-height: 0;
+      padding: 0;
+      margin-bottom: -7vw;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
     }
-    h1 {
-      font-size: clamp(2.4rem, 8vw, 4rem);
-      font-family: 'Space Grotesk', sans-serif;
-      font-weight: 900; line-height: 1.05; letter-spacing: -0.02em; color: #fff;
+    .parallax-text-wrap {
+      overflow: hidden;
+      pointer-events: none;
+      margin-bottom: 0;
     }
-    h1 em { font-style: normal; color: #555; }
-    .sub { font-size: clamp(1rem, 3vw, 1.2rem); font-weight: 300; color: #555; }
-
-    /* magnetic button wrapper */
-    .btn-wrap {
-      align-self: flex-start;
+    .parallax-text {
+      font-family: 'Special Gothic Expanded One', sans-serif;
+      font-size: clamp(7rem, 20vw, 18rem);
+      letter-spacing: -0.02em; text-transform: uppercase;
+      white-space: nowrap;
       display: inline-block;
-    }
-    .btn {
-      display: block;
-      background: #fff; color: #0a0a0a;
-      font-family: inherit; font-size: 0.85rem;
-      font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;
-      padding: 1rem 2rem; border: none; border-radius: 50px; cursor: pointer;
-      transition: background 0.2s;
       will-change: transform;
+      line-height: 0.9;
     }
-    .btn:hover  { background: #e0e0e0; }
-    .btn:active { filter: brightness(0.92); }
+    .parallax-text.red  { color: var(--red); }
+    .parallax-text.dark { color: var(--black); }
 
-    /* ── STEP screens ── */
-    .step-wrap {
-      max-width: 480px; width: 100%;
-      display: flex; flex-direction: column; align-items: center; gap: 2.5rem;
+    /* card zone sits on the boundary black→white */
+    .showreel-card-zone {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      justify-content: center;
+      padding: 0 clamp(1.5rem, 5vw, 4rem) clamp(1rem, 2vw, 2rem);
     }
-
-    .step-header {
+    .showreel-card-wrap {
+      position: relative;
+      width: 100%; max-width: 800px;
+    }
+    .showreel-card {
+      position: relative;
       width: 100%;
-      display: flex; align-items: center; justify-content: space-between;
+      aspect-ratio: 16/9;
+      border-radius: 14px; overflow: hidden;
+      background: #0a0a14;
+      cursor: pointer;
+      box-shadow: 0 40px 100px rgba(0,0,0,0.5);
+      transition: transform 0.4s cubic-bezier(0.23,1,0.32,1);
     }
-    .back-btn {
-      background: none; border: none; color: #333;
-      font-family: inherit; font-size: 0.7rem;
-      letter-spacing: 0.15em; text-transform: uppercase;
-      cursor: pointer; transition: color 0.15s;
-    }
-    .back-btn:hover { color: #666; }
-
-    .step-dots { display: flex; gap: 6px; }
-    .dot {
-      width: 6px; height: 6px; border-radius: 50%; background: #222;
+    .showreel-card:hover { transform: scale(1.02); }
+    .showreel-card-overlay {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      gap: 1.2rem;
+      background: rgba(0,0,0,0.35);
       transition: background 0.3s;
     }
-    .dot.active { background: #fff; }
-
-    .step-label {
-      font-size: 0.7rem; letter-spacing: 0.2em;
-      text-transform: uppercase; color: #777; align-self: flex-start;
-    }
-
-    .num-row {
-      display: flex; align-items: center; gap: 1.5rem;
-    }
-    .num-row { flex-wrap: nowrap; }
-    .arrow-btn {
-      background: none; border: 1px solid #1e1e1e; border-radius: 50%;
-      width: clamp(40px, 11vw, 48px); height: clamp(40px, 11vw, 48px);
+    .showreel-card:hover .showreel-card-overlay { background: rgba(0,0,0,0.2); }
+    .play-btn {
+      width: 64px; height: 64px; border-radius: 50%;
+      background: var(--red);
       display: flex; align-items: center; justify-content: center;
-      color: #444; font-size: clamp(1rem, 4vw, 1.2rem); cursor: pointer;
-      transition: border-color 0.15s, color 0.15s, transform 0.15s;
-      -webkit-tap-highlight-color: transparent;
       flex-shrink: 0;
+      transition: transform 0.3s, box-shadow 0.3s;
     }
-    .arrow-btn:hover  { border-color: #444; color: #aaa; transform: scale(1.08); }
-    .arrow-btn:active { transform: scale(0.95); }
-
-    /* big editable input */
-    .big-num {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(3.5rem, 18vw, 8rem);
-      font-weight: 900; letter-spacing: -0.04em; line-height: 1;
-      color: #fff; text-align: center;
-      background: none; border: none; outline: none;
-      font-family: inherit;
-      -webkit-appearance: none; appearance: none;
-      caret-color: #fff;
-      cursor: text;
-      /* hide number spinners */
-      -moz-appearance: textfield;
+    .showreel-card:hover .play-btn {
+      transform: scale(1.12);
+      box-shadow: 0 0 40px rgba(227,21,26,0.6);
     }
-    .big-num::-webkit-outer-spin-button,
-    .big-num::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-    .big-num::placeholder { color: #222; }
-    .big-num:focus { color: #fff; }
-
-    /* month grid */
-    .month-grid {
-      display: grid; grid-template-columns: repeat(3, 1fr);
-      gap: 0.6rem; width: 100%;
-    }
-    .month-cell {
-      background: #111; border: 1px solid #1a1a1a; border-radius: 8px;
-      padding: 0.9rem 0.5rem; text-align: center;
-      font-size: 0.9rem; font-weight: 400; color: #555;
-      cursor: pointer; transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.15s;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .month-cell:hover  { background: #181818; color: #ccc; }
-    .month-cell.sel    { background: #fff; color: #0a0a0a; border-color: #fff; font-weight: 700; }
-
-    .next-btn {
-      width: 100%;
-      background: #fff; color: #0a0a0a;
-      font-family: inherit; font-size: 0.85rem;
-      font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;
-      padding: 1rem; border: none; border-radius: 50px; cursor: pointer;
-      transition: background 0.2s, transform 0.25s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s;
-      opacity: 0.25;
-    }
-    .next-btn.ready        { opacity: 1; }
-    .next-btn.ready:hover  { background: #e0e0e0; transform: scale(1.03); }
-    .next-btn.ready:active { transform: scale(0.99); }
-
-    /* ── RESULT ── */
-    #s-result {
-      display: block !important;   /* override .screen flex */
-      overflow-y: auto; padding: 0;
-    }
-    .result-inner {
-      width: 100%; max-width: 480px;
-      margin: 0 auto; padding: 0 1.5rem;
-    }
-    /* first viewport: age centered */
-    .result-hero {
-      min-height: auto;
-      display: flex; flex-direction: column; justify-content: flex-start;
-      padding-top: clamp(4rem, 18vh, 10rem);
-      padding-bottom: 2.5rem;
-      gap: 0.6rem;
-    }
-    /* scroll hint */
-    .scroll-hint {
-      margin-top: 2.5rem;
-      font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase;
-      color: #555;
-      display: flex; align-items: center; gap: 0.5rem;
-      opacity: 0; transition: opacity 0.6s ease 0.3s;
-    }
-    .scroll-hint.visible { opacity: 1; }
-    .scroll-hint::after { content: '↓'; font-size: 0.8rem; }
-    /* stats area */
-    .result-stats {
-      padding-top: 1rem; padding-bottom: 4rem;
-      display: flex; flex-direction: column; gap: 0.6rem;
-    }
-    .res-label {
-      font-size: 0.65rem; letter-spacing: 0.2em;
-      text-transform: uppercase; color: #666;
-    }
-    .res-number {
-      font-size: clamp(6rem, 26vw, 9rem);
-      font-family: 'Space Grotesk', sans-serif;
-      font-weight: 900; letter-spacing: -0.03em; line-height: 0.9;
-      color: #fff;
-    }
-    .res-feels-row {
-      margin-top: 1.2rem;
-      display: flex; align-items: baseline; gap: 0.6rem; flex-wrap: wrap;
-    }
-    .res-feels-label {
-      font-size: clamp(0.9rem, 3vw, 1.1rem);
-      color: #888; font-weight: 300;
-    }
-    .res-feels-num {
-      font-size: clamp(3rem, 14vw, 5rem);
-      font-family: 'Space Grotesk', sans-serif;
-      font-weight: 900; letter-spacing: -0.03em; line-height: 1;
-      color: #e8956d;
-    }
-    .res-again {
-      margin-top: 1.8rem; align-self: flex-start;
-      background: none; border: 1px solid #2a2a2a; border-radius: 50px;
-      color: #666; font-family: inherit; font-size: 0.7rem;
-      letter-spacing: 0.15em; text-transform: uppercase;
-      padding: 0.7rem 1.4rem; cursor: pointer;
-      transition: border-color 0.2s, color 0.2s, transform 0.2s;
-    }
-    .res-again:hover { border-color: #555; color: #aaa; transform: scale(1.04); }
-
-    /* ── STATS — дні / тижні / місяці / сезони (синій) ── */
-    .stats {
-      margin-top: 2rem;
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: 0.8rem; width: 100%;
-      opacity: 0; transform: translateY(12px);
-      transition: opacity 0.5s ease, transform 0.5s ease;
-    }
-    .stats.visible { opacity: 1; transform: translateY(0); }
-    .stat-card {
-      background: #0b0f18; border: 1px solid #151e30;
-      border-radius: 10px; padding: 1rem 1.1rem;
-      display: flex; flex-direction: column; gap: 0.3rem;
-    }
-    .stat-val {
-      font-size: clamp(1.4rem, 5vw, 2rem);
-      font-family: 'Space Grotesk', sans-serif;
-      font-weight: 700; letter-spacing: -0.02em;
-      color: #6fa8f5;
-      line-height: 1;
-    }
-    .stat-label {
-      font-size: 0.62rem; letter-spacing: 0.15em;
-      text-transform: uppercase; color: #3a5080; font-weight: 400;
+    .play-btn svg { margin-left: 4px; }
+    .showreel-label {
+      font-family: 'Special Gothic Expanded One', sans-serif;
+      font-size: clamp(1.4rem, 3vw, 2.2rem);
+      letter-spacing: 0.05em; text-transform: uppercase;
+      color: var(--white);
     }
 
-    /* dividers */
-    .fun-divider {
-      margin-top: 1.8rem; margin-bottom: 0.8rem;
-      font-size: 0.6rem; letter-spacing: 0.2em;
-      text-transform: uppercase; color: #555;
-      opacity: 0; transition: opacity 0.5s ease 0.15s;
-    }
-    .fun-divider.visible { opacity: 1; }
-
-    /* ── FUN STATS — за твоє життя (зелений) ── */
-    .fun-stats {
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: 0.8rem; width: 100%;
-      opacity: 0; transform: translateY(12px);
-      transition: opacity 0.5s ease 0.15s, transform 0.5s ease 0.15s;
-    }
-    .fun-stats.visible { opacity: 1; transform: translateY(0); }
-    .fun-card {
-      background: #0b130f; border: 1px solid #152010;
-      border-radius: 10px; padding: 0.9rem 1rem;
-      display: flex; flex-direction: column; gap: 0.25rem;
-    }
-    .fun-val {
-      font-size: clamp(1.1rem, 4vw, 1.5rem);
-      font-family: 'Space Grotesk', sans-serif;
-      font-weight: 700; letter-spacing: -0.01em;
-      color: #6bcf8f;
-      line-height: 1;
-    }
-    .fun-label {
-      font-size: 0.6rem; letter-spacing: 0.12em;
-      text-transform: uppercase; color: #2a5030; font-weight: 400;
+    /* yellow brush stroke deco */
+    .yellow-brush-deco {
+      position: absolute;
+      left: clamp(1rem, 4vw, 5rem);
+      top: 10%;
+      transform: translateY(0);
+      width: clamp(90px, 14vw, 180px);
+      pointer-events: none;
+      z-index: 4;
     }
 
-    /* zodiac */
-    .fun-card.wide {
-      grid-column: 1 / -1;
-      flex-direction: row; align-items: center;
-      justify-content: space-between;
+    .arrow-deco {
+      position: absolute; pointer-events: none;
     }
-    .fun-card.wide .fun-val { font-size: clamp(1.2rem, 4vw, 1.6rem); }
-    .zodiac-symbol { font-size: 2.2rem; line-height: 1; opacity: 0.25; }
 
-    /* ── BIRTH STATS — рік народження (фіолетовий) ── */
-    #birth-stats .fun-card {
-      background: #100b18; border-color: #1e1230;
-    }
-    #birth-stats .fun-val  { color: #b899f0; }
-    #birth-stats .fun-label { color: #3d2860; }
-
-    /* Кіану — виділений блок */
-    #stat-keanu { color: #f0c060; }
-    .keanu-card {
-      grid-column: 1 / -1;
-      background: #181208 !important;
-      border: 1px solid #3a2c00 !important;
-      border-radius: 12px;
-      padding: 0 !important;
+    /* ─── ABOUT ─── */
+    .about-section {
+      background: var(--white);
+      padding: clamp(0.5rem, 2vh, 2rem) 0 clamp(4rem, 10vh, 7rem);
       overflow: hidden;
-      flex-direction: row !important;
-      align-items: stretch !important;
-      justify-content: space-between;
-      gap: 0 !important;
+      position: relative;
     }
-    .keanu-text {
-      padding: 1.1rem 1.2rem;
-      display: flex; flex-direction: column; justify-content: center; gap: 0.4rem;
-      flex: 1;
+    .about-content {
+      display: flex;
+      justify-content: center;
+      padding: 3rem clamp(1.5rem, 5vw, 4rem) 0;
     }
-    .keanu-card .fun-label { color: #6a5010 !important; line-height: 1.4; }
-    .keanu-photo {
-      width: 80px;
-      object-fit: cover;
-      object-position: 20% top;
-      flex-shrink: 0;
-      filter: grayscale(25%) contrast(1.05);
-      border-left: 1px solid #3a2c00;
+    .about-text {
+      max-width: 640px;
+      text-align: center;
+      font-size: clamp(0.9rem, 1.4vw, 1rem);
+      color: rgba(0,0,0,0.55);
+      line-height: 1.9;
+    }
+    .about-yellow-deco {
+      position: absolute;
+      right: clamp(1.5rem, 5vw, 4rem);
+      top: -1rem;
+      width: clamp(80px, 12vw, 150px);
+      pointer-events: none;
+    }
+
+    /* ─── TEAM ─── */
+    .team-section {
+      background: var(--white);
+      padding: clamp(4rem, 8vh, 7rem) clamp(1.5rem, 5vw, 4rem) 0;
+      overflow: hidden;
+    }
+    .section-label {
+      font-family: 'Special Gothic Expanded One', sans-serif;
+      font-size: 0.62rem; letter-spacing: 0.45em;
+      text-transform: uppercase; color: var(--black);
+      margin-bottom: 2.5rem; text-align: center;
+    }
+    .section-label.light { color: var(--white); }
+
+    .team-gif-wrap {
+      width: 100vw;
+      margin-left: calc(-1 * clamp(1.5rem, 5vw, 4rem));
+    }
+    .team-gif {
+      width: 100%; height: auto;
       display: block;
     }
+
+    .team-names {
+      font-family: 'Special Gothic Expanded One', sans-serif;
+      font-size: clamp(2.2rem, 6.5vw, 6rem);
+      letter-spacing: -0.025em;
+      text-transform: uppercase;
+      color: var(--black);
+      line-height: 1.05;
+      text-align: center;
+    }
+    .team-names .row {
+      display: flex; flex-wrap: wrap;
+      justify-content: center; align-items: center;
+      gap: 0.15em; margin-bottom: 0.08em;
+    }
+    .team-names .sep { color: rgba(0,0,0,0.2); font-size: 0.55em; }
+    .team-photo {
+      width: clamp(36px, 5.5vw, 68px);
+      height: clamp(36px, 5.5vw, 68px);
+      border-radius: 50%;
+      background: #ccc;
+      display: inline-flex; align-items: center; justify-content: center;
+      overflow: hidden; flex-shrink: 0;
+      border: 2px solid rgba(0,0,0,0.08);
+    }
+    .team-photo img { width: 100%; height: 100%; object-fit: cover; }
+
+    .team-cta {
+      display: flex; justify-content: center;
+      padding: 3.5rem 0 0;
+    }
+
+    /* wavy divider white → black */
+    .wave-divider { display: block; width: 100%; overflow: hidden; line-height: 0; }
+    .wave-divider svg { width: 100%; display: block; }
+
+    /* ─── CLIENTS ─── */
+    .clients-section {
+      background: var(--black);
+      padding: clamp(4rem, 8vh, 7rem) 0;
+    }
+    .clients-section .section-label {
+      text-align: center; margin-bottom: 4rem;
+    }
+    .logos-wrap { overflow: hidden; margin-bottom: 2rem; }
+    .logos-track {
+      display: flex; align-items: center;
+      will-change: transform;
+    }
+    .logos-inner {
+      display: flex; align-items: center;
+      flex-shrink: 0;
+    }
+    .logo-item {
+      padding: 0 clamp(0.8rem, 2vw, 1.8rem);
+      flex-shrink: 0;
+      opacity: 0.7;
+      transition: opacity 0.3s;
+    }
+    .logo-item:hover { opacity: 0.9; }
+    .logo-item img {
+      height: clamp(50px, 7vw, 90px);
+      width: auto;
+      display: block;
+    }
+
+    /* ─── NEWS ─── */
+    .news-section {
+      background: var(--black);
+      padding: clamp(4rem, 8vh, 7rem) clamp(1.5rem, 5vw, 4rem);
+    }
+    .news-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem; margin-top: 3rem;
+      max-width: 1100px; margin-left: auto; margin-right: auto;
+    }
+    @media (max-width: 600px) { .news-grid { grid-template-columns: 1fr; } }
+
+    .news-card {
+      display: flex; flex-direction: column;
+      text-decoration: none;
+      border-radius: 20px; overflow: visible;
+      background: var(--white);
+      position: relative;
+      transition: transform 0.4s cubic-bezier(0.23,1,0.32,1),
+                  box-shadow 0.4s cubic-bezier(0.23,1,0.32,1);
+    }
+    .news-card:hover {
+      box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+    }
+    .news-thumb {
+      width: 100%; aspect-ratio: 1/1;
+      overflow: visible; position: relative; flex-shrink: 0;
+    }
+    .news-thumb-img {
+      width: 100%; height: 100%;
+      overflow: hidden;
+      border-radius: 20px 20px 0 0;
+    }
+    .news-thumb img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+      transition: transform 0.5s cubic-bezier(0.23,1,0.32,1);
+    }
+    .news-card:hover .news-thumb img { transform: scale(1.04); }
+
+    /* arrow button on thumb/body boundary */
+    .news-thumb-arrow {
+      position: absolute; right: 1.1rem; bottom: -22px;
+      width: 44px; height: 44px; border-radius: 50%;
+      background: var(--red);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 4;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+      transition: background 0.3s, transform 0.3s;
+    }
+    .news-card:hover .news-thumb-arrow { background: #c00; transform: scale(1.1); }
+    .news-thumb-arrow svg { fill: white; width: 16px; height: 16px; }
+
+    .news-body {
+      padding: 1.6rem 1.4rem 1.4rem;
+      flex: 1;
+    }
+    .news-date {
+      font-size: 0.78rem; font-weight: 600;
+      color: var(--red); margin-bottom: 0.7rem;
+      letter-spacing: 0.01em;
+    }
+    .news-title {
+      font-size: 0.88rem; line-height: 1.6;
+      color: #111;
+    }
+    .news-link { text-decoration: underline; }
+    .news-cta { display: flex; justify-content: center; margin-top: 3rem; }
+
+    /* ─── PROJECTS ─── */
+    .projects-section {
+      background: var(--black);
+      padding: clamp(4rem, 8vh, 7rem) 0 0;
+    }
+    .projects-header {
+      padding: 0 clamp(1.5rem, 5vw, 4rem);
+      margin-bottom: 1.5rem;
+    }
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+    }
+    @media (max-width: 768px) { .projects-grid { grid-template-columns: 1fr; } }
+    .project-card {
+      position: relative; overflow: hidden;
+      cursor: pointer; aspect-ratio: 16/9;
+    }
+    .project-bg {
+      position: absolute; inset: 0;
+      background-size: cover; background-position: center;
+      transition: transform 0.6s cubic-bezier(0.23,1,0.32,1);
+    }
+    .project-bg img {
+      width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;
+    }
+    .project-card:hover .project-bg { transform: scale(1.05); }
+    .project-info {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 1.2rem 1.5rem;
+      background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 50%, transparent 100%);
+      transition: background 0.4s;
+      opacity: 0; transform: translateY(8px);
+      transition: opacity 0.35s, transform 0.35s;
+    }
+    .project-card:hover .project-info {
+      opacity: 1; transform: translateY(0);
+      background: linear-gradient(to top, rgba(0,0,0,0.97) 0%, rgba(0,0,0,0.55) 50%, transparent 100%);
+    }
+    .project-client {
+      font-family: 'Special Gothic Expanded One', sans-serif;
+      font-size: 0.55rem; letter-spacing: 0.35em; text-transform: uppercase;
+      color: rgba(255,255,255,0.5); margin-bottom: 0.25rem;
+    }
+    .project-name {
+      font-family: 'Special Gothic Expanded One', sans-serif;
+      font-size: clamp(0.85rem, 1.6vw, 1.3rem);
+      text-transform: uppercase;
+      color: var(--white); line-height: 1.1;
+    }
+
+    .projects-cta {
+      display: flex; justify-content: center;
+      padding: 1rem 0;
+      position: relative; z-index: 10;
+      margin-top: clamp(0rem, 1vw, 1rem);
+      margin-bottom: clamp(-2rem, -3vw, -4rem);
+    }
+
+    /* ─── FOOTER / CTA ─── */
+    .footer-cta {
+      position: relative;
+      padding: clamp(10rem, 22vh, 16rem) clamp(1.5rem, 5vw, 4rem) clamp(5rem, 8vh, 8rem);
+      text-align: center;
+      margin-top: clamp(-7rem, -11vw, -14rem);
+    }
+    .footer-video {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover; z-index: 0;
+    }
+    .footer-overlay {
+      position: absolute; inset: 0;
+      background: transparent; z-index: 1;
+    }
+    .footer-content { position: relative; z-index: 2; }
+    .footer-avatar {
+      width: 82px; height: 82px; border-radius: 50%;
+      overflow: hidden; margin: 0 auto 2rem;
+      border: 2px solid rgba(255,255,255,0.18);
+      background: #333;
+    }
+    .footer-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .footer-title {
+      font-family: 'Special Gothic Expanded One', sans-serif;
+      font-size: 55px;
+      letter-spacing: -0.02em; line-height: 0.92;
+      text-transform: uppercase; color: var(--white);
+      margin-bottom: 2.8rem;
+    }
+    .footer-contacts {
+      display: flex; justify-content: center;
+      align-items: center; gap: 3rem;
+      margin-bottom: 2.5rem; flex-wrap: wrap;
+    }
+    .footer-contacts .contact-phone-email {
+      text-align: right;
+    }
+    .footer-contacts .contact-address {
+      text-align: left;
+    }
+    .footer-contacts a, .footer-contacts address {
+      font-family: 'Special Gothic Expanded One', sans-serif;
+      font-size: clamp(0.85rem, 1.4vw, 1rem);
+      color: var(--white); text-decoration: none;
+      line-height: 1.6; font-style: normal;
+      transition: color 0.2s;
+    }
+    .footer-contacts a:hover { color: var(--yellow); }
+    .contact-sep { width: 2px; height: 44px; background: var(--red); }
+    .footer-socials {
+      display: flex; justify-content: center; gap: 0.9rem;
+      margin-bottom: 3rem;
+    }
+    .social-btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      text-decoration: none;
+      transition: transform 0.25s, opacity 0.25s;
+    }
+    .social-btn:hover { transform: scale(1.12); opacity: 0.85; }
+    .social-btn img { width: 46px; height: 46px; display: block; }
+    .footer-copy {
+      font-size: 0.68rem; letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.18);
+    }
+
+    /* yellow drip SVG decorations */
+    .drip { position: absolute; pointer-events: none; z-index: 2; }
+
+    /* ─── PILL BUTTON ─── */
+    .btn-pill {
+      display: inline-flex; align-items: center; justify-content: space-between;
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: clamp(0.95rem, 1.5vw, 1.1rem);
+      font-weight: 700;
+      font-stretch: condensed;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      background: var(--red); color: var(--black);
+      text-decoration: none; border: none;
+      padding: 1rem 1.4rem 1rem 2rem; border-radius: 50px;
+      min-width: clamp(200px, 22vw, 280px);
+      cursor: pointer; position: relative; overflow: hidden;
+      transition: color 0.4s cubic-bezier(0.23,1,0.32,1);
+    }
+    .btn-pill > * { position: relative; z-index: 1; }
+    .btn-arrow-img { width: 14px; height: 12px; display: block; flex-shrink: 0; transition: transform 0.25s; }
+    .btn-pill:hover .btn-arrow-img { transform: translateX(4px); }
+    .btn-spacer { width: 20px; flex-shrink: 0; }
+    .btn-pill::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: var(--yellow);
+      border-radius: inherit;
+      transform: translateX(-102%);
+      transition: transform 0.45s cubic-bezier(0.23,1,0.32,1);
+    }
+    .btn-pill:hover::after { transform: translateX(0); }
+    .btn-pill:hover { color: var(--black); }
+    .btn-arrow { display: inline-block; transition: transform 0.3s; }
+    .btn-pill:hover .btn-arrow { transform: translateX(5px); }
+
+    /* ─── REVEAL ANIMATIONS ─── */
+    .reveal, .reveal-up {
+      opacity: 0; transform: translateY(45px);
+      transition: opacity 0.85s cubic-bezier(0.23,1,0.32,1),
+                  transform 0.85s cubic-bezier(0.23,1,0.32,1);
+    }
+    .reveal.visible, .reveal-up.visible { opacity: 1; transform: translateY(0); }
+    .reveal-scale {
+      opacity: 0; transform: scale(0.93);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal-scale.visible { opacity: 1; transform: scale(1); }
+    .stagger > * {
+      opacity: 0; transform: translateY(28px);
+      transition: opacity 0.6s cubic-bezier(0.23,1,0.32,1),
+                  transform 0.6s cubic-bezier(0.23,1,0.32,1);
+    }
+    .stagger.visible > *:nth-child(1) { opacity:1; transform:none; transition-delay:0s; }
+    .stagger.visible > *:nth-child(2) { opacity:1; transform:none; transition-delay:0.1s; }
+    .stagger.visible > *:nth-child(3) { opacity:1; transform:none; transition-delay:0.2s; }
+    .stagger.visible > *:nth-child(4) { opacity:1; transform:none; transition-delay:0.3s; }
+    .stagger.visible > *:nth-child(5) { opacity:1; transform:none; transition-delay:0.4s; }
+    .stagger.visible > *:nth-child(6) { opacity:1; transform:none; transition-delay:0.5s; }
   </style>
 </head>
 <body>
 
-<div class="bg">
-  <div class="blob blob-1"></div>
-  <div class="blob blob-2"></div>
-  <div class="blob blob-3"></div>
-  <div class="blob blob-4"></div>
-</div>
-
-<!-- 0. Intro -->
-<div class="screen in" id="s-intro">
-  <div class="intro">
-    <div class="eyebrow">калькулятор віку</div>
-    <h1>Завжди хотіли дізнатися<br/><em>свій точний вік?</em></h1>
-    <p class="sub">Гарні новини.</p>
-    <div class="btn-wrap" id="btn-wrap">
-      <button class="btn" id="btn-start">Дізнатися вік</button>
-    </div>
+<!-- ═══ NAV ═══ -->
+<nav id="main-nav">
+  <a href="/" class="nav-logo">
+    <img src="assets/favicon.svg" alt="ENDLESS" class="nav-logo-img"/>
+  </a>
+  <div class="nav-menu-btn" id="menu-toggle" role="button" aria-label="Menu" aria-expanded="false">
+    <div class="hamburger"><span></span><span></span><span></span></div>
   </div>
-</div>
+</nav>
 
-<!-- 1. Year -->
-<div class="screen out-down" id="s-year">
-  <div class="step-wrap">
-    <div class="step-header">
-      <button class="back-btn" data-to="s-intro">← назад</button>
-      <div class="step-dots">
-        <div class="dot active"></div><div class="dot"></div><div class="dot"></div>
+<!-- ═══ MENU OVERLAY ═══ -->
+<div class="menu-overlay" id="menu-overlay" aria-hidden="true">
+  <div class="menu-shell">
+    <img class="menu-bg-img" src="assets/bg_menu.jpg" alt="">
+    <button class="menu-close" id="menu-close" aria-label="Zamknij menu"></button>
+    <div class="menu-panel">
+      <div class="menu-inner">
+        <a href="index.html" class="menu-brand" id="menu-brand-link">Endless</a>
+        <ul class="menu-links">
+          <li><a href="o-nas.html">O nas</a></li>
+          <li><a href="projekty.html">Projekty</a></li>
+          <li><a href="press.html">Press</a></li>
+        </ul>
       </div>
-    </div>
-    <div class="step-label">Рік народження</div>
-    <div class="num-row">
-      <button class="arrow-btn" id="year-dec">−</button>
-      <input class="big-num" id="year-val" type="number" inputmode="numeric"
-             min="1900" max="2099" placeholder="????" />
-      <button class="arrow-btn" id="year-inc">+</button>
-    </div>
-    <button class="next-btn" id="year-next">Далі →</button>
-  </div>
-</div>
-
-<!-- 2. Month -->
-<div class="screen out-down" id="s-month">
-  <div class="step-wrap">
-    <div class="step-header">
-      <button class="back-btn" data-to="s-year">← назад</button>
-      <div class="step-dots">
-        <div class="dot"></div><div class="dot active"></div><div class="dot"></div>
-      </div>
-    </div>
-    <div class="step-label">Місяць народження</div>
-    <div class="month-grid" id="month-grid"></div>
-    <button class="next-btn" id="month-next">Далі →</button>
-  </div>
-</div>
-
-<!-- 3. Day -->
-<div class="screen out-down" id="s-day">
-  <div class="step-wrap">
-    <div class="step-header">
-      <button class="back-btn" data-to="s-month">← назад</button>
-      <div class="step-dots">
-        <div class="dot"></div><div class="dot"></div><div class="dot active"></div>
-      </div>
-    </div>
-    <div class="step-label">День народження</div>
-    <div class="num-row">
-      <button class="arrow-btn" id="day-dec">−</button>
-      <input class="big-num" id="day-val" type="number" inputmode="numeric"
-             min="1" max="31" placeholder="??" />
-      <button class="arrow-btn" id="day-inc">+</button>
-    </div>
-    <button class="next-btn" id="day-next">Розрахувати</button>
-  </div>
-</div>
-
-<!-- 4. Result -->
-<div class="screen out-down" id="s-result">
-  <div class="result-inner">
-
-    <!-- hero: centered on screen -->
-    <div class="result-hero">
-      <div class="res-label">твій вік</div>
-      <div class="res-number" id="res-num">0</div>
-      <div class="res-feels-row">
-        <span class="res-feels-label">відчувається як</span>
-        <span class="res-feels-num" id="res-feels">0</span>
-      </div>
-      <div class="scroll-hint" id="scroll-hint">більше цікавого</div>
-    </div>
-
-    <!-- stats: scroll below -->
-    <div class="result-stats">
-
-      <div class="stats" id="stats">
-        <div class="stat-card"><div class="stat-val" id="stat-days">—</div><div class="stat-label">днів</div></div>
-        <div class="stat-card"><div class="stat-val" id="stat-weeks">—</div><div class="stat-label">тижнів</div></div>
-        <div class="stat-card"><div class="stat-val" id="stat-months">—</div><div class="stat-label">місяців</div></div>
-        <div class="stat-card"><div class="stat-val" id="stat-seasons">—</div><div class="stat-label">сезонів</div></div>
-      </div>
-
-      <div class="fun-divider" id="fun-divider">за твоє життя</div>
-      <div class="fun-stats" id="fun-stats">
-        <div class="fun-card wide">
-          <div><div class="fun-val" id="stat-zodiac-name">—</div><div class="fun-label">знак зодіаку</div></div>
-          <div class="zodiac-symbol" id="stat-zodiac-sym"></div>
+      <div class="menu-contact">
+        <div class="menu-contact-label">Kontakt</div>
+        <p><a href="tel:+48501218473">+48 501 218 473</a><a href="mailto:tomek@weareendless.pl">tomek@weareendless.pl</a></p>
+        <p>al. Niepodległości 124<br>00-608 Warszawa</p>
+        <div class="menu-social-row">
+          <a href="https://www.linkedin.com/in/franek-toeplitz-b03a22165/" target="_blank" rel="noopener" class="menu-social-btn" aria-label="LinkedIn"><img src="assets/icon_Linkedin.svg" alt="LinkedIn"></a>
+          <a href="https://www.instagram.com/endless_warsaw/" target="_blank" rel="noopener" class="menu-social-btn" aria-label="Instagram"><img src="assets/icon_insta.svg" alt="Instagram"></a>
+          <a href="https://www.tiktok.com/@weareendless" target="_blank" rel="noopener" class="menu-social-btn" aria-label="TikTok"><img src="assets/icon_tiktok.svg" alt="TikTok"></a>
         </div>
-        <div class="fun-card"><div class="fun-val" id="stat-terminators">—</div><div class="fun-label">частин Термінатора вийшло за твоє життя</div></div>
-        <div class="fun-card"><div class="fun-val" id="stat-starwars">—</div><div class="fun-label">частин Зоряних Воєн за твоє життя</div></div>
-        <div class="fun-card"><div class="fun-val" id="stat-worldcups">—</div><div class="fun-label">чемпіонатів світу FIFA</div></div>
-        <div class="fun-card"><div class="fun-val" id="stat-olympics">—</div><div class="fun-label">літніх Олімпіад</div></div>
-        <div class="fun-card"><div class="fun-val" id="stat-iphones">—</div><div class="fun-label">поколінь iPhone</div></div>
-        <div class="fun-card"><div class="fun-val" id="stat-mondays">—</div><div class="fun-label">понеділків пережито</div></div>
-        <div class="fun-card" style="grid-column:1/-1"><div class="fun-val" id="stat-presidents">—</div><div class="fun-label">президентів США змінилося</div></div>
-        <div class="fun-card" style="grid-column:1/-1"><div class="fun-val" id="stat-km">—</div><div class="fun-label">км разом із Землею навколо Сонця</div></div>
-        <div class="fun-card" style="grid-column:1/-1"><div class="fun-val" id="stat-heartbeats">—</div><div class="fun-label">серцебиттів ≈</div></div>
       </div>
+    </div>
+  </div>
+</div>
 
-      <div class="fun-divider" id="birth-divider">рік, коли ти народився</div>
-      <div class="fun-stats" id="birth-stats">
-        <div class="keanu-card fun-card">
-          <div class="keanu-text">
-            <div class="fun-val" id="stat-keanu">—</div>
-            <div class="fun-label">років було Кіану Рівзу<br/>коли ти народився</div>
+<!-- ═══ HERO ═══ -->
+<section class="hero">
+  <video class="hero-video" autoplay muted loop playsinline>
+    <source src="assets/hero.mp4" type="video/mp4"/>
+  </video>
+  <div class="hero-overlay"></div>
+
+  <!-- corner wave from Figma -->
+  <img class="corner-waves" src="assets/top_wave.svg" alt="" aria-hidden="true"/>
+
+  <div class="hero-content">
+    <h1 class="hero-title">
+      <picture>
+        <source srcset="assets/h1_we_are_endless_mobile.svg" media="(max-width: 600px)"/>
+        <img src="assets/h1_we_are_endless.svg" alt="WE ARE ENDLESS" style="width:clamp(260px,55vw,800px);height:auto;display:block;margin:0 auto;"/>
+      </picture>
+    </h1>
+    <p class="hero-sub reveal" style="transition-delay:0.35s">Technology moves fast. Experience moves smarter.</p>
+  </div>
+
+  <div class="scroll-hint" aria-hidden="true">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- ═══ SHOWREEL ═══ -->
+<section class="showreel-section">
+  <!-- black bg: SHOWREEL text lives here -->
+  <div class="showreel-black-area">
+    <div class="parallax-text-wrap">
+      <span class="parallax-text red" id="txt-showreel">SHOWREEL&nbsp;&nbsp;SHOWREEL&nbsp;&nbsp;</span>
+    </div>
+  </div>
+
+  <!-- card zone overlaps up into black area -->
+  <div class="showreel-card-zone" style="position:relative;">
+    <!-- yellow brush stroke — left side, overlapping black→white boundary -->
+    <img src="assets/yellow_element.png" class="yellow-brush-deco" alt="">
+
+    <div class="showreel-card-wrap">
+      <div class="showreel-card reveal-scale">
+        <img src="assets/showreel_preview.png" style="width:100%;height:100%;object-fit:cover;display:block;" alt="Showreel preview">
+        <div class="showreel-card-overlay">
+          <div class="play-btn">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="white"><path d="M5 3l14 8-14 8V3z"/></svg>
           </div>
-          <img class="keanu-photo" id="keanu-img" alt="Keanu Reeves"
-               referrerpolicy="no-referrer"
-               src="https://commons.wikimedia.org/wiki/Special:FilePath/Keanu_Reeves_2014.jpg?width=220" />
-        </div>
-        <div class="fun-card" style="grid-column:1/-1">
-          <div class="fun-val" id="stat-song">—</div>
-          <div class="fun-label" id="stat-song-label">хіт-пісня року</div>
-        </div>
-        <div class="fun-card" style="grid-column:1/-1">
-          <div class="fun-val" id="stat-movie">—</div>
-          <div class="fun-label">найкасовіший фільм</div>
-        </div>
-        <div class="fun-card">
-          <div class="fun-val" id="stat-genre">—</div>
-          <div class="fun-label">домінуючий музичний жанр</div>
-        </div>
-        <div class="fun-card">
-          <div class="fun-val" id="stat-population">—</div>
-          <div class="fun-label">населення Землі</div>
+          <span class="showreel-label">SHOWREEL</span>
         </div>
       </div>
 
-      <button class="res-again" id="btn-again">↺ ще раз</button>
     </div>
   </div>
+</section>
+
+<!-- ═══ ABOUT ═══ -->
+<section class="about-section">
+  <div class="parallax-text-wrap">
+    <span class="parallax-text dark" id="txt-about">WE ARE ENDLESS&nbsp;&nbsp;</span>
+  </div>
+
+  <div class="about-content">
+    <p class="about-text reveal">
+      Wciąż odkrywamy nieznane, bo wierzymy, że tylko to co nowe i zaskakujące zapada w pamięć… na zawsze.
+      Osobą tworzymy kampanie, które na pewno znacie i zdobyliśmy nagrody na festiwalach reklamowych
+      w Polsce i za granicą. Dziś razem tworzymy Endless, zespół w którym nikt nie znalazł się przypadkiem.
+    </p>
+  </div>
+
+  <img class="about-yellow-deco" src="assets/yellow_element_2.png" alt="" aria-hidden="true">
+</section>
+
+<!-- ═══ TEAM ═══ -->
+<section class="team-section">
+  <p class="section-label reveal">KLUCZOWE OSOBY</p>
+
+  <div class="team-gif-wrap reveal">
+    <picture>
+      <source media="(max-width: 767px)" srcset="assets/team_mobile.gif"/>
+      <img src="assets/team.gif" alt="Kluczowe osoby — zespół Endless" class="team-gif"/>
+    </picture>
+  </div>
+
+  <div style="position:relative; pointer-events:none;">
+    <img src="assets/yellow_element_3.png" aria-hidden="true" style="position:absolute;left:clamp(1rem,4vw,5rem);top:-2rem;width:clamp(80px,12vw,180px);z-index:3;">
+    <img src="assets/yellow_element_4.png" aria-hidden="true" style="position:absolute;right:clamp(1rem,4vw,5rem);top:-3rem;width:clamp(80px,12vw,180px);z-index:3;">
+  </div>
+
+  <div class="team-cta">
+    <a href="#" class="btn-pill">
+      <span class="btn-spacer"></span><span>O NAS</span><img class="btn-arrow-img" src="assets/arrow.svg" alt="">
+    </a>
+  </div>
+</section>
+
+<!-- wave: white → black -->
+<div class="wave-divider" style="background:var(--white);">
+  <svg viewBox="0 0 1440 100" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+    <path d="M0,60 C180,120 360,0 540,50 C720,100 900,10 1080,60 C1200,95 1350,30 1440,50 L1440,100 L0,100 Z" fill="black"/>
+    <path d="M0,80 C140,50 300,110 480,70 C660,30 840,100 1020,65 C1160,38 1320,82 1440,60 L1440,100 L0,100 Z" fill="black" opacity="0.6"/>
+  </svg>
 </div>
+
+<!-- ═══ CLIENTS ═══ -->
+<section class="clients-section">
+  <p class="section-label light reveal">PRZEZ OSTATNIE 3 LATA ZAUFALI NAM</p>
+
+  <!-- Row 1 → left -->
+  <div class="logos-wrap">
+    <div class="logos-track" id="row1">
+      <div class="logos-inner">
+        <div class="logo-item"><img src="assets/client_logo_1.png" alt=""></div>
+        <div class="logo-item"><img src="assets/client_logo_2.png" alt=""></div>
+        <div class="logo-item"><img src="assets/client_logo_3.png" alt=""></div>
+        <div class="logo-item"><img src="assets/client_logo_4.png" alt=""></div>
+        <div class="logo-item"><img src="assets/client_logo_5.png" alt=""></div>
+        <div class="logo-item"><img src="assets/client_logo_6.png" alt=""></div>
+        <div class="logo-item"><img src="assets/client_logo_7.png" alt=""></div>
+        <div class="logo-item"><img src="assets/client_logo_8.png" alt=""></div>
+        <div class="logo-item"><img src="assets/client_logo_9.png" alt=""></div>
+        <div class="logo-item"><img src="assets/client_logo_10.png" alt=""></div>
+      </div>
+      <div class="logos-inner" aria-hidden="true">
+        <div class="logo-item"><img src="assets/client_logo_1.png" alt=""></div>
+        <div class="logo-item"><img src="assets/client_logo_2.png" alt=""></div>
+        <div class="logo-item"><img src="assets/client_logo_3.png" alt=""></div>
+        <div class="logo-item"><img src="assets/client_logo_4.png" alt=""></div>
+        <div class="logo-item"><img src="assets/client_logo_5.png" alt=""></div>
+        <div class="logo-item"><img src="assets/client_logo_6.png" alt=""></div>
+        <div class="logo-item"><img src="assets/client_logo_7.png" alt=""></div>
+        <div class="logo-item"><img src="assets/client_logo_8.png" alt=""></div>
+        <div class="logo-item"><img src="assets/client_logo_9.png" alt=""></div>
+        <div class="logo-item"><img src="assets/client_logo_10.png" alt=""></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 2 → right -->
+  <div class="logos-wrap">
+    <div class="logos-track" id="row2">
+      <div class="logos-inner">
+        <div class="logo-item"><img src="assets/client_logo_11.png" alt=""></div>
+        <div class="logo-item"><img src="assets/client_logo_12.png" alt=""></div>
+        <div class="logo-item"><img src="assets/client_logo_13.png" alt=""></div>
+        <div class="logo-item"><img src="assets/client_logo_14.png" alt=""></div>
+        <div class="logo-item"><img src="assets/client_logo_15.png" alt=""></div>
+        <div class="logo-item"><img src="assets/client_logo_16.png" alt=""></div>
+        <div class="logo-item"><img src="assets/client_logo_17.png" alt=""></div>
+        <div class="logo-item"><img src="assets/client_logo_18.png" alt=""></div>
+        <div class="logo-item"><img src="assets/client_logo_19.png" alt=""></div>
+      </div>
+      <div class="logos-inner" aria-hidden="true">
+        <div class="logo-item"><img src="assets/client_logo_11.png" alt=""></div>
+        <div class="logo-item"><img src="assets/client_logo_12.png" alt=""></div>
+        <div class="logo-item"><img src="assets/client_logo_13.png" alt=""></div>
+        <div class="logo-item"><img src="assets/client_logo_14.png" alt=""></div>
+        <div class="logo-item"><img src="assets/client_logo_15.png" alt=""></div>
+        <div class="logo-item"><img src="assets/client_logo_16.png" alt=""></div>
+        <div class="logo-item"><img src="assets/client_logo_17.png" alt=""></div>
+        <div class="logo-item"><img src="assets/client_logo_18.png" alt=""></div>
+        <div class="logo-item"><img src="assets/client_logo_19.png" alt=""></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ NEWS ═══ -->
+<section class="news-section">
+  <p class="section-label light reveal" style="text-align:center;">CO SIĘ U NAS DZIEJE?</p>
+  <div class="news-grid">
+    <a class="news-card reveal" href="#">
+      <div class="news-thumb">
+        <div class="news-thumb-img"><img src="assets/news_1.png" alt=""></div>
+        <div class="news-thumb-arrow">
+          <svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/><style>path{stroke:white;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}</style></svg>
+        </div>
+      </div>
+      <div class="news-body">
+        <div class="news-date">12.06.2026</div>
+        <div class="news-title">Pierwsza i na pewno nie ostatnia produkcja full AI Endless! Nasza praca z AI to jednak dużo więcej niż samo promptowanie. Tak jak przy każdej produkcji, zaczęliśmy od scenariusza, znaleźliśmy reżysera (dzięki, <span class="news-link">Mikołaj Sadowski</span> 🙌), przeszliśmy przez…</div>
+      </div>
+    </a>
+    <a class="news-card reveal" href="#" style="transition-delay:0.1s">
+      <div class="news-thumb">
+        <div class="news-thumb-img"><img src="assets/news_2.png" alt=""></div>
+        <div class="news-thumb-arrow">
+          <svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/><style>path{stroke:white;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}</style></svg>
+        </div>
+      </div>
+      <div class="news-body">
+        <div class="news-date">12.06.2026</div>
+        <div class="news-title">Cieszymy się, że razem ze <span class="news-link">Sporting Agency</span> zaczynamy współpracę przy projekcie dla <span class="news-link">Superbet</span>! Szczegóły już niedługo!</div>
+      </div>
+    </a>
+    <a class="news-card reveal" href="#" style="transition-delay:0.2s">
+      <div class="news-thumb">
+        <div class="news-thumb-img"><img src="assets/news_3.png" alt=""></div>
+        <div class="news-thumb-arrow">
+          <svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/><style>path{stroke:white;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}</style></svg>
+        </div>
+      </div>
+      <div class="news-body">
+        <div class="news-date">12.06.2026</div>
+        <div class="news-title">Duma to mało powiedziane. Współtworzenie kampanii dla Ministerstwa Cyfryzacji — <span class="news-link">Ministerstwo Cyfryzacji</span>, która porusza tak ważny temat reprezentacji kobiet w zawodach cyfrowych, to dla nas coś więcej niż kolejny projekt.</div>
+      </div>
+    </a>
+  </div>
+  <div class="news-cta reveal">
+    <a href="#" class="btn-pill"><span class="btn-spacer"></span><span>PRESS</span><img class="btn-arrow-img" src="assets/arrow.svg" alt=""></a>
+  </div>
+</section>
+
+<!-- ═══ PROJECTS ═══ -->
+<section class="projects-section">
+  <div class="projects-header">
+    <p class="section-label light reveal">WYBRANE PROJEKTY</p>
+  </div>
+  <div class="projects-grid">
+    <div class="project-card reveal">
+      <div class="project-bg"><img src="assets/work_1.png" alt="Buduj cyfrową formę"></div>
+      <div class="project-info">
+        <div class="project-client">DIGITAL</div>
+        <div class="project-name">BUDUJ CYFROWĄ FORMĘ</div>
+      </div>
+    </div>
+    <div class="project-card reveal" style="transition-delay:0.08s">
+      <div class="project-bg"><img src="assets/work_2.png" alt="Superbet"></div>
+      <div class="project-info">
+        <div class="project-client">SUPERBET</div>
+        <div class="project-name">MISTRZOSTWA W TWOICH RĘKACH</div>
+      </div>
+    </div>
+    <div class="project-card reveal" style="transition-delay:0.16s">
+      <div class="project-bg"><img src="assets/work_3.png" alt="Spokój ducha gratis"></div>
+      <div class="project-info">
+        <div class="project-client">INSURANCE</div>
+        <div class="project-name">SPOKÓJ DUCHA GRATIS</div>
+      </div>
+    </div>
+    <div class="project-card reveal" style="transition-delay:0.24s">
+      <div class="project-bg"><img src="assets/work_4.jpg" alt="Flamin Hot"></div>
+      <div class="project-info">
+        <div class="project-client">FLAMIN' HOT</div>
+        <div class="project-name">ARE NOT</div>
+      </div>
+    </div>
+    <div class="project-card reveal" style="transition-delay:0.32s">
+      <div class="project-bg"><img src="assets/work_5.png" alt="Vectra Netflix 1670"></div>
+      <div class="project-info">
+        <div class="project-client">VECTRA × NETFLIX</div>
+        <div class="project-name">1670 SEZON 2</div>
+      </div>
+    </div>
+    <div class="project-card reveal" style="transition-delay:0.4s">
+      <div class="project-bg"><img src="assets/work_6.png" alt="Project 6"></div>
+      <div class="project-info">
+        <div class="project-client">DIGITAL</div>
+        <div class="project-name">BUDUJ CYFROWĄ FORMĘ</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="projects-cta reveal">
+  <a href="projekty.html" class="btn-pill"><span class="btn-spacer"></span><span>PROJEKTY</span><img class="btn-arrow-img" src="assets/arrow.svg" alt=""></a>
+</div>
+
+<!-- ═══ FOOTER / CTA ═══ -->
+<section class="footer-cta">
+  <video class="footer-video" autoplay muted loop playsinline>
+    <source src="assets/footer.mp4" type="video/mp4"/>
+  </video>
+  <div class="footer-overlay"></div>
+
+  <!-- yellow paint elements -->
+  <img class="drip" style="right:3%;top:3%;width:clamp(90px,12vw,160px);" src="assets/yellow_element_5.png" alt="" aria-hidden="true">
+  <img class="drip" style="left:1.5%;bottom:6%;width:clamp(120px,18vw,240px);" src="assets/yellow_element_6.png" alt="" aria-hidden="true">
+
+  <div class="footer-content">
+    <div class="footer-avatar"><img src="assets/tomek_bottom.jpg" alt=""></div>
+
+    <h2 class="footer-title reveal">
+      MASZ PYTANIA?<br/>NAPISZ LUB ZADZWOŃ!
+    </h2>
+
+    <div class="footer-contacts reveal" style="transition-delay:0.2s">
+      <div class="contact-phone-email">
+        <a href="tel:+48501218473">+48 501 218 473</a><br/>
+        <a href="mailto:tomek@weareendless.pl">tomek@weareendless.pl</a>
+      </div>
+      <div class="contact-sep"></div>
+      <address class="contact-address">
+        al. Niepodległości 124<br/>00-608 Warszawa
+      </address>
+    </div>
+
+    <div class="footer-socials reveal" style="transition-delay:0.35s">
+      <a href="https://www.linkedin.com/in/franek-toeplitz-b03a22165/" target="_blank" rel="noopener" class="social-btn" aria-label="LinkedIn">
+        <img src="assets/icon_Linkedin.svg" alt="LinkedIn">
+      </a>
+      <a href="https://www.instagram.com/endless_warsaw/" target="_blank" rel="noopener" class="social-btn" aria-label="Instagram">
+        <img src="assets/icon_insta.svg" alt="Instagram">
+      </a>
+      <a href="https://www.tiktok.com/@weareendless" target="_blank" rel="noopener" class="social-btn" aria-label="TikTok">
+        <img src="assets/icon_tiktok.svg" alt="TikTok">
+      </a>
+    </div>
+
+    <p class="footer-copy">Copyright© 2026 Endless. All Rights Reserved</p>
+  </div>
+</section>
 
 <script>
-  // ── Audio ──
-  const AudioCtx = window.AudioContext || window.webkitAudioContext;
-  let actx = null;
-  function initAudio() { if (!actx) actx = new AudioCtx(); }
-
-  // ── Касовий апарат ──
-  // Кожна клавіша: короткий металевий "клік" + дзвінок
-  function cashKey(volume = 1) {
-    if (!actx) return;
-    const t = actx.currentTime;
-
-    // 1) Механічний удар клавіші — шум з bandpass
-    const keyDur = 0.04;
-    const kBuf = actx.createBuffer(1, Math.floor(actx.sampleRate * keyDur), actx.sampleRate);
-    const kData = kBuf.getChannelData(0);
-    for (let i = 0; i < kData.length; i++)
-      kData[i] = (Math.random() * 2 - 1) * Math.exp(-i / (kData.length * 0.15));
-    const kSrc = actx.createBufferSource(); kSrc.buffer = kBuf;
-    const kBp = actx.createBiquadFilter(); kBp.type = 'bandpass'; kBp.frequency.value = 2400; kBp.Q.value = 1.2;
-    const kG = actx.createGain(); kG.gain.setValueAtTime(0.12 * volume, t);
-    kSrc.connect(kBp); kBp.connect(kG); kG.connect(actx.destination);
-    kSrc.start(t); kSrc.stop(t + keyDur);
-
-    // 2) Металевий дзвінок — синус із загасанням
-    const ringDur = 0.12;
-    const o = actx.createOscillator();
-    const oG = actx.createGain();
-    o.type = 'sine';
-    o.frequency.setValueAtTime(1320, t);
-    o.frequency.exponentialRampToValueAtTime(880, t + 0.015);
-    oG.gain.setValueAtTime(0.07 * volume, t);
-    oG.gain.exponentialRampToValueAtTime(0.0001, t + ringDur);
-    o.connect(oG); oG.connect(actx.destination);
-    o.start(t); o.stop(t + ringDur);
-  }
-
-  // М'який chime — коли з'являються нові факти
-  function chime(delay = 0) {
-    if (!actx) return;
-    const notes = [523, 659, 784, 1047]; // C5 E5 G5 C6
-    notes.forEach((freq, i) => {
-      const t = actx.currentTime + delay + i * 0.1;
-      const o = actx.createOscillator();
-      const g = actx.createGain();
-      o.type = 'sine'; o.frequency.value = freq;
-      g.gain.setValueAtTime(0, t);
-      g.gain.linearRampToValueAtTime(0.06, t + 0.015);
-      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.5);
-      o.connect(g); g.connect(actx.destination);
-      o.start(t); o.stop(t + 0.5);
-    });
-  }
-
-  // Фінальний "дзінь" каси — вищий і довший
-  function cashRegister() {
-    if (!actx) return;
-    const t = actx.currentTime;
-    [1760, 2093, 2637].forEach((freq, i) => {
-      const o = actx.createOscillator();
-      const g = actx.createGain();
-      o.type = 'sine'; o.frequency.value = freq;
-      g.gain.setValueAtTime(0, t + i * 0.07);
-      g.gain.linearRampToValueAtTime(0.09, t + i * 0.07 + 0.01);
-      g.gain.exponentialRampToValueAtTime(0.0001, t + i * 0.07 + 0.4);
-      o.connect(g); g.connect(actx.destination);
-      o.start(t + i * 0.07); o.stop(t + i * 0.07 + 0.4);
-    });
-  }
-
-  function tick(_, __) { cashKey(0.5); }
-  function btnSound() {
-    if (!actx) return;
-    cashKey(0.8);
-    setTimeout(() => cashKey(0.5), 40);
-  }
-
-  // ── Magnetic button ──
-  const btnWrap = document.getElementById('btn-wrap');
-  const btnEl   = document.getElementById('btn-start');
-  const STRENGTH = 0.35;
-
-  btnWrap.addEventListener('mousemove', e => {
-    const r = btnEl.getBoundingClientRect();
-    const cx = r.left + r.width / 2;
-    const cy = r.top  + r.height / 2;
-    const dx = (e.clientX - cx) * STRENGTH;
-    const dy = (e.clientY - cy) * STRENGTH;
-    btnEl.style.transform = `translate(${dx}px, ${dy}px) scale(1.06)`;
-  });
-  btnWrap.addEventListener('mouseleave', () => {
-    btnEl.style.transform = '';
-    btnEl.style.transition = 'transform 0.5s cubic-bezier(0.34,1.56,0.64,1), background 0.2s';
-    setTimeout(() => { btnEl.style.transition = ''; }, 500);
-  });
-
-  // ── Screen transitions ──
-  function goTo(id, direction = 'forward') {
-    const current = document.querySelector('.screen.in');
-    if (current) {
-      current.classList.remove('in');
-      current.classList.add(direction === 'forward' ? 'out-up' : 'out-down');
-    }
-    const next = document.getElementById(id);
-    next.classList.remove('out-up', 'out-down');
-    next.getBoundingClientRect(); // force reflow
-    next.classList.add('in');
-  }
-
-  // ── Months ──
-  const MONTHS = ['Січень','Лютий','Березень','Квітень','Травень','Червень',
-                  'Липень','Серпень','Вересень','Жовтень','Листопад','Грудень'];
-  const grid = document.getElementById('month-grid');
-  MONTHS.forEach((m, i) => {
-    const el = document.createElement('div');
-    el.className = 'month-cell';
-    el.textContent = m;
-    el.dataset.month = i + 1;
-    el.addEventListener('click', () => {
-      initAudio(); tick(660, 0.04);
-      document.querySelectorAll('.month-cell').forEach(c => c.classList.remove('sel'));
-      el.classList.add('sel');
-      state.month = i + 1;
-      document.getElementById('month-next').classList.add('ready');
-    });
-    grid.appendChild(el);
-  });
-
-  // ── State ──
-  const state = { year: null, month: null, day: null };
-  const NOW = new Date();
-  const CUR_YEAR = NOW.getFullYear();
-
-  // ── Year ──
-  let yearVal = null;
-  const yearInput = document.getElementById('year-val');
-  const yearNext  = document.getElementById('year-next');
-
-  function setYear(v, silent) {
-    v = Math.max(CUR_YEAR - 120, Math.min(CUR_YEAR, v));
-    yearVal = v;
-    yearInput.value = v;
-    state.year = v;
-    yearNext.classList.add('ready');
-    if (!silent) tick(800, 0.025);
-  }
-
-  yearInput.addEventListener('input', () => {
-    initAudio(); cashKey(0.4);
-    const v = parseInt(yearInput.value, 10);
-    if (!isNaN(v) && String(yearInput.value).length === 4) {
-      setYear(v, true);
-    } else {
-      state.year = null;
-      yearNext.classList.remove('ready');
+/* ── Scroll reveal ── */
+const revealIO = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      revealIO.unobserve(e.target);
     }
   });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal,.reveal-up,.reveal-scale,.stagger').forEach(el => revealIO.observe(el));
 
-  yearInput.addEventListener('keydown', e => {
-    if (e.key === 'Enter' && yearNext.classList.contains('ready')) {
-      initAudio(); tick();
-      goTo('s-month');
-    }
-  });
+/* ── Nav scroll ── */
+const nav = document.getElementById('main-nav');
+function updateNav() {
+  nav.classList.toggle('scrolled', window.scrollY > 50);
+}
+window.addEventListener('scroll', updateNav, { passive: true });
+updateNav();
 
-  document.getElementById('year-dec').addEventListener('click', () => {
-    initAudio(); setYear((yearVal ?? CUR_YEAR - 30) - 1);
-  });
-  document.getElementById('year-inc').addEventListener('click', () => {
-    initAudio(); setYear((yearVal ?? CUR_YEAR - 30) + 1);
-  });
+/* ── Horizontal parallax text ──
+   showreel: starts right of center, moves left as you scroll past
+   about:    starts left of center, moves right as you scroll past
+*/
+const txShowreel = document.getElementById('txt-showreel');
+const txAbout    = document.getElementById('txt-about');
 
-  // long-press repeat
-  function holdRepeat(btn, action) {
-    let timer, interval;
-    btn.addEventListener('pointerdown', () => {
-      action();
-      timer = setTimeout(() => { interval = setInterval(action, 80); }, 400);
-    });
-    const stop = () => { clearTimeout(timer); clearInterval(interval); };
-    btn.addEventListener('pointerup', stop);
-    btn.addEventListener('pointerleave', stop);
-  }
-  holdRepeat(document.getElementById('year-dec'), () => { initAudio(); setYear((yearVal ?? CUR_YEAR - 30) - 1); });
-  holdRepeat(document.getElementById('year-inc'), () => { initAudio(); setYear((yearVal ?? CUR_YEAR - 30) + 1); });
+function parallax() {
+  const vH = window.innerHeight;
 
-  // ── Day ──
-  let dayVal = null;
-  const dayInput = document.getElementById('day-val');
-  const dayNext  = document.getElementById('day-next');
-
-  function maxDay() {
-    if (!state.month || !state.year) return 31;
-    return new Date(state.year, state.month, 0).getDate();
-  }
-  function setDay(v, silent) {
-    v = Math.max(1, Math.min(maxDay(), v));
-    dayVal = v;
-    dayInput.value = v;
-    state.day = v;
-    dayNext.classList.add('ready');
-    if (!silent) tick(800, 0.025);
+  if (txShowreel) {
+    const r = txShowreel.parentElement.getBoundingClientRect();
+    const p = (vH - r.top) / (vH + r.height);
+    txShowreel.style.transform = `translateX(${-5 + p * 30}%)`;
   }
 
-  dayInput.addEventListener('input', () => {
-    initAudio(); cashKey(0.4);
-    const v = parseInt(dayInput.value, 10);
-    if (!isNaN(v) && v >= 1 && v <= maxDay()) {
-      setDay(v, true);
-    } else {
-      state.day = null;
-      dayNext.classList.remove('ready');
-    }
-  });
+  if (txAbout) {
+    const r = txAbout.parentElement.getBoundingClientRect();
+    const p = (vH - r.top) / (vH + r.height);
+    txAbout.style.transform = `translateX(${20 - p * 40}%)`;
+  }
+}
+window.addEventListener('scroll', parallax, { passive: true });
+parallax();
 
-  dayInput.addEventListener('keydown', e => {
-    if (e.key === 'Enter' && dayNext.classList.contains('ready')) {
-      initAudio(); tick();
-      showResult();
-    }
-  });
+/* ── Logo marquees — two rows, opposite directions, scroll-speed boost ── */
+const r1el = document.getElementById('row1');
+const r2el = document.getElementById('row2');
 
-  document.getElementById('day-dec').addEventListener('click', () => { initAudio(); setDay((dayVal ?? 1) - 1); });
-  document.getElementById('day-inc').addEventListener('click', () => { initAudio(); setDay((dayVal ?? 0) + 1); });
-  holdRepeat(document.getElementById('day-dec'), () => { initAudio(); setDay((dayVal ?? 1) - 1); });
-  holdRepeat(document.getElementById('day-inc'), () => { initAudio(); setDay((dayVal ?? 0) + 1); });
+let r1x = 0, r2x = 0;
+let r1w = 0, r2w = 0;
+let velDecay = 0;
 
-  // ── Navigation ──
-  document.getElementById('btn-start').addEventListener('click', () => {
-    initAudio(); btnSound();
-    goTo('s-year');
-    setTimeout(() => document.getElementById('year-val').focus(), 500);
-  });
+function initWidths() {
+  r1w = r1el?.querySelector('.logos-inner')?.offsetWidth || 0;
+  r2w = r2el?.querySelector('.logos-inner')?.offsetWidth || 0;
+  r2x = -r2w * 0.35; // offset row2 start so rows aren't aligned
+}
 
-  document.getElementById('year-next').addEventListener('click', () => {
-    if (!yearNext.classList.contains('ready')) return;
-    initAudio(); tick(900, 0.04);
-    goTo('s-month');
-  });
+let lastSY = window.scrollY;
+window.addEventListener('scroll', () => {
+  velDecay = (window.scrollY - lastSY) * 0.18;
+  lastSY = window.scrollY;
+}, { passive: true });
 
-  document.getElementById('month-next').addEventListener('click', () => {
-    const btn = document.getElementById('month-next');
-    if (!btn.classList.contains('ready')) return;
-    initAudio(); tick(900, 0.04);
-    // don't pre-fill day — leave placeholder
-    if (dayVal !== null) dayVal = Math.min(dayVal, maxDay());
-    goTo('s-day');
-    setTimeout(() => document.getElementById('day-val').focus(), 500);
-  });
+const BASE = 0.55; // px/frame base speed
 
-  document.getElementById('day-next').addEventListener('click', () => {
-    if (!dayNext.classList.contains('ready')) return;
-    initAudio(); tick(1000, 0.05);
-    showResult();
-  });
+function tick() {
+  const v = velDecay;
+  velDecay *= 0.88;
 
-  document.querySelectorAll('[data-to]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      initAudio(); tick(600, 0.03);
-      goTo(btn.dataset.to, 'back');
-    });
-  });
-
-  document.getElementById('btn-again').addEventListener('click', () => {
-    initAudio();
-    state.year = null; state.month = null; state.day = null;
-    yearVal = null; dayVal = null;
-    yearInput.value = ''; yearNext.classList.remove('ready');
-    document.querySelectorAll('.month-cell').forEach(c => c.classList.remove('sel'));
-    document.getElementById('month-next').classList.remove('ready');
-    dayInput.value = ''; dayNext.classList.remove('ready');
-    document.getElementById('fun-stats').classList.remove('visible');
-    document.getElementById('fun-divider').classList.remove('visible');
-    document.getElementById('birth-stats').classList.remove('visible');
-    document.getElementById('birth-divider').classList.remove('visible');
-    document.getElementById('scroll-hint').classList.remove('visible');
-    goTo('s-intro', 'back');
-  });
-
-  // ── Age calc ──
-  function calcAge() {
-    const dob = new Date(state.year, state.month - 1, state.day);
-    let age = NOW.getFullYear() - dob.getFullYear();
-    const m = NOW.getMonth() - dob.getMonth();
-    if (m < 0 || (m === 0 && NOW.getDate() < dob.getDate())) age--;
-    return Math.max(0, age);
+  if (r1w) {
+    r1x -= BASE + v;
+    if (r1x <= -r1w) r1x += r1w;
+    if (r1x > 0)     r1x -= r1w;
+    r1el.style.transform = `translateX(${r1x}px)`;
+  }
+  if (r2w) {
+    r2x += BASE + v;
+    if (r2x >= 0)    r2x -= r2w;
+    if (r2x < -r2w)  r2x += r2w;
+    r2el.style.transform = `translateX(${r2x}px)`;
   }
 
-  function animateCounter(el, target, onTick) {
-    // Розклад часу: кожен наступний крок займає більше часу —
-    // перші 80% значень = перші 40% тривалості, останні 20% = 60%
-    const DURATION = 2200;
-    // Будуємо таблицю "значення → час" щоб перші цифри летіли, останні тяглися
-    function valueToTime(v) {
-      // x = v/target (0..1), повертає t (0..1) у часі
-      // використовуємо зворотну ease-out cubic: t = 1-(1-x)^(1/3) → не те
-      // Хочемо: на початку швидко (багато значень за мало часу),
-      //         наприкінці повільно (кожна цифра по довгому)
-      // Використовуємо x^3 (ease-in для часу = ease-out для значення)
-      const x = v / target;
-      return Math.pow(x, 2.8);  // час = значення^2.8
-    }
+  requestAnimationFrame(tick);
+}
 
-    let lastVal = -1;
-    let lastFlipTime = 0;
+initWidths();
+window.addEventListener('resize', initWidths);
+requestAnimationFrame(tick);
 
-    function frame(ts) {
-      if (!frame.startTs) frame.startTs = ts;
-      const elapsed = ts - frame.startTs;
-      const t = Math.min(elapsed / DURATION, 1);
+/* ── Menu overlay ── */
+const menuToggle = document.getElementById('menu-toggle');
+const menuOverlay = document.getElementById('menu-overlay');
+const menuClose = document.getElementById('menu-close');
 
-      // обернена функція: знаходимо значення для поточного часу t
-      // t = (v/target)^2.8  →  v = target * t^(1/2.8)
-      const cur = t === 1 ? target : Math.floor(target * Math.pow(t, 1 / 2.8));
+function openMenu() {
+  menuOverlay.classList.add('is-open');
+  menuOverlay.setAttribute('aria-hidden', 'false');
+  menuToggle.setAttribute('aria-expanded', 'true');
+  menuToggle.classList.add('menu-open');
+  document.body.classList.add('menu-open-state');
+}
+function closeMenu() {
+  menuOverlay.classList.remove('is-open');
+  menuOverlay.setAttribute('aria-hidden', 'true');
+  menuToggle.setAttribute('aria-expanded', 'false');
+  menuToggle.classList.remove('menu-open');
+  document.body.classList.remove('menu-open-state');
+}
 
-      if (cur !== lastVal) {
-        lastVal = cur;
-        el.textContent = cur;
-        // звук тільки якщо пройшло достатньо часу (уповільнення = довші паузи)
-        const now = performance.now();
-        const minGap = 30 + (cur / target) * 180; // від 30мс до 210мс між звуками
-        if (now - lastFlipTime >= minGap) {
-          lastFlipTime = now;
-          if (onTick) onTick(cur);
-        }
-      }
+menuToggle.addEventListener('click', () => {
+  menuOverlay.classList.contains('is-open') ? closeMenu() : openMenu();
+});
 
-      if (t < 1) requestAnimationFrame(frame);
-      else { el.textContent = target; if (onTick) onTick(target); }
-    }
-    requestAnimationFrame(frame);
-  }
-
-  function calcFunStats(totalDays) {
-    // Zodiac
-    const ZODIAC = [
-      { name: 'Козеріг',   sym: '♑', m:  1, d:  1 },
-      { name: 'Водолій',   sym: '♒', m:  1, d: 20 },
-      { name: 'Риби',      sym: '♓', m:  2, d: 19 },
-      { name: 'Овен',      sym: '♈', m:  3, d: 21 },
-      { name: 'Телець',    sym: '♉', m:  4, d: 20 },
-      { name: 'Близнюки',  sym: '♊', m:  5, d: 21 },
-      { name: 'Рак',       sym: '♋', m:  6, d: 21 },
-      { name: 'Лев',       sym: '♌', m:  7, d: 23 },
-      { name: 'Діва',      sym: '♍', m:  8, d: 23 },
-      { name: 'Терези',    sym: '♎', m:  9, d: 23 },
-      { name: 'Скорпіон',  sym: '♏', m: 10, d: 23 },
-      { name: 'Стрілець',  sym: '♐', m: 11, d: 22 },
-      { name: 'Козеріг',   sym: '♑', m: 12, d: 22 },
-    ];
-    const m = state.month, d = state.day;
-    let z = ZODIAC[0];
-    for (let i = ZODIAC.length - 1; i >= 0; i--) {
-      if (m > ZODIAC[i].m || (m === ZODIAC[i].m && d >= ZODIAC[i].d)) { z = ZODIAC[i]; break; }
-    }
-
-    // Terminator films by release year
-    const TERM_YEARS = [1984, 1991, 2003, 2009, 2015, 2019];
-    const dobYear = state.year;
-    const terminators = TERM_YEARS.filter(y => y >= dobYear && y <= NOW.getFullYear()).length;
-
-    // Mondays
-    const mondays = Math.floor(totalDays / 7);
-
-    // Heartbeats (~70 bpm)
-    const beats = totalDays * 24 * 60 * 70;
-
-    // iPhone generations (first iPhone: June 2007, new model every year)
-    const iphoneStart = new Date(2007, 5, 29);
-    const dob = new Date(state.year, state.month - 1, state.day);
-    const iphonesSinceBirth = dob < iphoneStart
-      ? NOW.getFullYear() - 2007 + 1
-      : NOW.getFullYear() - Math.max(dob.getFullYear(), 2007) + (NOW >= iphoneStart ? 1 : 0);
-    const iphones = Math.max(0, iphonesSinceBirth);
-
-    // FIFA World Cups (every 4 years: 1930, skip 1942/46, then 1950, 1954...)
-    const FIFA = [1930,1934,1938,1950,1954,1958,1962,1966,1970,1974,
-                  1978,1982,1986,1990,1994,1998,2002,2006,2010,2014,2018,2022,2026];
-    const worldcups = FIFA.filter(y => y >= dobYear && y <= NOW.getFullYear()).length;
-
-    // Star Wars main saga + spinoffs by release year
-    const SW_YEARS = [1977,1980,1983,1999,2002,2005,2015,2016,2017,2018,2019];
-    const starwars = SW_YEARS.filter(y => y >= dobYear && y <= NOW.getFullYear()).length;
-
-    // Summer Olympics
-    const OLYMPICS = [1984,1988,1992,1996,2000,2004,2008,2012,2016,2020,2024,2028];
-    const olympics = OLYMPICS.filter(y => y >= dobYear && y <= NOW.getFullYear()).length;
-
-    // US Presidents (inauguration years → who was president since birth)
-    const PRESIDENTS = [
-      { name: 'Картер',   start: 1977 },
-      { name: 'Рейган',   start: 1981 },
-      { name: 'Буш-ст.',  start: 1989 },
-      { name: 'Клінтон',  start: 1993 },
-      { name: 'Буш-мол.', start: 2001 },
-      { name: 'Обама',    start: 2009 },
-      { name: 'Трамп',    start: 2017 },
-      { name: 'Байден',   start: 2021 },
-      { name: 'Трамп',    start: 2025 },
-    ];
-    const curYear = NOW.getFullYear();
-    const presidents = PRESIDENTS.filter(p => p.start <= curYear && p.start >= dobYear - 1).length;
-
-    // Km with Earth around the Sun (~107,000 km/h)
-    const kmBillion = Math.round(totalDays * 24 * 107000 / 1e9 * 10) / 10;
-
-    // Keanu Reeves age at user's birth (born Sep 2, 1964)
-    const keanuDob = new Date(1964, 8, 2);
-    const userDob  = new Date(state.year, state.month - 1, state.day);
-    let keanu = userDob.getFullYear() - keanuDob.getFullYear();
-    const km = userDob.getMonth() - keanuDob.getMonth();
-    if (km < 0 || (km === 0 && userDob.getDate() < keanuDob.getDate())) keanu--;
-    keanu = Math.max(0, keanu);
-
-    return { zodiac: z, terminators, mondays, beats, iphones, worldcups, starwars, olympics, presidents, kmBillion, keanu };
-  }
-
-  function calcStats() {
-    const dob = new Date(state.year, state.month - 1, state.day);
-    const totalDays = Math.floor((NOW - dob) / 86400000);
-    const totalMonths = (NOW.getFullYear() - state.year) * 12
-      + (NOW.getMonth() - (state.month - 1))
-      - (NOW.getDate() < state.day ? 1 : 0);
-    return {
-      totalDays,
-      days:    totalDays.toLocaleString('uk-UA'),
-      weeks:   Math.floor(totalDays / 7).toLocaleString('uk-UA'),
-      months:  totalMonths.toLocaleString('uk-UA'),
-      seasons: Math.floor(totalDays / 91).toLocaleString('uk-UA'),
-    };
-  }
-
-  // ── Birth year data ──
-  const SONGS = {
-    1958:{s:"Volare",a:"Domenico Modugno"},1959:{s:"Mack the Knife",a:"Bobby Darin"},
-    1960:{s:"Theme from A Summer Place",a:"Percy Faith"},1961:{s:"Tossin' and Turnin'",a:"Bobby Lewis"},
-    1962:{s:"Stranger on the Shore",a:"Mr. Acker Bilk"},1963:{s:"Sugar Shack",a:"Jimmy Gilmer"},
-    1964:{s:"I Want to Hold Your Hand",a:"The Beatles"},1965:{s:"Wooly Bully",a:"Sam the Sham"},
-    1966:{s:"Ballad of the Green Berets",a:"SSgt. Barry Sadler"},1967:{s:"To Sir with Love",a:"Lulu"},
-    1968:{s:"Hey Jude",a:"The Beatles"},1969:{s:"Sugar Sugar",a:"The Archies"},
-    1970:{s:"Bridge over Troubled Water",a:"Simon & Garfunkel"},1971:{s:"Joy to the World",a:"Three Dog Night"},
-    1972:{s:"The First Time Ever I Saw Your Face",a:"Roberta Flack"},1973:{s:"Tie a Yellow Ribbon",a:"Tony Orlando"},
-    1974:{s:"The Way We Were",a:"Barbra Streisand"},1975:{s:"Love Will Keep Us Together",a:"Captain & Tennille"},
-    1976:{s:"Silly Love Songs",a:"Wings"},1977:{s:"You Light Up My Life",a:"Debby Boone"},
-    1978:{s:"Shadow Dancing",a:"Andy Gibb"},1979:{s:"My Sharona",a:"The Knack"},
-    1980:{s:"Call Me",a:"Blondie"},1981:{s:"Bette Davis Eyes",a:"Kim Carnes"},
-    1982:{s:"Physical",a:"Olivia Newton-John"},1983:{s:"Every Breath You Take",a:"The Police"},
-    1984:{s:"When Doves Cry",a:"Prince"},1985:{s:"Careless Whisper",a:"Wham!"},
-    1986:{s:"That's What Friends Are For",a:"Dionne Warwick"},1987:{s:"Walk Like an Egyptian",a:"The Bangles"},
-    1988:{s:"Faith",a:"George Michael"},1989:{s:"Look Away",a:"Chicago"},
-    1990:{s:"Hold On",a:"Wilson Phillips"},1991:{s:"(Everything I Do) I Do It for You",a:"Bryan Adams"},
-    1992:{s:"End of the Road",a:"Boyz II Men"},1993:{s:"I Will Always Love You",a:"Whitney Houston"},
-    1994:{s:"The Sign",a:"Ace of Base"},1995:{s:"Gangsta's Paradise",a:"Coolio"},
-    1996:{s:"Macarena",a:"Los Del Rio"},1997:{s:"Candle in the Wind 1997",a:"Elton John"},
-    1998:{s:"The Boy Is Mine",a:"Brandy & Monica"},1999:{s:"Believe",a:"Cher"},
-    2000:{s:"Breathe",a:"Faith Hill"},2001:{s:"Hanging by a Moment",a:"Lifehouse"},
-    2002:{s:"How You Remind Me",a:"Nickelback"},2003:{s:"In da Club",a:"50 Cent"},
-    2004:{s:"Yeah!",a:"Usher"},2005:{s:"We Belong Together",a:"Mariah Carey"},
-    2006:{s:"Bad Day",a:"Daniel Powter"},2007:{s:"Irreplaceable",a:"Beyoncé"},
-    2008:{s:"Low",a:"Flo Rida"},2009:{s:"Boom Boom Pow",a:"Black Eyed Peas"},
-    2010:{s:"TiK ToK",a:"Ke$ha"},2011:{s:"Rolling in the Deep",a:"Adele"},
-    2012:{s:"Somebody That I Used to Know",a:"Gotye"},2013:{s:"Thrift Shop",a:"Macklemore"},
-    2014:{s:"Happy",a:"Pharrell Williams"},2015:{s:"Uptown Funk",a:"Mark Ronson ft. Bruno Mars"},
-    2016:{s:"One Dance",a:"Drake"},2017:{s:"Shape of You",a:"Ed Sheeran"},
-    2018:{s:"God's Plan",a:"Drake"},2019:{s:"Old Town Road",a:"Lil Nas X"},
-    2020:{s:"Blinding Lights",a:"The Weeknd"},2021:{s:"drivers license",a:"Olivia Rodrigo"},
-    2022:{s:"As It Was",a:"Harry Styles"},2023:{s:"Flowers",a:"Miley Cyrus"},
-    2024:{s:"Die With a Smile",a:"Lady Gaga & Bruno Mars"},
-  };
-  const MOVIES = {
-    1960:"Спартак",1961:"101 далматинець",1962:"Як завоювали Захід",1963:"Клеопатра",
-    1964:"Голдфінгер",1965:"Звуки музики",1966:"Hawaii",1967:"Книга джунглів",
-    1968:"Смішна дівчинка",1969:"Буч Кесіді та Санденс Кід",1970:"Love Story",
-    1971:"Скрипаль на даху",1972:"Хрещений батько",1973:"Екзорцист",
-    1974:"Blazing Saddles",1975:"Щелепи",1976:"Рокі",1977:"Зоряні Війни",
-    1978:"Грease",1979:"Крамер проти Крамера",1980:"Імперія завдає удару у відповідь",
-    1981:"Рейдери втраченого ковчегу",1982:"Інопланетянин",1983:"Повернення джедая",
-    1984:"Мисливці за привидами",1985:"Назад у майбутнє",1986:"Top Gun",
-    1987:"Троє чоловіків і немовля",1988:"Людина дощу",1989:"Бетмен",
-    1990:"Сам удома",1991:"Мовчання ягнят",1992:"Аладдін",1993:"Парк Юрського Періоду",
-    1994:"Король Лев",1995:"Toy Story",1996:"Незалежність",1997:"Титанік",
-    1998:"Рятування рядового Райана",1999:"Примарна загроза",2000:"Місія неможлива 2",
-    2001:"Гаррі Поттер і філософський камінь",2002:"Людина-павук",2003:"В пошуках Немо",
-    2004:"Шрек 2",2005:"Зоряні Війни: Помста сіхів",2006:"Пірати Карибського моря 2",
-    2007:"Людина-павук 3",2008:"Темний лицар",2009:"Аватар",2010:"Toy Story 3",
-    2011:"Гаррі Поттер і смертельні реліквії 2",2012:"Месники",2013:"Крижане серце",
-    2014:"Трансформери 4",2015:"Зоряні Війни: Пробудження сили",2016:"Перший месник: Протистояння",
-    2017:"Зоряні Війни: Останні джедаї",2018:"Месники: Війна нескінченності",
-    2019:"Месники: Завершення",2020:"Погані хлопці назавжди",2021:"Людина-павук: Немає шляху додому",
-    2022:"Top Gun: Маверік",2023:"Барбі",2024:"Думками навиворіт 2",
-  };
-  const GENRES = {
-    1950:"Rock & Roll",1951:"Rock & Roll",1952:"Rock & Roll",1953:"Rock & Roll",
-    1954:"Rock & Roll",1955:"Rock & Roll",1956:"Rock & Roll",1957:"Rock & Roll",
-    1958:"Rock & Roll",1959:"Rock & Roll",1960:"Поп / Твіст",1961:"Поп / Твіст",
-    1962:"Поп / Серф",1963:"Поп / Серф",1964:"Брит-рок",1965:"Брит-рок",
-    1966:"Психоделічний рок",1967:"Психоделічний рок",1968:"Класичний рок",1969:"Класичний рок",
-    1970:"Класичний рок / Соул",1971:"Класичний рок / Соул",1972:"Глем-рок",1973:"Глем-рок",
-    1974:"Класичний рок / Фанк",1975:"Класичний рок / Фанк",1976:"Диско",1977:"Диско / Панк",
-    1978:"Диско",1979:"Диско / Нова хвиля",1980:"Нова хвиля / Поп",1981:"Нова хвиля / Поп",
-    1982:"Синті-поп",1983:"Синті-поп",1984:"Поп / Hair Metal",1985:"Поп / Hair Metal",
-    1986:"Поп / Hair Metal",1987:"Поп / Hair Metal",1988:"Поп / Hair Metal",1989:"Поп / Hip-Hop",
-    1990:"Гранж / Поп",1991:"Гранж / Hip-Hop",1992:"Гранж / R&B",1993:"Гранж / Hip-Hop",
-    1994:"Альтернатива / Hip-Hop",1995:"Поп / Hip-Hop",1996:"Поп / Hip-Hop",1997:"Поп / R&B",
-    1998:"Поп / R&B",1999:"Поп / Nu Metal",2000:"Поп / R&B",2001:"Поп / Hip-Hop",
-    2002:"Поп / Rock",2003:"Hip-Hop / R&B",2004:"Hip-Hop / R&B",2005:"Hip-Hop / Поп",
-    2006:"Поп / Hip-Hop",2007:"Поп / R&B",2008:"Поп / Hip-Hop",2009:"Поп / Електронна",
-    2010:"Поп / Дабстеп",2011:"Поп / Електронна",2012:"Поп / EDM",2013:"Поп / Hip-Hop",
-    2014:"Поп / Hip-Hop",2015:"Поп / Hip-Hop",2016:"Hip-Hop / Поп",2017:"Hip-Hop / Поп",
-    2018:"Hip-Hop / Поп",2019:"Hip-Hop / Поп",2020:"Поп / Hip-Hop",2021:"Поп / Hip-Hop",
-    2022:"Поп / Hip-Hop",2023:"Поп / Hip-Hop",2024:"Поп / Hip-Hop",
-  };
-  // World population in billions by year (interpolated)
-  function worldPop(year) {
-    const pts = [[1950,2.5],[1960,3.0],[1970,3.7],[1980,4.4],[1990,5.3],[2000,6.1],[2010,6.9],[2020,7.8],[2025,8.2]];
-    for (let i = 0; i < pts.length - 1; i++) {
-      if (year >= pts[i][0] && year <= pts[i+1][0]) {
-        const t = (year - pts[i][0]) / (pts[i+1][0] - pts[i][0]);
-        return (pts[i][1] + t * (pts[i+1][1] - pts[i][1])).toFixed(1);
-      }
-    }
-    return '?';
-  }
-
-  function showResult() {
-    const age   = calcAge();
-    let offset;
-    if      (age < 20)  offset = -(2 + Math.floor(Math.random() * 2)); // +2..+3
-    else if (age < 40)  offset =   4 + Math.floor(Math.random() * 5);  // -4..-8
-    else if (age < 60)  offset =   8 + Math.floor(Math.random() * 9);  // -8..-16
-    else                offset =  10 + Math.floor(Math.random() * 11); // -10..-20
-    const feels  = Math.max(0, age - offset);
-    const stats  = calcStats();
-    const fun    = calcFunStats(stats.totalDays);
-    const yr     = state.year;
-    const song   = SONGS[yr];
-    const movie  = MOVIES[yr] || '—';
-    const genre  = GENRES[yr] || '—';
-    const pop    = worldPop(yr);
-
-    // reset
-    document.getElementById('res-num').textContent = '0';
-    document.getElementById('res-feels').textContent = '0';
-    document.getElementById('scroll-hint').classList.remove('visible');
-    document.getElementById('stats').classList.remove('visible');
-    document.getElementById('fun-stats').classList.remove('visible');
-    document.getElementById('fun-divider').classList.remove('visible');
-    document.getElementById('birth-stats').classList.remove('visible');
-    document.getElementById('birth-divider').classList.remove('visible');
-    ['stat-days','stat-weeks','stat-months','stat-seasons',
-     'stat-zodiac-name','stat-zodiac-sym','stat-terminators','stat-mondays',
-     'stat-iphones','stat-worldcups','stat-starwars','stat-olympics',
-     'stat-presidents','stat-km','stat-heartbeats','stat-keanu','stat-song','stat-movie',
-     'stat-genre','stat-population'
-    ].forEach(id => { document.getElementById(id).textContent = '—'; });
-    document.getElementById('s-result').scrollTop = 0;
-
-    goTo('s-result');
-
-    setTimeout(() => {
-      animateCounter(document.getElementById('res-num'), age, cur => {
-        cashKey(0.45 + (cur / (age || 1)) * 0.45);
-      });
-      setTimeout(() => {
-        animateCounter(document.getElementById('res-feels'), feels, null);
-      }, 400);
-
-      // scroll hint
-      setTimeout(() => {
-        document.getElementById('scroll-hint').classList.add('visible');
-      }, 2400);
-
-      // серйозна статистика
-      setTimeout(() => {
-        document.getElementById('stat-days').textContent    = stats.days;
-        document.getElementById('stat-weeks').textContent   = stats.weeks;
-        document.getElementById('stat-months').textContent  = stats.months;
-        document.getElementById('stat-seasons').textContent = stats.seasons;
-        document.getElementById('stats').classList.add('visible');
-        cashRegister();
-      }, 2700);
-
-      // за твоє життя
-      setTimeout(() => {
-        document.getElementById('stat-zodiac-name').textContent = fun.zodiac.name;
-        document.getElementById('stat-zodiac-sym').textContent  = fun.zodiac.sym;
-        document.getElementById('stat-terminators').textContent = fun.terminators;
-        document.getElementById('stat-mondays').textContent     = fun.mondays.toLocaleString('uk-UA');
-        document.getElementById('stat-iphones').textContent     = fun.iphones;
-        document.getElementById('stat-worldcups').textContent   = fun.worldcups;
-        document.getElementById('stat-starwars').textContent    = fun.starwars;
-        document.getElementById('stat-olympics').textContent    = fun.olympics;
-        document.getElementById('stat-presidents').textContent  = fun.presidents;
-        document.getElementById('stat-km').textContent = '~' + fun.kmBillion.toLocaleString('uk-UA') + ' млрд км';
-        document.getElementById('stat-heartbeats').textContent = '~' + Math.round(fun.beats / 1e6).toLocaleString('uk-UA') + ' млн';
-        document.getElementById('stat-keanu').textContent = fun.keanu;
-        document.getElementById('fun-divider').classList.add('visible');
-        document.getElementById('fun-stats').classList.add('visible');
-        chime();
-      }, 3300);
-
-      // рік народження
-      setTimeout(() => {
-        if (song) {
-          document.getElementById('stat-song').textContent = `"${song.s}"`;
-          document.getElementById('stat-song-label').textContent = `хіт-пісня — ${song.a}`;
-        }
-        document.getElementById('stat-movie').textContent      = movie;
-        document.getElementById('stat-genre').textContent      = genre;
-        document.getElementById('stat-population').textContent = pop + ' млрд';
-        document.getElementById('birth-divider').classList.add('visible');
-        document.getElementById('birth-stats').classList.add('visible');
-        chime(0.05);
-      }, 4100);
-    }, 300);
-  }
-
-  // ── Blob mouse parallax ──
-  const blobs = [
-    { el: document.querySelector('.blob-1'), sx: 0, sy: 0, ox: -15, oy: -20, speed: 0.04, drift: { ax:0, ay:0, px:0, py:0, spd:0.00018 } },
-    { el: document.querySelector('.blob-2'), sx: 0, sy: 0, ox:  85, oy:  85, speed: 0.03, drift: { ax:0, ay:0, px:Math.PI, py:Math.PI*0.7, spd:0.00013 } },
-    { el: document.querySelector('.blob-3'), sx: 0, sy: 0, ox:  50, oy:  35, speed: 0.05, drift: { ax:0, ay:0, px:Math.PI*0.5, py:Math.PI*1.3, spd:0.00021 } },
-    { el: document.querySelector('.blob-4'), sx: 0, sy: 0, ox:  88, oy:  15, speed: 0.035, drift: { ax:0, ay:0, px:Math.PI*1.2, py:Math.PI*0.3, spd:0.00016 } },
-  ];
-
-  // mouse position normalised -0.5..+0.5
-  let mx = 0, my = 0;
-  let targetMx = 0, targetMy = 0;
-
-  window.addEventListener('mousemove', e => {
-    targetMx = e.clientX / window.innerWidth  - 0.5;
-    targetMy = e.clientY / window.innerHeight - 0.5;
-  });
-
-  // touch
-  window.addEventListener('touchmove', e => {
-    const t = e.touches[0];
-    targetMx = t.clientX / window.innerWidth  - 0.5;
-    targetMy = t.clientY / window.innerHeight - 0.5;
-  }, { passive: true });
-
-  const DRIFT_AMP = 6; // px автономного дрейфу
-  const MOUSE_STR = 40; // px зсуву від миші
-
-  function animBlobs(ts) {
-    // smooth mouse
-    mx += (targetMx - mx) * 0.05;
-    my += (targetMy - my) * 0.05;
-
-    blobs.forEach(b => {
-      // autonomous drift via sin
-      b.drift.px += b.drift.spd * 1000 * (1 / 60); // approx per frame
-      b.drift.py += b.drift.spd * 1000 * (1 / 60) * 0.7;
-      const driftX = Math.sin(ts * b.drift.spd)       * DRIFT_AMP;
-      const driftY = Math.cos(ts * b.drift.spd * 0.7) * DRIFT_AMP;
-
-      // target = base offset + mouse parallax + drift
-      const tx = b.ox + mx * MOUSE_STR * b.speed * 20 + driftX;
-      const ty = b.oy + my * MOUSE_STR * b.speed * 20 + driftY;
-
-      // smooth follow
-      b.sx += (tx - b.sx) * b.speed;
-      b.sy += (ty - b.sy) * b.speed;
-
-      b.el.style.transform = `translate(${b.sx - b.ox}vw, ${b.sy - b.oy}vh)`;
-    });
-
-    requestAnimationFrame(animBlobs);
-  }
-  requestAnimationFrame(animBlobs);
+/* Mark current page link */
+const currentPath = location.pathname.split('/').pop() || 'index.html';
+document.querySelectorAll('.menu-links a, .menu-brand').forEach(a => {
+  const raw = a.getAttribute('href') || '';
+  if (!raw || raw === '#') return;
+  const href = raw.split('/').pop().split('#')[0] || 'index.html';
+  if (href === currentPath) a.classList.add('current');
+});
+menuClose.addEventListener('click', closeMenu);
+menuOverlay.addEventListener('click', e => {
+  if (e.target === menuOverlay || e.target.closest('.menu-photo')) closeMenu();
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
 </script>
 </body>
 </html>
