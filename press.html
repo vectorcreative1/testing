@@ -26,15 +26,23 @@
     .nav-logo-img { height: 38px; width: auto; display: block; }
     .nav-menu-btn {
       width: 56px; height: 56px; border-radius: 50%;
-      background: radial-gradient(circle at 38% 35%, rgba(80,110,160,0.55) 0%, rgba(10,10,20,0.75) 55%, rgba(0,0,0,0.85) 100%);
-      border: 1px solid rgba(255,255,255,0.18);
-      backdrop-filter: blur(18px) saturate(1.4); -webkit-backdrop-filter: blur(18px) saturate(1.4);
-      box-shadow: inset 0 1px 1px rgba(255,255,255,0.2), inset 0 -1px 2px rgba(0,0,0,0.6), 0 8px 32px rgba(0,0,0,0.4);
+      background:
+        radial-gradient(circle at 30% 25%, rgba(255,255,255,0.25) 0%, transparent 50%),
+        linear-gradient(145deg, rgba(80,80,110,0.45) 0%, rgba(10,10,20,0.65) 60%, rgba(0,0,0,0.8) 100%);
+      border: none;
+      backdrop-filter: blur(6px) saturate(4) brightness(1.35) contrast(0.8) hue-rotate(5deg);
+      -webkit-backdrop-filter: blur(6px) saturate(4) brightness(1.35) contrast(0.8) hue-rotate(5deg);
+      box-shadow:
+        inset 0 2px 3px rgba(255,255,255,0.6),
+        inset 0 -2px 6px rgba(0,0,0,0.2),
+        0 0 0 1.5px rgba(255,255,255,0.55),
+        0 0 0 3px rgba(255,255,255,0.08),
+        0 4px 24px rgba(0,0,0,0.35);
       display: flex; align-items: center; justify-content: center;
-      cursor: pointer; transition: transform 0.2s, background 0.3s;
+      cursor: pointer; transition: transform 0.2s, box-shadow 0.3s;
     }
     .menu-open.nav-menu-btn { background: var(--black); border-color: transparent; backdrop-filter: none; -webkit-backdrop-filter: none; }
-    .nav-menu-btn:hover { transform: scale(1.06); }
+    .nav-menu-btn:hover { transform: scale(1.06); box-shadow: inset 0 2px 3px rgba(255,255,255,0.7), inset 0 -2px 6px rgba(0,0,0,0.2), 0 0 0 1.5px rgba(255,255,255,0.8), 0 0 0 4px rgba(255,255,255,0.12), 0 6px 30px rgba(0,0,0,0.4); }
     .hamburger { display: flex; flex-direction: column; gap: 5px; }
     .hamburger span { display: block; height: 1.5px; background: var(--white); transition: width 0.3s cubic-bezier(0.23,1,0.32,1), transform 0.35s cubic-bezier(0.23,1,0.32,1), opacity 0.3s; }
     .hamburger span:nth-child(1) { width: 22px; }
@@ -58,7 +66,7 @@
     .menu-shell {
       position: relative; border-radius: 28px; overflow: hidden;
       box-shadow: 0 32px 80px rgba(0,0,0,0.5);
-      height: 82vh; min-height: 500px; display: flex; align-items: center;
+      height: calc(100vh - clamp(1.6rem, 3vw, 3rem)); min-height: 500px; display: flex; align-items: center;
     }
     .menu-bg-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; z-index: 0; }
     .menu-close { display: none; }
@@ -86,6 +94,27 @@
     .menu-brand { opacity: 0; transform: translateY(16px); transition: opacity 0.4s, transform 0.4s, letter-spacing 0.3s, color 0.2s; }
     .menu-links li { opacity: 0; transform: translateY(16px); transition: opacity 0.4s, transform 0.4s; }
     .menu-overlay.is-open .menu-brand { opacity:1; transform:none; transition-delay:0.12s; }
+    @media (max-width: 640px) {
+      .menu-shell { align-items: flex-start; height: auto; overflow-y: auto; }
+      .menu-inner { padding-top: 5rem; }
+      .menu-panel { padding: 2.5rem 2rem 3rem; flex-direction: column; gap: 2rem; }
+      .menu-contact { padding-top: 0; }
+      .menu-links a, .menu-brand { font-size: clamp(2.4rem, 10vw, 3.2rem); }
+      .btn-pill { min-width: 280px !important; font-size: 1.1rem !important; padding: 1rem 1.4rem 1rem 2rem !important; }
+      .hero { justify-content: center !important; padding-bottom: 0; }
+      .hero-content { margin-top: 22vh; }
+      .hero-title img { width: 82vw !important; }
+      .hero-sub { margin-top: 10rem; white-space: normal; padding: 0 8vw; text-align: center; }
+      .hero-video { inset: auto !important; top: 50% !important; left: 0 !important; right: auto !important; bottom: auto !important; transform: translateY(-65%) !important; width: 130% !important; left: -15% !important; height: auto !important; object-fit: contain !important; filter: brightness(1.15) !important; }
+      .hero-overlay { display: none; }
+      .contact-sep { display: none !important; }
+      .footer-title { font-size: 30px !important; }
+      .footer-contacts a, .footer-contacts address { font-size: 22px !important; text-align: center; }
+      .footer-contacts { flex-direction: column; gap: 0.5rem; align-items: center; }
+      .footer-contacts .contact-phone-email { text-align: center !important; margin-bottom: -0.8rem; }
+      .footer-contacts .contact-address { text-align: center !important; margin-top: -0.8rem; }
+      .footer-copy { text-align: center; }
+    }
     .menu-overlay.is-open .menu-links li:nth-child(1) { opacity:1; transform:none; transition-delay:0.2s; }
     .menu-overlay.is-open .menu-links li:nth-child(2) { opacity:1; transform:none; transition-delay:0.28s; }
     .menu-overlay.is-open .menu-links li:nth-child(3) { opacity:1; transform:none; transition-delay:0.36s; }
@@ -101,7 +130,7 @@
     /* ─── HERO HEADER ─── */
     .hero {
       position: relative;
-      height: 55vh; min-height: 380px;
+      height: 72vh; min-height: 480px;
       display: flex; flex-direction: column;
       align-items: center; justify-content: center;
       text-align: center; overflow: hidden;
@@ -109,11 +138,11 @@
     .hero-video {
       position: absolute; inset: 0;
       width: 100%; height: 100%;
-      object-fit: contain; z-index: 0;
+      object-fit: contain; z-index: 0; opacity: 0.5;
     }
     .hero-overlay {
       position: absolute; inset: 0;
-      background: rgba(0,0,0,0.55); z-index: 1;
+      background: transparent; z-index: 1;
     }
     .corner-waves {
       position: absolute; top: 0; right: 0;
@@ -141,7 +170,7 @@
       font-family: 'Special Gothic Expanded One', sans-serif;
       font-size: clamp(0.55rem, 1.1vw, 0.72rem);
       letter-spacing: 0.38em; text-transform: uppercase;
-      color: rgba(255,255,255,0.45);
+      color: #ffffff;
     }
 
     /* ─── CONTENT WRAPPER ─── */
@@ -149,13 +178,20 @@
       max-width: 1400px; margin: 0 auto;
       padding: 0 clamp(1.5rem, 5vw, 4rem);
     }
+    .news-grid-wrap { width: 100%; }
 
     /* ─── NEWS GRID ─── */
-    .news-section { background: var(--black); padding: clamp(2rem, 5vh, 4rem) 0 clamp(3rem, 6vh, 5rem); }
+    .news-section {
+      background: var(--black);
+      padding: 0 clamp(1rem, 2vw, 4rem) clamp(3rem, 6vh, 5rem);
+      position: relative; z-index: 3;
+    }
     .news-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: clamp(1rem, 2vw, 1.5rem);
+      grid-template-columns: repeat(3, clamp(250px, 28vw, 350px));
+      gap: clamp(1.5rem, 5vw, 8rem);
+      justify-content: center;
+      position: relative; z-index: 1;
     }
     @media (max-width: 768px) { .news-grid { grid-template-columns: 1fr; } }
 
@@ -165,6 +201,7 @@
       border-radius: 20px; overflow: visible;
       background: var(--white);
       position: relative;
+      will-change: transform;
       transition: box-shadow 0.4s cubic-bezier(0.23,1,0.32,1);
     }
     .news-card:hover { box-shadow: 0 24px 60px rgba(0,0,0,0.5); }
@@ -175,6 +212,7 @@
     .news-thumb-img {
       width: 100%; height: 100%;
       overflow: hidden; border-radius: 20px 20px 0 0;
+      outline: 1px solid #333;
     }
     .news-thumb img {
       width: 100%; height: 100%; object-fit: cover; display: block;
@@ -200,14 +238,93 @@
       font-family: 'Poppins', sans-serif;
       font-size: clamp(0.78rem, 1.2vw, 0.9rem);
       color: var(--black); line-height: 1.55;
+      display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical; overflow: hidden;
     }
     .news-link { text-decoration: underline; }
 
     .news-cta { display: flex; justify-content: center; margin-top: 3rem; }
 
+    /* ─── NEWS MODAL ─── */
+    .news-modal-overlay {
+      position: fixed; inset: 0; z-index: 1000;
+      background: rgba(0,0,0,0.75);
+      backdrop-filter: blur(6px);
+      display: flex; align-items: center; justify-content: center;
+      gap: clamp(1.5rem, 3vw, 3rem);
+      padding: 2rem;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.35s cubic-bezier(0.23,1,0.32,1);
+    }
+    .news-modal-overlay.is-open { opacity: 1; pointer-events: all; }
+    .news-modal {
+      background: var(--white);
+      border-radius: 20px;
+      width: 100%; max-width: 560px;
+      max-height: 88vh;
+      overflow-y: auto;
+      position: relative;
+      transform: translateY(24px) scale(0.97);
+      transition: transform 0.35s cubic-bezier(0.23,1,0.32,1);
+    }
+    .news-modal-overlay.is-open .news-modal { transform: translateY(0) scale(1); }
+    .news-modal-img {
+      width: 100%; aspect-ratio: 1/1;
+      object-fit: cover;
+      border-radius: 20px 20px 0 0;
+      display: block; flex-shrink: 0;
+    }
+    .news-modal-body { padding: 2rem 2rem 2.5rem; }
+    .news-modal-date {
+      font-family: 'Special Gothic Expanded One', sans-serif;
+      font-size: 0.78rem; color: var(--red); margin-bottom: 1rem;
+    }
+    .news-modal-text {
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.95rem; line-height: 1.7; color: var(--black);
+    }
+    .news-modal-close {
+      position: absolute; top: 1rem; right: 1rem;
+      width: 40px; height: 40px; border-radius: 50%;
+      background: rgba(0,0,0,0.6); border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .news-modal-close:hover { background: var(--red); transform: scale(1.1); }
+    .news-modal-close svg { width: 14px; height: 14px; }
+
+    .news-modal-arrow {
+      width: 52px; height: 52px; border-radius: 50%; flex-shrink: 0;
+      background: var(--red); border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: transform 0.2s, background 0.2s;
+    }
+    .news-modal-arrow:hover { background: #c00; transform: scale(1.1); }
+    .news-modal-arrow svg { width: 20px; height: 20px; }
+
+    .news-modal-btn {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      margin-top: 1.5rem;
+      font-family: 'Special Gothic Expanded One', sans-serif;
+      font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--red); text-decoration: none;
+      transition: gap 0.2s, color 0.2s;
+    }
+    .news-modal-btn:hover { gap: 0.8rem; color: var(--black); }
+    .news-modal-btn svg { width: 16px; height: 16px; }
+
+    .news-modal-arrows-row { display: none; }
+    @media (max-width: 640px) {
+      .news-modal-overlay { flex-direction: column; gap: 1rem; padding: 1.5rem 1rem; align-items: center; }
+      .news-modal { order: 1; max-height: 72vh; display: flex; flex-direction: column; }
+      .news-modal-img { flex-shrink: 0; }
+      .news-modal-body { overflow-y: auto; flex: 1; min-height: 6rem; }
+      .news-modal-prev, .news-modal-next { display: none; }
+      .news-modal-arrows-row { display: flex; flex-direction: row; gap: 2rem; order: 2; }
+    }
+
     /* ─── PROJECTS ─── */
     .projects-section { background: var(--black); padding: clamp(4rem, 8vh, 7rem) 0 0; }
-    .projects-header { padding: 0 clamp(1.5rem, 5vw, 4rem); margin-bottom: 1.5rem; }
+    .projects-header { padding: 0 clamp(1.5rem, 5vw, 4rem); margin-bottom: 1.5rem; text-align: center; }
     .section-label {
       font-family: 'Special Gothic Expanded One', sans-serif;
       font-size: 0.6rem; letter-spacing: 0.4em; text-transform: uppercase;
@@ -216,22 +333,22 @@
     .projects-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; }
     @media (max-width: 600px) { .projects-grid { grid-template-columns: 1fr; } }
     .project-card { position: relative; overflow: hidden; cursor: pointer; aspect-ratio: 16/9; }
-    .project-bg { position: absolute; inset: 0; transition: transform 0.6s cubic-bezier(0.23,1,0.32,1); }
+    .project-bg { position: absolute; inset: 0; transition: transform 0.6s cubic-bezier(0.23,1,0.32,1), filter 0.4s cubic-bezier(0.23,1,0.32,1); }
     .project-bg img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .project-card:hover .project-bg { transform: scale(1.05); }
+    .project-card:hover .project-bg { transform: scale(1.05); filter: blur(6px) brightness(0.45); }
     .project-info {
-      position: absolute; bottom: 0; left: 0; right: 0;
-      padding: 1.2rem 1.5rem;
-      background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 50%, transparent 100%);
-      opacity: 0; transform: translateY(8px);
-      transition: opacity 0.35s, transform 0.35s, background 0.4s;
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 1.5rem; text-align: center;
+      opacity: 0; transform: scale(0.95);
+      transition: opacity 0.35s, transform 0.35s;
+      z-index: 2;
     }
-    .project-card:hover .project-info {
-      opacity: 1; transform: translateY(0);
-      background: linear-gradient(to top, rgba(0,0,0,0.97) 0%, rgba(0,0,0,0.55) 50%, transparent 100%);
-    }
+    .project-card:hover .project-info { opacity: 1; transform: scale(1); }
     .project-client { font-family: 'Special Gothic Expanded One', sans-serif; font-size: 0.55rem; letter-spacing: 0.35em; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-bottom: 0.25rem; }
-    .project-name { font-family: 'Special Gothic Expanded One', sans-serif; font-size: clamp(0.85rem, 1.6vw, 1.3rem); text-transform: uppercase; color: var(--white); line-height: 1.1; }
+    .project-name { font-family: 'Special Gothic Expanded One', sans-serif; font-size: clamp(0.9rem, 1.8vw, 1.5rem); text-transform: uppercase; color: var(--white); line-height: 1.1; transition: transform 0.35s cubic-bezier(0.23,1,0.32,1); }
+    .project-card:hover .project-name { transform: scale(1.08); }
 
     .projects-cta {
       display: flex; justify-content: center;
@@ -267,7 +384,7 @@
     /* ─── FOOTER ─── */
     .footer-cta {
       position: relative; overflow: hidden;
-      padding: clamp(8rem, 18vh, 13rem) clamp(1.5rem, 5vw, 4rem) clamp(3rem, 5vh, 4rem);
+      padding: clamp(10rem, 22vh, 16rem) clamp(1.5rem, 5vw, 4rem) clamp(5rem, 8vh, 8rem);
       text-align: center;
       margin-top: clamp(-7rem, -11vw, -14rem);
     }
@@ -287,7 +404,7 @@
     .social-btn { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; transition: transform 0.25s, opacity 0.25s; }
     .social-btn:hover { transform: scale(1.12); opacity: 0.85; }
     .social-btn img { width: 46px; height: 46px; display: block; }
-    .footer-copy { font-size: 0.68rem; letter-spacing: 0.1em; color: rgba(255,255,255,0.18); }
+    .footer-copy { font-size: 0.68rem; letter-spacing: 0.1em; color: rgba(255,255,255,0.18); white-space: nowrap; }
     .drip { position: absolute; pointer-events: none; z-index: 2; }
 
     /* ─── REVEAL ─── */
@@ -300,7 +417,7 @@
 <!-- ═══ NAV ═══ -->
 <nav id="main-nav">
   <a href="index.html" class="nav-logo">
-    <img src="assets/favicon.svg" alt="ENDLESS" class="nav-logo-img"/>
+    <img src="assets/logo.svg" alt="ENDLESS" class="nav-logo-img"/>
   </a>
   <div class="nav-menu-btn" id="menu-toggle" role="button" aria-label="Menu" aria-expanded="false">
     <div class="hamburger"><span></span><span></span><span></span></div>
@@ -338,7 +455,7 @@
 <!-- ═══ HERO ═══ -->
 <section class="hero">
   <video class="hero-video" autoplay muted loop playsinline>
-    <source src="assets/bg_octopus.mp4" type="video/mp4"/>
+    <source src="assets/BG_video/bg_octopus_2_new.mp4" type="video/mp4"/>
   </video>
   <div class="hero-overlay"></div>
   <img class="corner-waves" src="assets/top_wave.svg" alt="" aria-hidden="true"/>
@@ -346,19 +463,20 @@
     <h1 class="hero-title">
       <picture>
         <source srcset="assets/h1_co_slychac_mobile.svg" media="(max-width: 600px)"/>
-        <img src="assets/h1_co_slychac.svg" alt="CO SŁYCHAĆ" style="width:clamp(200px,45vw,700px);height:auto;display:block;margin:0 auto;"/>
+        <img src="assets/h1_co_slychac.svg" alt="CO SŁYCHAĆ" style="width:clamp(260px,60vw,900px);height:auto;display:block;margin:0 auto;"/>
       </picture>
     </h1>
     <p class="hero-sub reveal" style="transition-delay:0.2s">Zobcz co u nas się dzieje</p>
   </div>
 </section>
-
 <!-- ═══ NEWS ═══ -->
 <section class="news-section">
+  <img style="position:absolute;right:3%;top:0%;width:clamp(120px,16vw,220px);z-index:0;pointer-events:none;" src="assets/yellow_element_2.png" alt="" aria-hidden="true"/>
+  <img style="position:absolute;left:0%;top:40%;width:clamp(150px,20vw,300px);z-index:0;pointer-events:none;" src="assets/yellow_element_6.png" alt="" aria-hidden="true"/>
   <div class="content-wrap">
-  <div class="news-grid">
+  <div class="news-grid-wrap"><div class="news-grid">
 
-    <a class="news-card reveal" href="#">
+    <a class="news-card" href="#">
       <div class="news-thumb">
         <div class="news-thumb-img"><img src="assets/news_1.png" alt=""></div>
         <div class="news-thumb-arrow">
@@ -371,7 +489,7 @@
       </div>
     </a>
 
-    <a class="news-card reveal" href="#" style="transition-delay:0.08s">
+    <a class="news-card" href="#" style="transition-delay:0.08s">
       <div class="news-thumb">
         <div class="news-thumb-img"><img src="assets/news_2.png" alt=""></div>
         <div class="news-thumb-arrow">
@@ -384,7 +502,7 @@
       </div>
     </a>
 
-    <a class="news-card reveal" href="#" style="transition-delay:0.16s">
+    <a class="news-card" href="#" style="transition-delay:0.16s">
       <div class="news-thumb">
         <div class="news-thumb-img"><img src="assets/news_3.png" alt=""></div>
         <div class="news-thumb-arrow">
@@ -397,90 +515,119 @@
       </div>
     </a>
 
-    <a class="news-card reveal" href="#" style="transition-delay:0.08s">
+    <a class="news-card" href="#" style="transition-delay:0.08s">
       <div class="news-thumb">
-        <div class="news-thumb-img"><img src="assets/news_1.png" alt=""></div>
+        <div class="news-thumb-img"><img src="assets/news/news_4.jpg" alt=""></div>
         <div class="news-thumb-arrow">
           <svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/><style>path{stroke:white;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}</style></svg>
         </div>
       </div>
       <div class="news-body">
         <div class="news-date">12.06.2026</div>
-        <div class="news-title">Pierwsza i na pewno nie ostatnia produkcja full AI Endless! Nasza praca z AI to jednak dużo więcej niż samo promptowanie. Tak jak przy każdej produkcji, zaczęliśmy od scenariusza, znaleźliśmy reżysera (dzięki, <span class="news-link">Mikołaj Sadowski</span> 🙌), przeszliśmy przez…</div>
+        <div class="news-title">Agencja Endless poszerza swój dział kreacji. Do zespołu dołącza Piotr Fuk, jeden z najbardziej doświadczonych art directorów na polskim rynku. Obejmując stanowisko senior art directora, będzie współpracował z Renatą Carenzo zarówno przy bieżących projektach, jak i w procesach przetargowych.</div>
       </div>
     </a>
 
-    <a class="news-card reveal" href="#" style="transition-delay:0.16s">
+    <a class="news-card" href="#" style="transition-delay:0.16s">
       <div class="news-thumb">
-        <div class="news-thumb-img"><img src="assets/news_2.png" alt=""></div>
+        <div class="news-thumb-img"><img src="assets/news/news_5.jpg" alt=""></div>
         <div class="news-thumb-arrow">
           <svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/><style>path{stroke:white;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}</style></svg>
         </div>
       </div>
       <div class="news-body">
         <div class="news-date">12.06.2026</div>
-        <div class="news-title">Cieszymy się, że razem ze <span class="news-link">Sporting Agency</span> zaczynamy współpracę przy projekcie dla <span class="news-link">Superbet</span>! Szczegóły już niedługo!</div>
+        <div class="news-title">W naszej branży mawia się jednak zasady są po to by je łamać, chrupać a potem przeżuwać. Dlatego tym bardziej cieszy nas, że kampania launchująca Flamin' Hot, do której współtworzenia zaprosiło nas @ddb_warszawa, znalazła się wśród 50 najbardziej innowacyjnych projektów roku! 🔥</div>
       </div>
     </a>
 
-    <a class="news-card reveal" href="#" style="transition-delay:0.24s">
+    <a class="news-card" href="#" style="transition-delay:0.24s">
       <div class="news-thumb">
-        <div class="news-thumb-img"><img src="assets/news_3.png" alt=""></div>
+        <div class="news-thumb-img"><img src="assets/news/news_6.jpg" alt=""></div>
         <div class="news-thumb-arrow">
           <svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/><style>path{stroke:white;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}</style></svg>
         </div>
       </div>
       <div class="news-body">
         <div class="news-date">12.06.2026</div>
-        <div class="news-title">Duma to mało powiedziane. Współtworzenie kampanii dla Ministerstwa Cyfryzacji — <span class="news-link">Ministerstwo Cyfryzacji</span>, która porusza tak ważny temat reprezentacji kobiet w zawodach cyfrowych, to dla nas coś więcej niż kolejny projekt.</div>
+        <div class="news-title">poznajcie naszą nową zawodniczkę – Magdę. dołącza do zespołu @endless_warsaw jako dizajnerka i już zdążyła rozkręcić tu dobra energię</div>
       </div>
     </a>
 
-    <a class="news-card reveal" href="#" style="transition-delay:0.16s">
+    <a class="news-card" href="#" style="transition-delay:0.16s">
       <div class="news-thumb">
-        <div class="news-thumb-img"><img src="assets/news_1.png" alt=""></div>
+        <div class="news-thumb-img"><img src="assets/news/news_7.jpg" alt=""></div>
         <div class="news-thumb-arrow">
           <svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/><style>path{stroke:white;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}</style></svg>
         </div>
       </div>
       <div class="news-body">
         <div class="news-date">12.06.2026</div>
-        <div class="news-title">Pierwsza i na pewno nie ostatnia produkcja full AI Endless! Nasza praca z AI to jednak dużo więcej niż samo promptowanie. Tak jak przy każdej produkcji, zaczęliśmy od scenariusza, znaleźliśmy reżysera (dzięki, <span class="news-link">Mikołaj Sadowski</span> 🙌), przeszliśmy przez…</div>
+        <div class="news-title">Ten rok to pasmo sukcesów: zaczęliśmy od wygranej platformy komunikacyjnej dla NASK i już postawiliśmy dwie kampanie o bezpieczeństwie w sieci. A następnie dorzuciliśmy do tego przetarg dla Ministerstwa Cyfryzacji – mocne potwierdzenie, że w tematach społecznych i cyfrowych gramy w pierwszej lidze.</div>
       </div>
     </a>
 
-    <a class="news-card reveal" href="#" style="transition-delay:0.24s">
+    <a class="news-card" href="#" style="transition-delay:0.24s">
       <div class="news-thumb">
-        <div class="news-thumb-img"><img src="assets/news_2.png" alt=""></div>
+        <div class="news-thumb-img"><img src="assets/news/news_8.jpg" alt=""></div>
         <div class="news-thumb-arrow">
           <svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/><style>path{stroke:white;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}</style></svg>
         </div>
       </div>
       <div class="news-body">
         <div class="news-date">12.06.2026</div>
-        <div class="news-title">Cieszymy się, że razem ze <span class="news-link">Sporting Agency</span> zaczynamy współpracę przy projekcie dla <span class="news-link">Superbet</span>! Szczegóły już niedługo!</div>
+        <div class="news-title">Z dumą dzielimy się podsumowaniem naszego roku w raporcie Panorama Reklamy Press 2025. 5 łapek – drugi rok z rzędu! To dla nas potwierdzenie, że konsekwentny rozwój, wzmacnianie kompetencji kreatywnych i technologicznych oraz inwestycje w AI i produkcję contentu idą w dobrym kierunku.</div>
       </div>
     </a>
 
-    <a class="news-card reveal" href="#" style="transition-delay:0.32s">
+    <a class="news-card" href="#" style="transition-delay:0.32s">
       <div class="news-thumb">
-        <div class="news-thumb-img"><img src="assets/news_3.png" alt=""></div>
+        <div class="news-thumb-img"><img src="assets/news/news_9.jpg" alt=""></div>
         <div class="news-thumb-arrow">
           <svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/><style>path{stroke:white;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}</style></svg>
         </div>
       </div>
       <div class="news-body">
         <div class="news-date">12.06.2026</div>
-        <div class="news-title">Duma to mało powiedziane. Współtworzenie kampanii dla Ministerstwa Cyfryzacji — <span class="news-link">Ministerstwo Cyfryzacji</span>, która porusza tak ważny temat reprezentacji kobiet w zawodach cyfrowych, to dla nas coś więcej niż kolejny projekt.</div>
+        <div class="news-title">Kontynuujemy przedstawianie członków naszego zespołu przez pryzmat ich gustu. Dziś swoje rekomendacje – piosenki, filmu i książki – dzieli się Dagmara Balcer, Junior Account Managerka.</div>
       </div>
     </a>
 
-  </div>
+  </div></div><!-- /news-grid-wrap -->
   <div class="news-cta reveal">
     <a href="#" class="btn-pill"><span class="btn-spacer"></span><span>WIĘCEJ</span><img class="btn-arrow-img" src="assets/arrow.svg" alt=""></a>
   </div>
   </div><!-- /content-wrap -->
 </section>
+
+<!-- ═══ NEWS MODAL ═══ -->
+<div class="news-modal-overlay" id="newsModal" role="dialog" aria-modal="true">
+  <button class="news-modal-arrow news-modal-prev" id="newsModalPrev" aria-label="Poprzednia">
+    <svg viewBox="0 0 20 20" fill="none"><path d="M13 4l-6 6 6 6" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+  <div class="news-modal">
+    <img class="news-modal-img" id="newsModalImg" src="" alt="">
+    <div class="news-modal-body">
+      <div class="news-modal-date" id="newsModalDate"></div>
+      <div class="news-modal-text" id="newsModalText"></div>
+      <a href="#" class="news-modal-btn" id="newsModalBtn">Więcej <svg viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+    </div>
+    <button class="news-modal-close" id="newsModalClose" aria-label="Zamknij">
+      <svg viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+  <button class="news-modal-arrow news-modal-next" id="newsModalNext" aria-label="Następna">
+    <svg viewBox="0 0 20 20" fill="none"><path d="M7 4l6 6-6 6" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+  <div class="news-modal-arrows-row">
+    <button class="news-modal-arrow" id="newsModalPrevMobile" aria-label="Poprzednia">
+      <svg viewBox="0 0 20 20" fill="none"><path d="M13 4l-6 6 6 6" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <button class="news-modal-arrow" id="newsModalNextMobile" aria-label="Następna">
+      <svg viewBox="0 0 20 20" fill="none"><path d="M7 4l6 6-6 6" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+</div>
 
 <!-- ═══ WYBRANE PROJEKTY ═══ -->
 <section class="projects-section">
@@ -543,8 +690,8 @@
     <source src="assets/footer.mp4" type="video/mp4"/>
   </video>
   <div class="footer-overlay"></div>
-  <img class="drip" style="right:3%;top:3%;width:clamp(90px,12vw,160px);" src="assets/yellow_element_3.png" alt="" aria-hidden="true">
-  <img class="drip" style="left:1.5%;bottom:6%;width:clamp(120px,18vw,240px);" src="assets/yellow_element_4.png" alt="" aria-hidden="true">
+  <img class="drip" style="right:3%;top:3%;width:clamp(90px,12vw,160px);" src="assets/yellow_element_5.png" alt="" aria-hidden="true">
+  <img class="drip" style="left:1.5%;bottom:6%;width:clamp(120px,18vw,240px);" src="assets/yellow_element_6.png" alt="" aria-hidden="true">
   <div class="footer-content">
     <div class="footer-avatar"><img src="assets/tomek_bottom.jpg" alt=""></div>
     <h2 class="footer-title reveal">MASZ PYTANIA?<br/>NAPISZ LUB ZADZWOŃ!</h2>
@@ -597,6 +744,171 @@ menuToggle.addEventListener('click', () => menuOverlay.classList.contains('is-op
 menuClose.addEventListener('click', closeMenu);
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
 
+/* News rows vertical convergence */
+const newsCards = Array.from(document.querySelectorAll('.news-card'));
+const newsRowCount = Math.ceil(newsCards.length / 3);
+const ROW_PUSH = 180;
+const COL_OFFSET = [-120, 0, 120]; // left higher, right lower
+let rowNaturalTops = [];
+
+function getAbsoluteTop(el) {
+  let top = 0;
+  while (el) { top += el.offsetTop; el = el.offsetParent; }
+  return top;
+}
+function initRowTops() {
+  rowNaturalTops = [];
+  for (let r = 0; r < newsRowCount; r++) {
+    const anchor = newsCards[r * 3 + 1] || newsCards[r * 3];
+    rowNaturalTops.push(getAbsoluteTop(anchor));
+  }
+}
+
+function updateNewsStagger() {
+  if (!newsCards.length) return;
+  const vH = window.innerHeight;
+  for (let r = 0; r < newsRowCount; r++) {
+    const naturalTop = rowNaturalTops[r] || 0;
+    const rowInView = naturalTop - window.scrollY;
+    // p=0: row at viewport bottom; p=1: row top at 20% from top
+    const p = Math.max(0, Math.min(1, (vH - rowInView) / (vH * 0.8)));
+    const ty = ROW_PUSH * (1 - p);
+    for (let col = 0; col < 3; col++) {
+      const card = newsCards[r * 3 + col];
+      if (card) card.style.transform = `translateY(${ty + COL_OFFSET[col] * (1 - p)}px)`;
+    }
+  }
+}
+
+let entranceExtra = 0;
+let entranceDone = false;
+
+const ENTRANCE_DELAYS = [0, 180, 340]; // ms per column
+
+function runEntrance() {
+  const start = performance.now();
+  const DURATION = 1000;
+  const EXTRA = 140;
+  // per-card extra offsets during entrance
+  const cardExtra = [EXTRA, EXTRA, EXTRA];
+
+  // hide all row-0 cards before their turn
+  for (let col = 0; col < 3; col++) {
+    if (newsCards[col]) newsCards[col].style.opacity = '0';
+  }
+
+  function frame(now) {
+    let allDone = true;
+    for (let col = 0; col < 3; col++) {
+      const elapsed = now - start - ENTRANCE_DELAYS[col];
+      const t = Math.max(0, Math.min(1, elapsed / DURATION));
+      const ease = 1 - Math.pow(1 - t, 3);
+      cardExtra[col] = EXTRA * (1 - ease);
+      if (t < 1) allDone = false;
+    }
+
+    const vH = window.innerHeight;
+    const naturalTop = rowNaturalTops[0] || 0;
+    const rowInView = naturalTop - window.scrollY;
+    const p = Math.max(0, Math.min(1, (vH - rowInView) / (vH * 0.8)));
+    const rowTy = ROW_PUSH * (1 - p);
+    for (let col = 0; col < 3; col++) {
+      const card = newsCards[col];
+      if (!card) continue;
+      const elapsed = now - start - ENTRANCE_DELAYS[col];
+      const t = Math.max(0, Math.min(1, elapsed / DURATION));
+      card.style.opacity = t > 0 ? '1' : '0';
+      card.style.transform = `translateY(${rowTy + cardExtra[col] + COL_OFFSET[col] * (1 - p)}px)`;
+    }
+
+    if (!allDone) requestAnimationFrame(frame);
+    else { entranceDone = true; }
+  }
+  requestAnimationFrame(frame);
+}
+
+function updateNewsStagger() {
+  if (!newsCards.length) return;
+  const vH = window.innerHeight;
+  for (let r = 0; r < newsRowCount; r++) {
+    const naturalTop = rowNaturalTops[r] || 0;
+    const rowInView = naturalTop - window.scrollY;
+    const p = Math.max(0, Math.min(1, (vH - rowInView) / (vH * 0.8)));
+    const ty = ROW_PUSH * (1 - p) + (r === 0 ? entranceExtra : 0);
+    for (let col = 0; col < 3; col++) {
+      const card = newsCards[r * 3 + col];
+      if (card) card.style.transform = `translateY(${ty + COL_OFFSET[col] * (1 - p)}px)`;
+    }
+  }
+}
+
+/* News modal */
+(function() {
+  const overlay = document.getElementById('newsModal');
+  const modalImg = document.getElementById('newsModalImg');
+  const modalDate = document.getElementById('newsModalDate');
+  const modalText = document.getElementById('newsModalText');
+  const closeBtn = document.getElementById('newsModalClose');
+  const prevBtn = document.getElementById('newsModalPrev');
+  const nextBtn = document.getElementById('newsModalNext');
+  const prevMobile = document.getElementById('newsModalPrevMobile');
+  const nextMobile = document.getElementById('newsModalNextMobile');
+  const newsCards = Array.from(document.querySelectorAll('.news-card'));
+  let currentIndex = 0;
+
+  function openModal(index) {
+    const card = newsCards[index];
+    const img = card.querySelector('.news-thumb-img img');
+    const date = card.querySelector('.news-date');
+    const title = card.querySelector('.news-title');
+    modalImg.src = img ? img.src : '';
+    modalDate.textContent = date ? date.textContent : '';
+    modalText.textContent = title ? title.textContent : '';
+    currentIndex = index;
+    prevBtn.style.opacity = index === 0 ? '0.3' : '1';
+    nextBtn.style.opacity = index === newsCards.length - 1 ? '0.3' : '1';
+    prevMobile.style.opacity = index === 0 ? '0.3' : '1';
+    nextMobile.style.opacity = index === newsCards.length - 1 ? '0.3' : '1';
+    overlay.classList.add('is-open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    overlay.classList.remove('is-open');
+    document.body.style.overflow = '';
+  }
+
+  newsCards.forEach((card, i) => {
+    card.addEventListener('click', e => { e.preventDefault(); openModal(i); });
+  });
+
+  prevBtn.addEventListener('click', () => { if (currentIndex > 0) openModal(currentIndex - 1); });
+  nextBtn.addEventListener('click', () => { if (currentIndex < newsCards.length - 1) openModal(currentIndex + 1); });
+  prevMobile.addEventListener('click', () => { if (currentIndex > 0) openModal(currentIndex - 1); });
+  nextMobile.addEventListener('click', () => { if (currentIndex < newsCards.length - 1) openModal(currentIndex + 1); });
+  closeBtn.addEventListener('click', closeModal);
+  overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+  document.addEventListener('keydown', e => {
+    if (!overlay.classList.contains('is-open')) return;
+    if (e.key === 'Escape') closeModal();
+    if (e.key === 'ArrowLeft' && currentIndex > 0) openModal(currentIndex - 1);
+    if (e.key === 'ArrowRight' && currentIndex < newsCards.length - 1) openModal(currentIndex + 1);
+  });
+})();
+
+window.addEventListener('scroll', updateNewsStagger, { passive: true });
+window.addEventListener('load', () => {
+  initRowTops(); runEntrance();
+  const el = document.getElementById('press-yellow2');
+  const hero = document.querySelector('.hero');
+  if (el && hero) {
+    const heroBottom = hero.getBoundingClientRect().bottom + window.scrollY;
+    el.style.top = (heroBottom - el.offsetHeight * 0.55) + 'px';
+  }
+});
+initRowTops();
+updateNewsStagger();
+
 /* Current page */
 const currentPath = location.pathname.split('/').pop() || 'index.html';
 document.querySelectorAll('.menu-links a, .menu-brand').forEach(a => {
@@ -605,6 +917,7 @@ document.querySelectorAll('.menu-links a, .menu-brand').forEach(a => {
   const href = raw.split('/').pop().split('#')[0] || 'index.html';
   if (href === currentPath) a.classList.add('current');
 });
+document.querySelectorAll(".project-card").forEach(card => { card.style.cursor = "pointer"; card.addEventListener("click", () => { window.location.href = "buduj-cyfrowa-forme.html"; }); });
 </script>
 </body>
 </html>

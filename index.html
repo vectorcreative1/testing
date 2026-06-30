@@ -18,7 +18,7 @@
       --yellow:#f3e600;
     }
 
-    html { scroll-behavior: smooth; margin: 0; padding: 0; overflow-y: scroll; }
+    html { scroll-behavior: smooth; margin: 0; padding: 0; overflow-x: hidden; overflow-y: scroll; }
 
     body {
       margin: 0; padding: 0;
@@ -41,15 +41,23 @@
     .nav-logo-img { height: 38px; width: auto; display: block; }
     .nav-menu-btn {
       width: 56px; height: 56px; border-radius: 50%;
-      background: radial-gradient(circle at 38% 35%, rgba(80,110,160,0.55) 0%, rgba(10,10,20,0.75) 55%, rgba(0,0,0,0.85) 100%);
-      border: 1px solid rgba(255,255,255,0.18);
-      backdrop-filter: blur(18px) saturate(1.4); -webkit-backdrop-filter: blur(18px) saturate(1.4);
-      box-shadow: inset 0 1px 1px rgba(255,255,255,0.2), inset 0 -1px 2px rgba(0,0,0,0.6), 0 8px 32px rgba(0,0,0,0.4);
+      background:
+        radial-gradient(circle at 30% 25%, rgba(255,255,255,0.25) 0%, transparent 50%),
+        linear-gradient(145deg, rgba(80,80,110,0.45) 0%, rgba(10,10,20,0.65) 60%, rgba(0,0,0,0.8) 100%);
+      border: none;
+      backdrop-filter: blur(6px) saturate(4) brightness(1.35) contrast(0.8) hue-rotate(5deg);
+      -webkit-backdrop-filter: blur(6px) saturate(4) brightness(1.35) contrast(0.8) hue-rotate(5deg);
+      box-shadow:
+        inset 0 2px 3px rgba(255,255,255,0.6),
+        inset 0 -2px 6px rgba(0,0,0,0.2),
+        0 0 0 1.5px rgba(255,255,255,0.55),
+        0 0 0 3px rgba(255,255,255,0.08),
+        0 4px 24px rgba(0,0,0,0.35);
       display: flex; align-items: center; justify-content: center;
-      cursor: pointer; transition: transform 0.2s, background 0.3s;
+      cursor: pointer; transition: transform 0.2s, box-shadow 0.3s;
     }
     .menu-open.nav-menu-btn { background: var(--black); border-color: transparent; backdrop-filter: none; -webkit-backdrop-filter: none; }
-    .nav-menu-btn:hover { transform: scale(1.06); }
+    .nav-menu-btn:hover { transform: scale(1.06); box-shadow: inset 0 2px 3px rgba(255,255,255,0.7), inset 0 -2px 6px rgba(0,0,0,0.2), 0 0 0 1.5px rgba(255,255,255,0.8), 0 0 0 4px rgba(255,255,255,0.12), 0 6px 30px rgba(0,0,0,0.4); }
     .hamburger { display: flex; flex-direction: column; gap: 5px; }
     .hamburger span { display: block; height: 1.5px; background: var(--white); transition: width 0.3s cubic-bezier(0.23,1,0.32,1), transform 0.35s cubic-bezier(0.23,1,0.32,1), opacity 0.3s; }
     .hamburger span:nth-child(1) { width: 22px; }
@@ -80,7 +88,7 @@
       border-radius: 28px;
       overflow: hidden;
       box-shadow: 0 32px 80px rgba(0,0,0,0.5);
-      height: 82vh; min-height: 500px;
+      height: calc(100vh - clamp(1.6rem, 3vw, 3rem)); min-height: 500px;
       display: flex; align-items: center;
     }
     .menu-bg-img {
@@ -168,30 +176,52 @@
 
     @media (max-width: 640px) {
       .menu-photo { display: none; }
-      .menu-panel { padding: 2.5rem 2rem 3rem; }
       .menu-lower { flex-direction: column; gap: 2rem; }
-      .menu-contact { min-width: unset; }
-      .menu-links a { font-size: clamp(2.4rem, 10vw, 3.2rem); }
+      .menu-contact { min-width: unset; padding-top: 0; }
+      .menu-links a, .menu-brand { font-size: clamp(2.4rem, 10vw, 3.2rem); }
+      .btn-pill { min-width: 280px !important; font-size: 1.1rem !important; padding: 1rem 1.4rem 1rem 2rem !important; }
+      .menu-shell { align-items: flex-start; height: auto; overflow-y: auto; }
+      .menu-inner { padding-top: 5rem; }
+      .menu-panel { padding: 2.5rem 2rem 3rem; flex-direction: column; gap: 2rem; }
+      .hero-title { font-size: clamp(4.5rem, 28vw, 7rem); }
+      .hero { justify-content: flex-end !important; padding-bottom: 2rem; }
+      .hero-title img { width: 74vw !important; margin-bottom: 0.5rem; }
+      .hero { justify-content: center !important; padding-bottom: 0; }
+      .hero-content { margin-top: 15vh; }
+      .hero-sub { font-size: clamp(0.5rem, 2.8vw, 0.65rem); margin-top: 8rem; white-space: normal; padding: 0 8vw; text-align: center; }
+      .hero-video { inset: auto !important; top: 50% !important; left: 0 !important; right: 0 !important; bottom: auto !important; transform: translateY(-65%) !important; width: 90% !important; left: 5% !important; height: auto !important; object-fit: contain !important; }
+      .hero-overlay { display: none; }
+      .logo-item img { height: clamp(75px, 22vw, 110px) !important; }
+      .hero-yellow-top { right: 13% !important; }
+      .contact-sep { display: none !important; }
+      .footer-title { font-size: 30px !important; }
+      .footer-contacts { flex-direction: column; gap: 0.5rem; align-items: center; }
+      .footer-contacts .contact-phone-email { text-align: center !important; margin-bottom: -0.8rem; }
+      .footer-contacts .contact-address { text-align: center !important; margin-top: -0.8rem; }
+      .footer-contacts a, .footer-contacts address { font-size: 22px !important; text-align: center; }
+      .footer-copy { text-align: center; }
     }
 
     /* ─── HERO ─── */
     .hero {
       position: relative;
-      height: 85vh; min-height: 560px;
+      height: calc(95vh - clamp(1.6rem, 3vw, 3rem)); min-height: 560px;
       display: flex; flex-direction: column;
       align-items: center; justify-content: center;
       text-align: center;
       overflow: hidden;
     }
     .hero-video {
-      position: absolute; inset: 0;
-      width: 100%; height: 100%;
-      object-fit: cover;
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 60%; height: auto;
+      object-fit: contain;
       z-index: 0;
     }
     .hero-overlay {
       position: absolute; inset: 0;
-      background: rgba(0,0,0,0.55);
+      background: rgba(0,0,0,0.25);
       z-index: 1;
     }
     .corner-waves {
@@ -219,6 +249,16 @@
       from { opacity: 0; transform: translateY(50px); }
       to   { opacity: 1; transform: translateY(0); }
     }
+    @keyframes showreelTextIn {
+      from { opacity: 0; transform: translateX(-120px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    #showreel-float { opacity: 0; }
+    .showreel-card-clip { overflow: hidden; border-radius: 48px; }
+    .showreel-card-wrap { }
+    #showreel-float.anim-in {
+      animation: showreelTextIn 0.9s cubic-bezier(0.23,1,0.32,1) both;
+    }
     .hero-title {
       font-family: 'Special Gothic Expanded One', sans-serif;
       font-size: clamp(2.5rem, 7.5vw, 7rem);
@@ -228,12 +268,13 @@
       margin-top: 2rem;
       animation: heroSlideIn 0.9s cubic-bezier(0.23,1,0.32,1) 0.15s both;
     }
+    .hero-sub br { display: none; }
     .hero-sub {
       margin-top: 1.5rem;
       font-family: 'Special Gothic Expanded One', sans-serif;
       font-size: clamp(0.55rem, 1.1vw, 0.72rem);
       letter-spacing: 0.38em; text-transform: uppercase;
-      color: rgba(255,255,255,0.45);
+      color: #ffffff;
     }
     .scroll-hint {
       position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
@@ -262,35 +303,33 @@
     }
     .showreel-black-area {
       background: var(--black);
-      min-height: 0;
       padding: 0;
       margin-bottom: -7vw;
       overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
+      /* height set by JS to match text */
     }
     .parallax-text-wrap {
       overflow: hidden;
       pointer-events: none;
-      margin-bottom: 0;
+      line-height: 0;
+      font-size: 0;
     }
     .parallax-text {
       font-family: 'Special Gothic Expanded One', sans-serif;
       font-size: clamp(7rem, 20vw, 18rem);
-      letter-spacing: -0.02em; text-transform: uppercase;
+      letter-spacing: -0.07em; text-transform: uppercase;
       white-space: nowrap;
       display: inline-block;
+      vertical-align: top;
       will-change: transform;
-      line-height: 0.9;
+      line-height: 0.85;
     }
-    .parallax-text.red  { color: var(--red); }
     .parallax-text.dark { color: var(--black); }
 
     /* card zone sits on the boundary black→white */
     .showreel-card-zone {
       position: relative;
-      z-index: 2;
+      z-index: 10;
       display: flex;
       justify-content: center;
       padding: 0 clamp(1.5rem, 5vw, 4rem) clamp(1rem, 2vw, 2rem);
@@ -303,7 +342,7 @@
       position: relative;
       width: 100%;
       aspect-ratio: 16/9;
-      border-radius: 14px; overflow: hidden;
+      border-radius: 48px; overflow: hidden;
       background: #0a0a14;
       cursor: pointer;
       box-shadow: 0 40px 100px rgba(0,0,0,0.5);
@@ -343,7 +382,7 @@
       left: clamp(1rem, 4vw, 5rem);
       top: 10%;
       transform: translateY(0);
-      width: clamp(90px, 14vw, 180px);
+      width: clamp(120px, 18vw, 260px);
       pointer-events: none;
       z-index: 4;
     }
@@ -355,8 +394,8 @@
     /* ─── ABOUT ─── */
     .about-section {
       background: var(--white);
-      padding: clamp(0.5rem, 2vh, 2rem) 0 clamp(4rem, 10vh, 7rem);
-      overflow: hidden;
+      padding: clamp(4rem, 8vh, 7rem) 0 clamp(4rem, 10vh, 7rem);
+      overflow: visible;
       position: relative;
     }
     .about-content {
@@ -366,7 +405,7 @@
     }
     .about-text {
       max-width: 640px;
-      text-align: center;
+      text-align: justify;
       font-size: clamp(0.9rem, 1.4vw, 1rem);
       color: rgba(0,0,0,0.55);
       line-height: 1.9;
@@ -383,7 +422,6 @@
     .team-section {
       background: var(--white);
       padding: clamp(4rem, 8vh, 7rem) clamp(1.5rem, 5vw, 4rem) 0;
-      overflow: hidden;
     }
     .section-label {
       font-family: 'Special Gothic Expanded One', sans-serif;
@@ -396,10 +434,12 @@
     .team-gif-wrap {
       width: 100vw;
       margin-left: calc(-1 * clamp(1.5rem, 5vw, 4rem));
+      position: relative;
     }
     .team-gif {
       width: 100%; height: auto;
       display: block;
+      position: relative; z-index: 1;
     }
 
     .team-names {
@@ -455,14 +495,12 @@
       flex-shrink: 0;
     }
     .logo-item {
-      padding: 0 clamp(0.8rem, 2vw, 1.8rem);
+      padding: 0 clamp(1rem, 2.5vw, 2.2rem);
       flex-shrink: 0;
-      opacity: 0.7;
-      transition: opacity 0.3s;
+      pointer-events: none;
     }
-    .logo-item:hover { opacity: 0.9; }
     .logo-item img {
-      height: clamp(50px, 7vw, 90px);
+      height: clamp(70px, 11vw, 140px);
       width: auto;
       display: block;
     }
@@ -474,11 +512,12 @@
     }
     .news-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1.5rem; margin-top: 3rem;
-      max-width: 1100px; margin-left: auto; margin-right: auto;
+      grid-template-columns: repeat(3, clamp(250px, 28vw, 350px));
+      gap: clamp(1.5rem, 5vw, 8rem);
+      justify-content: center;
+      margin-top: 3rem;
     }
-    @media (max-width: 600px) { .news-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 600px) { .news-grid { grid-template-columns: clamp(200px, 93vw, 400px); } }
 
     .news-card {
       display: flex; flex-direction: column;
@@ -486,8 +525,8 @@
       border-radius: 20px; overflow: visible;
       background: var(--white);
       position: relative;
-      transition: transform 0.4s cubic-bezier(0.23,1,0.32,1),
-                  box-shadow 0.4s cubic-bezier(0.23,1,0.32,1);
+      will-change: transform;
+      transition: box-shadow 0.4s cubic-bezier(0.23,1,0.32,1);
     }
     .news-card:hover {
       box-shadow: 0 24px 60px rgba(0,0,0,0.5);
@@ -500,6 +539,7 @@
       width: 100%; height: 100%;
       overflow: hidden;
       border-radius: 20px 20px 0 0;
+      outline: 1px solid #333;
     }
     .news-thumb img {
       width: 100%; height: 100%; object-fit: cover; display: block;
@@ -507,7 +547,6 @@
     }
     .news-card:hover .news-thumb img { transform: scale(1.04); }
 
-    /* arrow button on thumb/body boundary */
     .news-thumb-arrow {
       position: absolute; right: 1.1rem; bottom: -22px;
       width: 44px; height: 44px; border-radius: 50%;
@@ -520,21 +559,96 @@
     .news-card:hover .news-thumb-arrow { background: #c00; transform: scale(1.1); }
     .news-thumb-arrow svg { fill: white; width: 16px; height: 16px; }
 
-    .news-body {
-      padding: 1.6rem 1.4rem 1.4rem;
-      flex: 1;
-    }
+    .news-body { padding: 2rem 1.3rem 1.5rem; flex: 1; }
     .news-date {
-      font-size: 0.78rem; font-weight: 600;
-      color: var(--red); margin-bottom: 0.7rem;
-      letter-spacing: 0.01em;
+      font-family: 'Special Gothic Expanded One', sans-serif;
+      font-size: 0.78rem; color: var(--red); margin-bottom: 0.6rem;
     }
     .news-title {
-      font-size: 0.88rem; line-height: 1.6;
-      color: #111;
+      font-family: 'Poppins', sans-serif;
+      font-size: clamp(0.78rem, 1.2vw, 0.9rem);
+      color: var(--black); line-height: 1.55;
+      display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical; overflow: hidden;
     }
     .news-link { text-decoration: underline; }
     .news-cta { display: flex; justify-content: center; margin-top: 3rem; }
+
+    /* ─── NEWS MODAL ─── */
+    .news-modal-overlay {
+      position: fixed; inset: 0; z-index: 1000;
+      background: rgba(0,0,0,0.75);
+      backdrop-filter: blur(6px);
+      display: flex; align-items: center; justify-content: center;
+      gap: clamp(1.5rem, 3vw, 3rem);
+      padding: 2rem;
+      overflow-y: auto;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.35s cubic-bezier(0.23,1,0.32,1);
+    }
+    .news-modal-overlay.is-open { opacity: 1; pointer-events: all; }
+    .news-modal {
+      background: var(--white);
+      border-radius: 20px;
+      width: 100%; max-width: 560px;
+      position: relative;
+      transform: translateY(24px) scale(0.97);
+      transition: transform 0.35s cubic-bezier(0.23,1,0.32,1);
+    }
+    .news-modal-overlay.is-open .news-modal { transform: translateY(0) scale(1); }
+    .news-modal-img {
+      width: 100%; aspect-ratio: 1/1;
+      object-fit: cover;
+      border-radius: 20px 20px 0 0;
+      display: block;
+      flex-shrink: 0;
+    }
+    .news-modal-body { padding: 2rem 2rem 2.5rem; }
+    .news-modal-date {
+      font-family: 'Special Gothic Expanded One', sans-serif;
+      font-size: 0.78rem; color: var(--red); margin-bottom: 1rem;
+    }
+    .news-modal-text {
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.95rem; line-height: 1.7; color: var(--black);
+    }
+    .news-modal-close {
+      position: absolute; top: 1rem; right: 1rem;
+      width: 40px; height: 40px; border-radius: 50%;
+      background: rgba(0,0,0,0.6); border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .news-modal-close:hover { background: var(--red); transform: scale(1.1); }
+    .news-modal-close svg { width: 14px; height: 14px; }
+
+    .news-modal-arrow {
+      width: 52px; height: 52px; border-radius: 50%; flex-shrink: 0;
+      background: var(--red); border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: transform 0.2s, background 0.2s;
+    }
+    .news-modal-arrow:hover { background: #c00; transform: scale(1.1); }
+    .news-modal-arrow svg { width: 20px; height: 20px; }
+
+    .news-modal-btn {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      margin-top: 1.5rem;
+      font-family: 'Special Gothic Expanded One', sans-serif;
+      font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--red); text-decoration: none;
+      transition: gap 0.2s;
+    }
+    .news-modal-btn:hover { gap: 0.8rem; color: var(--black); }
+    .news-modal-btn svg { width: 16px; height: 16px; }
+
+    .news-modal-arrows-row { display: none; }
+    @media (max-width: 640px) {
+      .news-modal-overlay { flex-direction: column; gap: 1rem; padding: 1.5rem 1rem; align-items: center; }
+      .news-modal { order: 1; }
+      .news-modal-body { }
+      .news-modal-prev, .news-modal-next { display: none; }
+      .news-modal-arrows-row { display: flex; flex-direction: row; gap: 2rem; order: 2; }
+    }
 
     /* ─── PROJECTS ─── */
     .projects-section {
@@ -558,24 +672,22 @@
     .project-bg {
       position: absolute; inset: 0;
       background-size: cover; background-position: center;
-      transition: transform 0.6s cubic-bezier(0.23,1,0.32,1);
+      transition: transform 0.6s cubic-bezier(0.23,1,0.32,1), filter 0.4s cubic-bezier(0.23,1,0.32,1);
     }
     .project-bg img {
       width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;
     }
-    .project-card:hover .project-bg { transform: scale(1.05); }
+    .project-card:hover .project-bg { transform: scale(1.05); filter: blur(6px) brightness(0.45); }
     .project-info {
-      position: absolute; bottom: 0; left: 0; right: 0;
-      padding: 1.2rem 1.5rem;
-      background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 50%, transparent 100%);
-      transition: background 0.4s;
-      opacity: 0; transform: translateY(8px);
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 1.5rem; text-align: center;
+      opacity: 0; transform: scale(0.95);
       transition: opacity 0.35s, transform 0.35s;
+      z-index: 2;
     }
-    .project-card:hover .project-info {
-      opacity: 1; transform: translateY(0);
-      background: linear-gradient(to top, rgba(0,0,0,0.97) 0%, rgba(0,0,0,0.55) 50%, transparent 100%);
-    }
+    .project-card:hover .project-info { opacity: 1; transform: scale(1); }
     .project-client {
       font-family: 'Special Gothic Expanded One', sans-serif;
       font-size: 0.55rem; letter-spacing: 0.35em; text-transform: uppercase;
@@ -583,10 +695,12 @@
     }
     .project-name {
       font-family: 'Special Gothic Expanded One', sans-serif;
-      font-size: clamp(0.85rem, 1.6vw, 1.3rem);
+      font-size: clamp(0.9rem, 1.8vw, 1.5rem);
       text-transform: uppercase;
       color: var(--white); line-height: 1.1;
+      transition: transform 0.35s cubic-bezier(0.23,1,0.32,1);
     }
+    .project-card:hover .project-name { transform: scale(1.08); }
 
     .projects-cta {
       display: flex; justify-content: center;
@@ -661,6 +775,7 @@
     .footer-copy {
       font-size: 0.68rem; letter-spacing: 0.1em;
       color: rgba(255,255,255,0.18);
+      white-space: nowrap;
     }
 
     /* yellow drip SVG decorations */
@@ -728,7 +843,7 @@
 <!-- ═══ NAV ═══ -->
 <nav id="main-nav">
   <a href="/" class="nav-logo">
-    <img src="assets/favicon.svg" alt="ENDLESS" class="nav-logo-img"/>
+    <img src="assets/logo.svg" alt="ENDLESS" class="nav-logo-img"/>
   </a>
   <div class="nav-menu-btn" id="menu-toggle" role="button" aria-label="Menu" aria-expanded="false">
     <div class="hamburger"><span></span><span></span><span></span></div>
@@ -766,12 +881,13 @@
 <!-- ═══ HERO ═══ -->
 <section class="hero">
   <video class="hero-video" autoplay muted loop playsinline>
-    <source src="assets/hero.mp4" type="video/mp4"/>
+    <source src="assets/BG_video/bg_heart_new.mp4" type="video/mp4"/>
   </video>
   <div class="hero-overlay"></div>
 
   <!-- corner wave from Figma -->
   <img class="corner-waves" src="assets/top_wave.svg" alt="" aria-hidden="true"/>
+  <img class="hero-yellow-top" style="position:absolute;top:-2%;right:8%;width:clamp(100px,14vw,200px);z-index:2;pointer-events:none;" src="assets/yellow_element_6.png" alt="" aria-hidden="true"/>
 
   <div class="hero-content">
     <h1 class="hero-title">
@@ -780,7 +896,7 @@
         <img src="assets/h1_we_are_endless.svg" alt="WE ARE ENDLESS" style="width:clamp(260px,55vw,800px);height:auto;display:block;margin:0 auto;"/>
       </picture>
     </h1>
-    <p class="hero-sub reveal" style="transition-delay:0.35s">Technology moves fast. Experience moves smarter.</p>
+    <p class="hero-sub reveal" style="transition-delay:0.35s">Technology&nbsp;moves&nbsp;fast. Experience&nbsp;moves&nbsp;smarter.</p>
   </div>
 
   <div class="scroll-hint" aria-hidden="true">
@@ -790,13 +906,14 @@
 </section>
 
 <!-- ═══ SHOWREEL ═══ -->
-<section class="showreel-section">
-  <!-- black bg: SHOWREEL text lives here -->
-  <div class="showreel-black-area">
-    <div class="parallax-text-wrap">
-      <span class="parallax-text red" id="txt-showreel">SHOWREEL&nbsp;&nbsp;SHOWREEL&nbsp;&nbsp;</span>
-    </div>
+<div id="showreel-float" style="position:absolute;left:0;right:0;overflow:visible;pointer-events:none;z-index:5;">
+  <div class="parallax-text-wrap">
+    <span class="parallax-text" id="txt-showreel">SHOWREEL&nbsp;&nbsp;SHOWREEL&nbsp;&nbsp;</span>
   </div>
+</div>
+<section class="showreel-section">
+  <!-- black bg only -->
+  <div class="showreel-black-area" id="showreel-black-area"></div>
 
   <!-- card zone overlaps up into black area -->
   <div class="showreel-card-zone" style="position:relative;">
@@ -804,6 +921,7 @@
     <img src="assets/yellow_element.png" class="yellow-brush-deco" alt="">
 
     <div class="showreel-card-wrap">
+      <div class="showreel-card-clip">
       <div class="showreel-card reveal-scale">
         <img src="assets/showreel_preview.png" style="width:100%;height:100%;object-fit:cover;display:block;" alt="Showreel preview">
         <div class="showreel-card-overlay">
@@ -813,6 +931,7 @@
           <span class="showreel-label">SHOWREEL</span>
         </div>
       </div>
+      </div><!-- /showreel-card-clip -->
 
     </div>
   </div>
@@ -821,7 +940,7 @@
 <!-- ═══ ABOUT ═══ -->
 <section class="about-section">
   <div class="parallax-text-wrap">
-    <span class="parallax-text dark" id="txt-about">WE ARE ENDLESS&nbsp;&nbsp;</span>
+    <span class="parallax-text dark" id="txt-about">WE&nbsp;&nbsp;&nbsp;ARE&nbsp;&nbsp;&nbsp;ENDLESS&nbsp;&nbsp;&nbsp;&nbsp;</span>
   </div>
 
   <div class="about-content">
@@ -844,15 +963,14 @@
       <source media="(max-width: 767px)" srcset="assets/team_mobile.gif"/>
       <img src="assets/team.gif" alt="Kluczowe osoby — zespół Endless" class="team-gif"/>
     </picture>
-  </div>
-
-  <div style="position:relative; pointer-events:none;">
-    <img src="assets/yellow_element_3.png" aria-hidden="true" style="position:absolute;left:clamp(1rem,4vw,5rem);top:-2rem;width:clamp(80px,12vw,180px);z-index:3;">
-    <img src="assets/yellow_element_4.png" aria-hidden="true" style="position:absolute;right:clamp(1rem,4vw,5rem);top:-3rem;width:clamp(80px,12vw,180px);z-index:3;">
+    <!-- левый: вертикальный спрей — под гифом (за ним) -->
+    <img id="yellow-el-3" src="assets/yellow_element_3.png" aria-hidden="true" style="position:absolute;left:2%;top:-3%;width:clamp(100px,14vw,220px);z-index:0;pointer-events:none;">
+    <!-- правый: горизонтальная клякса — правый край, пониже и левее -->
+    <img id="yellow-el-4" src="assets/yellow_element_4.png" aria-hidden="true" style="position:absolute;right:8%;bottom:18%;width:clamp(220px,32vw,500px);z-index:0;pointer-events:none;transform:rotate(-3deg);">
   </div>
 
   <div class="team-cta">
-    <a href="#" class="btn-pill">
+    <a href="o-nas.html" class="btn-pill">
       <span class="btn-spacer"></span><span>O NAS</span><img class="btn-arrow-img" src="assets/arrow.svg" alt="">
     </a>
   </div>
@@ -971,9 +1089,38 @@
     </a>
   </div>
   <div class="news-cta reveal">
-    <a href="#" class="btn-pill"><span class="btn-spacer"></span><span>PRESS</span><img class="btn-arrow-img" src="assets/arrow.svg" alt=""></a>
+    <a href="press.html" class="btn-pill"><span class="btn-spacer"></span><span>PRESS</span><img class="btn-arrow-img" src="assets/arrow.svg" alt=""></a>
   </div>
 </section>
+
+<!-- ═══ NEWS MODAL ═══ -->
+<div class="news-modal-overlay" id="newsModal" role="dialog" aria-modal="true">
+  <button class="news-modal-arrow news-modal-prev" id="newsModalPrev" aria-label="Poprzednia">
+    <svg viewBox="0 0 20 20" fill="none"><path d="M13 4l-6 6 6 6" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+  <div class="news-modal">
+    <img class="news-modal-img" id="newsModalImg" src="" alt="">
+    <div class="news-modal-body">
+      <div class="news-modal-date" id="newsModalDate"></div>
+      <div class="news-modal-text" id="newsModalText"></div>
+      <a href="press.html" class="news-modal-btn">Więcej <svg viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+    </div>
+    <button class="news-modal-close" id="newsModalClose" aria-label="Zamknij">
+      <svg viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+  <button class="news-modal-arrow news-modal-next" id="newsModalNext" aria-label="Następna">
+    <svg viewBox="0 0 20 20" fill="none"><path d="M7 4l6 6-6 6" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+  <div class="news-modal-arrows-row">
+    <button class="news-modal-arrow" id="newsModalPrevMobile" aria-label="Poprzednia">
+      <svg viewBox="0 0 20 20" fill="none"><path d="M13 4l-6 6 6 6" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <button class="news-modal-arrow" id="newsModalNextMobile" aria-label="Następna">
+      <svg viewBox="0 0 20 20" fill="none"><path d="M7 4l6 6-6 6" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+</div>
 
 <!-- ═══ PROJECTS ═══ -->
 <section class="projects-section">
@@ -1087,6 +1234,20 @@ const revealIO = new IntersectionObserver(entries => {
 }, { threshold: 0.12 });
 document.querySelectorAll('.reveal,.reveal-up,.reveal-scale,.stagger').forEach(el => revealIO.observe(el));
 
+/* ── Showreel entrance animations ── */
+const showreelSection = document.querySelector('.showreel-section');
+if (showreelSection) {
+  const showreelAnimIO = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        document.getElementById('showreel-float')?.classList.add('anim-in');
+        showreelAnimIO.disconnect();
+      }
+    });
+  }, { threshold: 0 });
+  showreelAnimIO.observe(showreelSection);
+}
+
 /* ── Nav scroll ── */
 const nav = document.getElementById('main-nav');
 function updateNav() {
@@ -1095,29 +1256,83 @@ function updateNav() {
 window.addEventListener('scroll', updateNav, { passive: true });
 updateNav();
 
-/* ── Horizontal parallax text ──
-   showreel: starts right of center, moves left as you scroll past
-   about:    starts left of center, moves right as you scroll past
-*/
-const txShowreel = document.getElementById('txt-showreel');
-const txAbout    = document.getElementById('txt-about');
+/* ── Horizontal parallax text ── */
+const txShowreel     = document.getElementById('txt-showreel');
+const txAbout        = document.getElementById('txt-about');
+const showreelFloat  = document.getElementById('showreel-float');
+const showreelBlack  = document.getElementById('showreel-black-area');
+
+function positionShowreelFloat() {
+  if (!showreelFloat || !showreelBlack) return;
+  const textH = showreelFloat.offsetHeight || window.innerWidth * 0.17;
+  // black area covers only 65% of text height — rest on white
+  const blackTop = showreelBlack.getBoundingClientRect().top + window.scrollY;
+  showreelFloat.style.top = (blackTop - textH * 0.09) + 'px';
+  showreelBlack.style.height = (textH * 0.83) + 'px';
+}
+
+function updateShowreelGradient() {
+  if (!txShowreel || !showreelFloat || !showreelBlack) return;
+  const floatTop  = showreelFloat.getBoundingClientRect().top;
+  const floatH    = showreelFloat.offsetHeight || 1;
+  const blackH    = showreelBlack.offsetHeight || 1;
+  const blackBot  = showreelBlack.getBoundingClientRect().bottom;
+  // what % of the text is above the black/white boundary
+  const pct = Math.max(0, Math.min(100, ((blackBot - floatTop) / floatH) * 100));
+  txShowreel.style.backgroundImage = 'none';
+  txShowreel.style.webkitBackgroundClip = 'unset';
+  txShowreel.style.backgroundClip = 'unset';
+  txShowreel.style.webkitTextFillColor = '#e3151a';
+  txShowreel.style.color = '#e3151a';
+}
 
 function parallax() {
   const vH = window.innerHeight;
 
-  if (txShowreel) {
-    const r = txShowreel.parentElement.getBoundingClientRect();
+  if (txShowreel && showreelFloat) {
+    const r = showreelFloat.getBoundingClientRect();
     const p = (vH - r.top) / (vH + r.height);
-    txShowreel.style.transform = `translateX(${-5 + p * 30}%)`;
+    txShowreel.style.marginLeft = `${-10 + p * 30}%`;
+    updateShowreelGradient();
   }
 
   if (txAbout) {
     const r = txAbout.parentElement.getBoundingClientRect();
-    const p = (vH - r.top) / (vH + r.height);
+    const p = (1.4 * vH - r.top) / (vH + r.height);
     txAbout.style.transform = `translateX(${20 - p * 40}%)`;
   }
+
+  const yel3 = document.getElementById('yellow-el-3');
+  const yel4 = document.getElementById('yellow-el-4');
+  if (yel3 || yel4) {
+    const teamSection = document.querySelector('.team-section');
+    if (teamSection) {
+      const secTop = teamSection.offsetTop;
+      const raw = (window.scrollY - secTop + vH) / (vH * 2);
+      const pClamped = Math.max(0, Math.min(1, raw));
+      if (yel3) yel3.style.transform = `translateY(${-pClamped * 220}px)`;
+      if (yel4) yel4.style.transform = `rotate(-3deg) translateY(${pClamped * 190}px)`;
+    }
+  }
+
+  /* ── Showreel card scroll-driven scale ── */
+  const cardClip = document.querySelector('.showreel-card-clip');
+  if (cardClip) {
+    const section = document.querySelector('.showreel-section');
+    const ref = section || cardClip;
+    const r = ref.getBoundingClientRect();
+    /* start animating as soon as the section top enters the viewport */
+    const p = Math.max(0, Math.min(1, (vH - r.top) / (vH * 0.85)));
+    const scale = 0.55 + p * 0.45;
+    const ty = (1 - p) * 120;
+    cardClip.style.transform = `translateY(${ty}px) scale(${scale})`;
+    cardClip.style.transformOrigin = 'center bottom';
+  }
 }
+
 window.addEventListener('scroll', parallax, { passive: true });
+window.addEventListener('resize', positionShowreelFloat);
+positionShowreelFloat();
 parallax();
 
 /* ── Logo marquees — two rows, opposite directions, scroll-speed boost ── */
@@ -1129,8 +1344,8 @@ let r1w = 0, r2w = 0;
 let velDecay = 0;
 
 function initWidths() {
-  r1w = r1el?.querySelector('.logos-inner')?.offsetWidth || 0;
-  r2w = r2el?.querySelector('.logos-inner')?.offsetWidth || 0;
+  r1w = r1el?.querySelector('.logos-inner')?.getBoundingClientRect().width || 0;
+  r2w = r2el?.querySelector('.logos-inner')?.getBoundingClientRect().width || 0;
   r2x = -r2w * 0.35; // offset row2 start so rows aren't aligned
 }
 
@@ -1202,7 +1417,60 @@ menuClose.addEventListener('click', closeMenu);
 menuOverlay.addEventListener('click', e => {
   if (e.target === menuOverlay || e.target.closest('.menu-photo')) closeMenu();
 });
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeMenu(); closeNewsModal(); } });
+
+/* News modal */
+const newsModalOverlay = document.getElementById('newsModal');
+const newsModalImg = document.getElementById('newsModalImg');
+const newsModalDate = document.getElementById('newsModalDate');
+const newsModalText = document.getElementById('newsModalText');
+const newsModalClose = document.getElementById('newsModalClose');
+const newsModalPrev = document.getElementById('newsModalPrev');
+const newsModalNext = document.getElementById('newsModalNext');
+const newsCards = Array.from(document.querySelectorAll('.news-card'));
+let currentNewsIndex = 0;
+
+function openNewsModal(index) {
+  const card = newsCards[index];
+  const img = card.querySelector('.news-thumb-img img');
+  const date = card.querySelector('.news-date');
+  const title = card.querySelector('.news-title');
+  newsModalImg.src = img ? img.src : '';
+  newsModalDate.textContent = date ? date.textContent : '';
+  newsModalText.textContent = title ? title.textContent : '';
+  currentNewsIndex = index;
+  newsModalPrev.style.opacity = index === 0 ? '0.3' : '1';
+  newsModalNext.style.opacity = index === newsCards.length - 1 ? '0.3' : '1';
+  newsModalOverlay.classList.add('is-open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeNewsModal() {
+  newsModalOverlay.classList.remove('is-open');
+  document.body.style.overflow = '';
+}
+
+newsCards.forEach((card, i) => {
+  card.addEventListener('click', e => { e.preventDefault(); openNewsModal(i); });
+});
+
+newsModalPrev.addEventListener('click', () => { if (currentNewsIndex > 0) openNewsModal(currentNewsIndex - 1); });
+newsModalNext.addEventListener('click', () => { if (currentNewsIndex < newsCards.length - 1) openNewsModal(currentNewsIndex + 1); });
+document.getElementById('newsModalPrevMobile').addEventListener('click', () => { if (currentNewsIndex > 0) openNewsModal(currentNewsIndex - 1); });
+document.getElementById('newsModalNextMobile').addEventListener('click', () => { if (currentNewsIndex < newsCards.length - 1) openNewsModal(currentNewsIndex + 1); });
+newsModalClose.addEventListener('click', closeNewsModal);
+newsModalOverlay.addEventListener('click', e => { if (e.target === newsModalOverlay) closeNewsModal(); });
+document.addEventListener('keydown', e => {
+  if (!newsModalOverlay.classList.contains('is-open')) return;
+  if (e.key === 'Escape') closeNewsModal();
+  if (e.key === 'ArrowLeft') { if (currentNewsIndex > 0) openNewsModal(currentNewsIndex - 1); }
+  if (e.key === 'ArrowRight') { if (currentNewsIndex < newsCards.length - 1) openNewsModal(currentNewsIndex + 1); }
+});
+
+document.querySelectorAll('.project-card').forEach(card => {
+  card.style.cursor = 'pointer';
+  card.addEventListener('click', () => { window.location.href = 'buduj-cyfrowa-forme.html'; });
+});
 </script>
 </body>
 </html>

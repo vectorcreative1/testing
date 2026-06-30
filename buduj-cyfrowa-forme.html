@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Buduj Cyfrową Formę — Endless</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Special+Gothic+Expanded+One&family=Poppins:wght@300;400;500&family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75,700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black: #000;
+      --white: #fff;
+      --red:   #e3151a;
+      --yellow:#f3e600;
+    }
+
+    html { scroll-behavior: smooth; overflow-x: hidden; overflow-y: scroll; }
+    body { margin: 0; padding: 0; background: var(--black); color: var(--white); font-family: 'Poppins', sans-serif; overflow-x: hidden; }
+
+    /* ─── NAV ─── */
+    #main-nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 300;
+      display: flex; align-items: flex-end; justify-content: space-between;
+      padding: 0 clamp(2.5rem, 5.5vw, 6rem) 1.4rem;
+      height: 110px; background: transparent;
+    }
+    body.menu-open-state .nav-logo { opacity: 0; pointer-events: none; }
+    .nav-logo { display: flex; align-items: center; text-decoration: none; transition: opacity 0.2s; }
+    .nav-logo-img { height: 38px; width: auto; display: block; }
+    .nav-menu-btn {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: radial-gradient(circle at 30% 25%, rgba(255,255,255,0.25) 0%, transparent 50%), linear-gradient(145deg, rgba(80,80,110,0.45) 0%, rgba(10,10,20,0.65) 60%, rgba(0,0,0,0.8) 100%);
+      border: none;
+      backdrop-filter: blur(6px) saturate(4) brightness(1.35) contrast(0.8) hue-rotate(5deg);
+      -webkit-backdrop-filter: blur(6px) saturate(4) brightness(1.35) contrast(0.8) hue-rotate(5deg);
+      box-shadow: inset 0 2px 3px rgba(255,255,255,0.6), inset 0 -2px 6px rgba(0,0,0,0.2), 0 0 0 1.5px rgba(255,255,255,0.55), 0 0 0 3px rgba(255,255,255,0.08), 0 4px 24px rgba(0,0,0,0.35);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: transform 0.2s, box-shadow 0.3s;
+    }
+    .menu-open.nav-menu-btn { background: var(--black); backdrop-filter: none; -webkit-backdrop-filter: none; }
+    .nav-menu-btn:hover { transform: scale(1.06); }
+    .hamburger { display: flex; flex-direction: column; gap: 5px; }
+    .hamburger span { display: block; height: 1.5px; background: var(--white); transition: width 0.3s cubic-bezier(0.23,1,0.32,1), transform 0.35s cubic-bezier(0.23,1,0.32,1), opacity 0.3s; }
+    .hamburger span:nth-child(1) { width: 22px; }
+    .hamburger span:nth-child(2) { width: 14px; }
+    .hamburger span:nth-child(3) { width: 18px; }
+    .nav-menu-btn:hover .hamburger span { width: 22px; }
+    .menu-open .hamburger span { width: 22px; }
+    .menu-open .hamburger span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .menu-open .hamburger span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .menu-open .hamburger span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+    /* ─── MENU ─── */
+    .menu-overlay {
+      position: fixed;
+      top: clamp(0.8rem, 1.5vw, 1.5rem); left: clamp(0.8rem, 1.5vw, 1.5rem); right: clamp(0.8rem, 1.5vw, 1.5rem);
+      z-index: 200; pointer-events: none;
+      transform: translateY(calc(-100% - 2rem));
+      transition: transform 0.55s cubic-bezier(0.23,1,0.32,1);
+    }
+    .menu-overlay.is-open { transform: translateY(0); pointer-events: all; }
+    .menu-shell {
+      position: relative; border-radius: 28px; overflow: hidden;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.5);
+      height: calc(100vh - clamp(1.6rem, 3vw, 3rem)); min-height: 500px;
+      display: flex; align-items: center;
+    }
+    .menu-bg-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center top; z-index: 0; }
+    .menu-photo-spray { position: absolute; bottom: 8%; left: 3%; width: clamp(80px, 11vw, 140px); pointer-events: none; z-index: 2; }
+    .menu-panel {
+      position: relative; z-index: 3; width: 100%; height: 100%;
+      display: flex; align-items: stretch; justify-content: space-between;
+      padding: 0 clamp(4rem, 8vw, 8rem) 0 36%; gap: clamp(3rem, 6vw, 7rem);
+    }
+    .menu-inner { display: flex; flex-direction: column; justify-content: center; padding: clamp(4rem, 9vh, 7rem) 0 clamp(3rem, 6vh, 5rem); }
+    .menu-contact { display: flex; flex-direction: column; justify-content: center; padding-top: 18%; padding-bottom: clamp(3rem, 6vh, 5rem); }
+    .menu-photo { display: none; }
+    .menu-close { display: none; }
+    .menu-lower { display: flex; gap: clamp(3rem, 6vw, 7rem); align-items: flex-start; }
+    .menu-nav { flex: 0 0 auto; }
+    .menu-brand, .menu-links a {
+      font-family: 'Special Gothic Expanded One', sans-serif;
+      font-size: clamp(2.8rem, 6.5vh, 5rem); line-height: 1.5;
+      text-decoration: none; display: block;
+      transition: letter-spacing 0.3s cubic-bezier(0.23,1,0.32,1), opacity 0.2s;
+    }
+    .menu-brand { color: var(--red); }
+    .menu-brand:hover { letter-spacing: 0.03em; opacity: 0.7; }
+    .menu-links { list-style: none; padding: 0; margin: 0; }
+    .menu-links a { color: var(--red); }
+    .menu-links a:hover { letter-spacing: 0.03em; opacity: 0.7; }
+    .menu-links a.current { color: var(--black); }
+    .menu-brand.current { color: var(--black); }
+    .menu-brand { opacity: 0; transform: translateY(16px); transition: opacity 0.4s, transform 0.4s, letter-spacing 0.3s, color 0.2s; }
+    .menu-links li { opacity: 0; transform: translateY(16px); transition: opacity 0.4s, transform 0.4s; }
+    .menu-overlay.is-open .menu-brand { opacity:1; transform:none; transition-delay:0.12s; }
+    .menu-overlay.is-open .menu-links li:nth-child(1) { opacity:1; transform:none; transition-delay:0.2s; }
+    .menu-overlay.is-open .menu-links li:nth-child(2) { opacity:1; transform:none; transition-delay:0.28s; }
+    .menu-overlay.is-open .menu-links li:nth-child(3) { opacity:1; transform:none; transition-delay:0.36s; }
+    .menu-contact { flex: 0 0 auto; }
+    .menu-contact-label { font-family: 'Special Gothic Expanded One', sans-serif; font-size: 0.6rem; letter-spacing: 0.3em; text-transform: uppercase; color: #999; margin-bottom: 1rem; }
+    .menu-contact p { font-family: 'Special Gothic Expanded One', sans-serif; font-size: 22px; color: var(--black); line-height: 1.5; margin: 0 0 1rem; }
+    .menu-contact a { color: inherit; text-decoration: none; display: block; }
+    .menu-social-row { display: flex; gap: 0.65rem; margin-top: 1.2rem; }
+    .menu-social-btn { display: inline-flex; align-items: center; justify-content: center; transition: transform 0.25s, opacity 0.25s; }
+    .menu-social-btn:hover { transform: scale(1.1); opacity: 0.85; }
+    .menu-social-btn img { width: 44px; height: 44px; display: block; }
+
+    /* ─── HERO ─── */
+    .project-hero {
+      width: 100%;
+      padding-top: 110px;
+    }
+    .project-hero-img {
+      width: 100%; height: auto; display: block;
+    }
+    .project-hero-overlay { display: none; }
+    .project-hero-content { display: none; }
+    .project-hero-client {
+      font-family: 'Special Gothic Expanded One', sans-serif;
+      font-size: clamp(0.55rem, 1vw, 0.7rem); letter-spacing: 0.35em; text-transform: uppercase;
+      color: rgba(255,255,255,0.6); margin-bottom: 0.8rem;
+    }
+    .project-hero-title {
+      font-family: 'Special Gothic Expanded One', sans-serif;
+      font-size: clamp(2.5rem, 6vw, 5.5rem); line-height: 1;
+      color: var(--white); margin-bottom: 1.5rem;
+    }
+    .btn-pill {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      font-family: 'Special Gothic Expanded One', sans-serif;
+      font-size: clamp(0.6rem, 1.1vw, 0.75rem); letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--white); border: 1.5px solid rgba(255,255,255,0.5); border-radius: 100px;
+      padding: 0.65em 1.4em; text-decoration: none; cursor: pointer; background: transparent;
+      position: relative; overflow: hidden; transition: color 0.35s;
+    }
+    .btn-pill::after { content:''; position:absolute; inset:0; background:var(--yellow); border-radius:inherit; transform:translateX(-102%); transition:transform 0.45s cubic-bezier(0.23,1,0.32,1); }
+    .btn-pill:hover::after { transform:translateX(0); }
+    .btn-pill:hover { color: var(--black); }
+    .btn-pill span { position: relative; z-index: 1; }
+
+    /* ─── INFO SECTION ─── */
+    .project-info-section {
+      background: var(--black); color: var(--white);
+      padding: clamp(4rem, 8vw, 8rem) clamp(2rem, 7vw, 8rem);
+      display: grid; grid-template-columns: 1fr 2fr; gap: clamp(3rem, 6vw, 8rem);
+      align-items: start;
+    }
+    .project-info-left { display: flex; flex-direction: column; gap: 1.5rem; }
+    .project-info-logo { max-width: 160px; display: block; }
+    .project-info-title {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: 80px; line-height: 65px;
+      font-weight: 800; font-stretch: condensed;
+      color: var(--white); text-transform: uppercase; letter-spacing: -0.04em;
+    }
+    .project-info-subtitle {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: clamp(1.2rem, 2.5vw, 2rem); font-weight: 700; font-stretch: condensed;
+      text-transform: uppercase; color: var(--yellow); letter-spacing: 0.02em;
+      margin-top: -1rem;
+    }
+    .project-info-right { display: flex; flex-direction: column; gap: 2.5rem; }
+    .project-section-label {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: 32px; font-weight: 800; font-stretch: condensed;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--white); margin-bottom: 0.8rem;
+    }
+    .project-section-text {
+      font-family: 'Poppins', sans-serif; font-size: clamp(0.85rem, 1.1vw, 1rem);
+      line-height: 1.8; color: var(--white);
+    }
+    .project-info-img {
+      width: 100%; border-radius: 12px; margin-top: 1rem; display: block;
+    }
+
+    /* ─── FULL WIDTH IMAGE ─── */
+    .project-full-img {
+      width: 100%; display: block; max-height: 70vh; object-fit: cover;
+    }
+    .project-full-video {
+      width: 100%; display: block; max-height: 70vh; object-fit: cover;
+    }
+
+    /* ─── BIG HEADING SECTION ─── */
+    .project-big-heading {
+      background: var(--black); color: var(--white);
+      padding: 0 clamp(2rem, 7vw, 8rem) clamp(5rem, 10vw, 10rem);
+      display: flex; justify-content: center;
+    }
+    .project-big-heading-inner {
+      width: 100%; max-width: 860px;
+      text-align: left;
+    }
+    .project-big-heading h2 {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 800; font-stretch: condensed;
+      font-size: 60px; line-height: 58px;
+      letter-spacing: -0.02em; margin-bottom: 2rem;
+      text-transform: uppercase;
+    }
+    .project-big-heading p {
+      font-family: 'Poppins', sans-serif; font-size: 26px; font-weight: 400;
+      line-height: 40px; letter-spacing: 0;
+      color: var(--white);
+      max-width: 860px; margin: 0;
+    }
+
+    /* ─── CENTER VIDEO ─── */
+    .project-center-video-section {
+      background: var(--black);
+      padding: clamp(1rem, 2vw, 2rem) clamp(2rem, 7vw, 8rem) clamp(5rem, 9vw, 9rem);
+      display: flex; justify-content: center;
+    }
+    .project-center-video {
+      width: 100%;
+      display: flex; justify-content: center;
+    }
+    .project-video-wrap {
+      position: relative; width: 100%; max-width: 860px;
+      border-radius: 16px; overflow: hidden; cursor: pointer;
+    }
+    .project-video-wrap video {
+      width: 100%; display: block;
+    }
+    .project-video-play {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      transition: opacity 0.25s;
+    }
+    .project-video-play-btn {
+      width: 72px; height: 72px; border-radius: 50%;
+      background: rgba(255,255,255,0.22);
+      backdrop-filter: blur(6px);
+      border: 2px solid rgba(255,255,255,0.5);
+      display: flex; align-items: center; justify-content: center;
+      transition: transform 0.2s, background 0.2s;
+    }
+    .project-video-wrap:hover .project-video-play-btn {
+      transform: scale(1.1); background: rgba(255,255,255,0.35);
+    }
+    .project-video-play svg { width: 28px; height: 28px; margin-left: 4px; }
+    .project-video-wrap.playing .project-video-play { opacity: 0; pointer-events: none; }
+
+    /* ─── PHONE GRID ─── */
+    .project-phone-grid {
+      background: var(--black);
+      padding: clamp(3rem, 5vw, 5rem) clamp(4rem, 10vw, 12rem) clamp(10rem, 15vw, 15rem);
+      display: flex; justify-content: center; align-items: flex-start;
+      gap: clamp(2rem, 4vw, 5rem);
+    }
+    .project-phone-item {
+      border-radius: 24px; overflow: hidden; aspect-ratio: 9/16;
+      background: #111; flex: 1; max-width: 22%;
+      position: relative; flex-shrink: 0;
+      opacity: 0;
+      transition: opacity 0.7s cubic-bezier(0.23,1,0.32,1), transform 0.7s cubic-bezier(0.23,1,0.32,1);
+    }
+    .project-phone-item:nth-child(1),
+    .project-phone-item:nth-child(2),
+    .project-phone-item:nth-child(3) { transform: none; }
+    .project-phone-item video, .project-phone-item img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+    }
+
+    /* ─── TEXT + IMAGE ROW ─── */
+    .project-text-section {
+      background: var(--black); color: var(--white);
+      padding: clamp(4rem, 7vw, 7rem) clamp(2rem, 7vw, 8rem);
+      display: flex; justify-content: center;
+    }
+    .project-text-section p {
+      font-family: 'Poppins', sans-serif; font-size: 26px;
+      line-height: 40px; color: var(--white);
+      max-width: 860px; margin: 0;
+    }
+
+    /* ─── WIDE IMAGE WITH OVERLAY ─── */
+    .project-wide-section {
+      position: relative; overflow: hidden;
+    }
+    .project-wide-section video, .project-wide-section img {
+      width: 100%; display: block; max-height: 65vh; object-fit: cover;
+    }
+    .project-wide-overlay {
+      position: absolute; inset: 0; background: rgba(0,0,0,0.45);
+      display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-end;
+      padding: clamp(2rem, 5vw, 5rem) clamp(2rem, 7vw, 8rem);
+    }
+    .project-wide-overlay h3 {
+      font-family: 'Special Gothic Expanded One', sans-serif;
+      font-size: clamp(2rem, 4vw, 3.5rem); line-height: 1; color: var(--white); margin-bottom: 1rem;
+    }
+
+    /* ─── SQUARE GRID ─── */
+    .project-square-grid {
+      background: var(--black);
+      padding: clamp(3rem, 5vw, 5rem) clamp(6rem, 14vw, 18rem) clamp(3rem, 5vw, 5rem);
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: clamp(1.2rem, 2.5vw, 2.5rem);
+    }
+    @media (max-width: 640px) {
+      .project-square-grid { grid-template-columns: 1fr; padding-top: clamp(5rem, 10vw, 8rem); padding-left: clamp(4rem, 10vw, 12rem); padding-right: clamp(4rem, 10vw, 12rem); }
+    }
+    .project-square-item {
+      aspect-ratio: 1/1; border-radius: 28px; overflow: hidden;
+      background: #111; position: relative;
+      opacity: 0;
+      transition: none;
+    }
+    .project-square-item video, .project-square-item img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+    }
+    .project-hero { overflow: hidden; }
+
+    /* ─── TEAM QUOTE ─── */
+    .project-team-quote {
+      background: var(--black);
+      padding: clamp(2rem, 5vw, 5rem) clamp(4rem, 10vw, 12rem);
+    }
+    .project-team-quote-inner {
+      background: var(--yellow);
+      border-radius: 24px;
+      padding: clamp(3rem, 5vw, 5rem) clamp(3rem, 6vw, 7rem);
+    }
+    .project-team-quote-label {
+      display: flex; align-items: center; gap: 0.75rem;
+      font-family: 'Special Gothic Expanded One', sans-serif;
+      font-size: 0.65rem; letter-spacing: 0.35em; text-transform: uppercase;
+      color: var(--black); margin-bottom: 2rem;
+    }
+    .project-team-quote-label svg { width: 28px; height: 16px; }
+    .project-team-quote-text {
+      font-family: 'Poppins', sans-serif; font-size: clamp(1rem, 1.4vw, 1.15rem);
+      line-height: 1.75; color: var(--black);
+      max-width: 820px; margin-bottom: 2.5rem;
+    }
+    .project-team-quote-person {
+      display: flex; align-items: center; gap: 1.25rem;
+    }
+    .project-team-quote-photo {
+      width: 72px; height: 72px; border-radius: 50%; overflow: hidden; flex-shrink: 0;
+      background: #000;
+    }
+    .project-team-quote-photo img { width: 100%; height: 100%; object-fit: cover; display: block; filter: grayscale(1); }
+    .project-team-quote-name {
+      font-family: 'Special Gothic Expanded One', sans-serif;
+      font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--black);
+      line-height: 1.6;
+    }
+
+    /* ─── INNE PROJEKTY ─── */
+    .inne-projekty {
+      background: var(--black); color: var(--white);
+      padding: clamp(4rem, 8vw, 8rem) 0 0;
+    }
+    .inne-projekty-label {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: clamp(2.5rem, 5vw, 4.5rem); font-weight: 800; font-stretch: condensed;
+      letter-spacing: -0.02em; text-transform: uppercase;
+      margin-bottom: clamp(2rem, 4vw, 3rem);
+      text-align: center;
+    }
+    .inne-projekty-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 0;
+    }
+    @media (max-width: 640px) { .inne-projekty-grid { grid-template-columns: 1fr; } }
+    .inne-card {
+      position: relative; overflow: hidden; cursor: pointer; aspect-ratio: 16/9;
+      text-decoration: none; display: block;
+    }
+    .inne-card-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.6s cubic-bezier(0.23,1,0.32,1), filter 0.4s; }
+    .inne-card:hover .inne-card-bg { transform: scale(1.05); filter: blur(6px) brightness(0.45); }
+    .inne-card-info {
+      position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      opacity: 0; transform: scale(0.95); transition: opacity 0.35s, transform 0.35s; padding: 1.5rem;
+    }
+    .inne-card:hover .inne-card-info { opacity: 1; transform: scale(1); }
+    .inne-card-client { font-family: 'Special Gothic Expanded One', sans-serif; font-size: 0.55rem; letter-spacing: 0.35em; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-bottom: 0.25rem; }
+    .inne-card-name { font-family: 'Special Gothic Expanded One', sans-serif; font-size: clamp(0.9rem, 1.8vw, 1.5rem); color: var(--white); text-align: center; line-height: 1.1; transition: transform 0.35s cubic-bezier(0.23,1,0.32,1); }
+    .inne-card:hover .inne-card-name { transform: scale(1.08); }
+
+    /* ─── FOOTER ─── */
+    .footer-cta {
+      position: relative; overflow: hidden;
+      padding: clamp(10rem, 22vh, 16rem) clamp(1.5rem, 5vw, 4rem) clamp(8rem, 14vh, 12rem);
+      min-height: 70vh;
+      text-align: center;
+    }
+    .footer-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+    .footer-overlay { position: absolute; inset: 0; background: transparent; z-index: 1; }
+    .footer-content { position: relative; z-index: 2; }
+    .footer-avatar { width: 82px; height: 82px; border-radius: 50%; overflow: hidden; margin: 0 auto 2rem; border: 2px solid rgba(255,255,255,0.18); background: #333; }
+    .footer-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .footer-title {
+      font-family: 'Special Gothic Expanded One', sans-serif;
+      font-size: 55px;
+      letter-spacing: -0.02em; line-height: 0.92;
+      text-transform: uppercase; color: var(--white); margin-bottom: 2.8rem;
+    }
+    .footer-contacts { display: flex; justify-content: center; align-items: center; gap: 3rem; margin-bottom: 2.5rem; flex-wrap: wrap; }
+    .footer-contacts a, .footer-contacts address {
+      font-family: 'Special Gothic Expanded One', sans-serif;
+      font-size: clamp(0.85rem, 1.4vw, 1rem);
+      color: var(--white); text-decoration: none; line-height: 1.6; font-style: normal; transition: color 0.2s;
+    }
+    .footer-contacts a:hover { color: var(--yellow); }
+    .contact-sep { width: 2px; height: 44px; background: var(--red); }
+    .footer-socials { display: flex; justify-content: center; gap: 0.9rem; margin-bottom: 3rem; }
+    .social-btn { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; transition: transform 0.25s, opacity 0.25s; }
+    .social-btn:hover { transform: scale(1.12); opacity: 0.85; }
+    .social-btn img { width: 46px; height: 46px; display: block; }
+    .footer-copy { font-size: 0.68rem; letter-spacing: 0.1em; color: rgba(255,255,255,0.18); white-space: nowrap; }
+    .drip { position: absolute; pointer-events: none; z-index: 2; }
+
+    /* ─── REVEAL ─── */
+    .reveal { opacity: 0; transform: translateY(35px); transition: opacity 0.85s cubic-bezier(0.23,1,0.32,1), transform 0.85s cubic-bezier(0.23,1,0.32,1); }
+    .reveal.is-visible { opacity: 1; transform: none; }
+
+    /* ─── MOBILE ─── */
+    @media (max-width: 640px) {
+      .menu-shell { align-items: flex-start; height: auto; overflow-y: auto; }
+      .menu-inner { padding-top: 5rem; }
+      .menu-panel { padding: 2.5rem 2rem 3rem; flex-direction: column; gap: 2rem; }
+      .menu-contact { min-width: unset; padding-top: 0; }
+      .menu-links a, .menu-brand { font-size: clamp(2.4rem, 10vw, 3.2rem); }
+      .project-info-section { grid-template-columns: 1fr; }
+      .project-info-left { padding-bottom: 3rem; }
+      .project-phone-grid { flex-direction: column; align-items: center; }
+      .project-phone-grid { padding-left: clamp(4rem, 10vw, 12rem) !important; padding-right: clamp(4rem, 10vw, 12rem) !important; }
+      .project-phone-item { max-width: 100% !important; width: 100%; flex: none; }
+      .inne-projekty-grid { grid-template-columns: 1fr; }
+      .project-info-title { font-size: 80px !important; line-height: 65px !important; letter-spacing: -0.04em !important; }
+      .project-info-subtitle { font-size: 2rem !important; }
+      .project-big-heading h2 { font-size: 40px !important; line-height: 35px !important; letter-spacing: -0.02em !important; }
+      .contact-sep { display: none !important; }
+      .footer-title { font-size: 30px !important; }
+      .footer-contacts { flex-direction: column; gap: 0.5rem !important; align-items: center; }
+      .footer-contacts .contact-phone-email, .footer-contacts > div:first-child { text-align: center !important; margin-bottom: -0.8rem; }
+      .footer-contacts .contact-address, .footer-contacts address { text-align: center !important; margin-top: -0.8rem; }
+      .footer-contacts a, .footer-contacts address { font-size: 22px !important; text-align: center; }
+      .footer-copy { text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<nav id="main-nav">
+  <a href="index.html" class="nav-logo">
+    <img src="assets/logo.svg" alt="ENDLESS" class="nav-logo-img"/>
+  </a>
+  <div class="nav-menu-btn" id="menu-toggle" role="button" aria-label="Menu" aria-expanded="false">
+    <div class="hamburger"><span></span><span></span><span></span></div>
+  </div>
+</nav>
+
+<div class="menu-overlay" id="menu-overlay" aria-hidden="true">
+  <div class="menu-shell">
+    <img class="menu-bg-img" src="assets/bg_menu.jpg" alt="">
+    <div class="menu-panel">
+      <div class="menu-inner">
+        <a href="index.html" class="menu-brand">Endless</a>
+        <ul class="menu-links">
+          <li><a href="o-nas.html">O nas</a></li>
+          <li><a href="projekty.html" class="current">Projekty</a></li>
+          <li><a href="press.html">Press</a></li>
+        </ul>
+      </div>
+      <div class="menu-contact">
+        <div class="menu-contact-label">Kontakt</div>
+        <p><a href="tel:+48501218473">+48 501 218 473</a><a href="mailto:tomek@weareendless.pl">tomek@weareendless.pl</a></p>
+        <p>al. Niepodległości 124<br>00-608 Warszawa</p>
+        <div class="menu-social-row">
+          <a href="https://www.linkedin.com/in/franek-toeplitz-b03a22165/" target="_blank" rel="noopener" class="menu-social-btn" aria-label="LinkedIn"><img src="assets/icon_Linkedin.svg" alt="LinkedIn"></a>
+          <a href="https://www.instagram.com/endless_warsaw/" target="_blank" rel="noopener" class="menu-social-btn" aria-label="Instagram"><img src="assets/icon_insta.svg" alt="Instagram"></a>
+          <a href="https://www.tiktok.com/@weareendless" target="_blank" rel="noopener" class="menu-social-btn" aria-label="TikTok"><img src="assets/icon_tiktok.svg" alt="TikTok"></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ HERO ═══ -->
+<section class="project-hero">
+  <picture>
+    <source srcset="assets/projects/cyfrowa_forma/main_image_mobile.png" media="(max-width: 640px)">
+    <img class="project-hero-img" src="assets/projects/cyfrowa_forma/main_image.jpg" alt="Buduj Cyfrową Formę"/>
+  </picture>
+  <div class="project-hero-overlay"></div>
+  <div class="project-hero-content">
+    <div class="project-hero-client reveal">DIGITAL / ZUS</div>
+    <h1 class="project-hero-title reveal" style="transition-delay:0.1s">Buduj cyfrową<br>formę</h1>
+    <a href="#" class="btn-pill reveal" style="transition-delay:0.2s"><span>KLIK PO KLIKU</span></a>
+  </div>
+</section>
+
+<!-- ═══ INFO ═══ -->
+<section class="project-info-section">
+  <div class="project-info-left reveal">
+    <img src="assets/projects/cyfrowa_forma/client_logo.png" alt="Logo klienta" class="project-info-logo">
+    <h2 class="project-info-title">BUDUJ<br>CYFROWĄ<br>FORMĘ</h2>
+    <div class="project-info-subtitle">KLIK PO KLIKU</div>
+  </div>
+  <div class="project-info-right">
+    <div class="reveal">
+      <div class="project-section-label">Wyzwanie</div>
+      <p class="project-section-text">Ciągły i coraz szybszy rozwój technologii cyfrowych zmienia nasze życie. Daje nowe narzędzia, możliwości i perspektywy. Jednak ta akceleracja technologiczna ma też drugą stronę – technologia przestaje być tylko jedną z opcji i udogodnieniem – staje się koniecznością. Niezależnie od tego w jakim się jest wieku, jakie ma się wykształcenie czy status majątkowy – muszisz rozwijać kompetencje cyfrowe.</p>
+    </div>
+    <div class="reveal" style="transition-delay:0.15s">
+      <div class="project-section-label">Idea kampanii</div>
+      <p class="project-section-text">Kompetencje cyfrowe są jak mięśnie, trzeba stale je ćwiczyć, żeby być w formie, więc jeśli jest Ci...CIĘŻKO z postępem cyfryzacji? Buduj cyfrową formę klik po kliku, by lekko unieść nowe technologie!</p>
+      <p class="project-section-text">Zarówno na podstawowym poziomie jak i na bardziej zaawansowanym ciągły rozwój cyfryzacji sprawia, że wystarczy chwila by zostać z tyłu. Sposobem jest proste, ale regularne uaktualnianie wiedzy – podobnie jak z treningiem fizycznym, wystarczy konsekwentnie wykonywać kilka prostych ćwiczeń, by ciężary stawały się coraz lżejsze.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CENTER VIDEO ═══ -->
+<section class="project-center-video-section">
+  <div class="project-center-video reveal">
+    <div class="project-video-wrap" id="centerVideoWrap">
+      <video poster="assets/projects/cyfrowa_forma/video_preview.png" playsinline id="centerVideo">
+        <source src="assets/projects/cyfrowa_forma/MC 15s Wnuczek_Digital_-1db_2026_03_17.mp4" type="video/mp4">
+      </video>
+      <div class="project-video-play" id="centerVideoPlay">
+        <div class="project-video-play-btn">
+          <svg viewBox="0 0 24 24" fill="white"><path d="M6 4l14 8-14 8V4z"/></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ BIG HEADING ═══ -->
+<section class="project-big-heading">
+  <div class="project-big-heading-inner">
+    <h2 class="reveal">SERCEM KAMPANII JEST POJĘCIE<br>CYFROWA FORMA</h2>
+    <p class="reveal" style="transition-delay:0.15s">To połączenie nazwy kampanii, koncepcji cyfrowej po stronie kreacji i koncepcji kampanii. Nie chodzi o jednorazowe ubranie produktu w "piksele". Chodzi o regularne, małe i dopasowane do własnych możliwości działania. Produkt ten przekładamy równolegle w ramach kampanii i per.</p>
+  </div>
+</section>
+
+<!-- ═══ FULL WIDTH ═══ -->
+<img class="project-full-img" src="assets/projects/cyfrowa_forma/full_wide_1.png" alt="" style="max-height: none; object-fit: unset;">
+
+<!-- ═══ TEXT SECTION ═══ -->
+<section class="project-text-section">
+  <p class="reveal">Kampania jest szeroko obecna w mediach – w największych stacjach telewizyjnych i radiowych, w tym regionalnych, a także w internecie i na kanałach własnych Ministerstwa Cyfryzacji. Za kreację i koncepcję kreatywną odpowiada agencja Endless, a za emisję – dom mediowy Carat Polska.</p>
+</section>
+
+<!-- ═══ WIDE VIDEO ═══ -->
+<video autoplay muted loop playsinline class="project-full-video" style="max-height: none; object-fit: unset; display: block; width: 100%;">
+  <source src="assets/projects/cyfrowa_forma/full_wide_2.mp4" type="video/mp4">
+</video>
+
+<!-- ═══ TEXT 2 ═══ -->
+<section class="project-text-section">
+  <p class="reveal">Elementem kampanii jest strona internetowa cyfrowaforma.gov.pl. Można tam wykonać test kompetencji cyfrowych, który pokazuje, jakie umiejętności warto wzmocnić.</p>
+</section>
+
+<!-- ═══ PHONE GRID ═══ -->
+<div class="project-phone-grid">
+  <div class="project-phone-item phone-stagger">
+    <video autoplay muted loop playsinline>
+      <source src="assets/projects/cyfrowa_forma/MC_WIOSNA_15sec_MALARZ_VS2_9x16_-1db_digi_20260430.mp4" type="video/mp4">
+    </video>
+  </div>
+  <div class="project-phone-item phone-stagger" style="transition-delay:0.12s">
+    <video autoplay muted loop playsinline>
+      <source src="assets/projects/cyfrowa_forma/MC_Seniorzy_15s 9x16_digital_-1db_2026_03_19.mp4" type="video/mp4">
+    </video>
+  </div>
+  <div class="project-phone-item phone-stagger" style="transition-delay:0.24s">
+    <video autoplay muted loop playsinline>
+      <source src="assets/projects/cyfrowa_forma/MC_WIOSNA_15seC_MECHANIK_VS2_9x16_-1db_digi_20260430.mp4" type="video/mp4">
+    </video>
+  </div>
+</div>
+
+<!-- ═══ WIDE IMAGE ─ DESKTOP ═══ -->
+<img class="project-full-img" src="assets/projects/cyfrowa_forma/wull_wide_3.png" alt="" style="max-height: none; object-fit: unset;">
+
+<!-- ═══ TEXT 3 ═══ -->
+<section class="project-text-section">
+  <p class="reveal">To odpowiedź na tempo zmian technologicznych. Sprawia ono, że uczenie się nie kończy się wraz ze szkołą czy studiami – dziś trwa przez całe życie. Dlatego jej głównym celem jest zachęcenie do samodzielnego rozwijania kompetencji cyfrowych – w życiu prywatnym i zawodowym. Z naciskiem na sprawczość i poczucie, że nawet drobne kroki mają sens.</p>
+</section>
+
+<!-- ═══ WIDE IMAGE 4 ═══ -->
+<img class="project-full-img" src="assets/projects/cyfrowa_forma/wull_wide_4.png" alt="">
+
+<!-- ═══ SQUARE GRID ═══ -->
+<div class="project-square-grid">
+  <div class="project-square-item reveal">
+    <video autoplay muted loop playsinline>
+      <source src="assets/projects/cyfrowa_forma/MC_Seniorzy_15s 9x16_digital_-1db_2026_03_19.mp4" type="video/mp4">
+    </video>
+  </div>
+  <div class="project-square-item reveal" style="transition-delay:0.1s">
+    <video autoplay muted loop playsinline>
+      <source src="assets/projects/cyfrowa_forma/MC_WIOSNA_15sec_MAMA_VS5_9x16_-1db_digi_20260430.mp4" type="video/mp4">
+    </video>
+  </div>
+  <div class="project-square-item reveal" style="transition-delay:0.2s">
+    <img src="assets/projects/cyfrowa_forma/Group 170.jpg" alt="">
+  </div>
+</div>
+
+<!-- ═══ TEAM QUOTE ═══ -->
+<section class="project-team-quote">
+  <div class="project-team-quote-inner reveal">
+    <div class="project-team-quote-label">
+      <svg viewBox="0 0 28 16" fill="none"><path d="M4 8h20M18 2l6 6-6 6" stroke="black" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      KREACJA
+    </div>
+    <p class="project-team-quote-text">Kiedy pracowaliśmy nad koncepcją, nagle okazało się, że każdy z nas miał momenty w swoim życiu, kiedy czuł się jak główny bohater. Buduj cyfrową formę klik po kliku — bo nawet małe kroki w świecie technologii mają znaczenie.</p>
+    <div class="project-team-quote-person">
+      <div class="project-team-quote-photo">
+        <img src="assets/team_franek.jpg" alt="Franek">
+      </div>
+      <div class="project-team-quote-name">
+        Franek Toeplitz<br>Creative Director
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ INNE PROJEKTY ═══ -->
+<section class="inne-projekty">
+  <div class="inne-projekty-label reveal">INNE PROJEKTY</div>
+  <div class="inne-projekty-grid">
+    <a href="buduj-cyfrowa-forme.html" class="inne-card reveal">
+      <img class="inne-card-bg" src="assets/work_1.png" alt="Buduj cyfrową formę">
+      <div class="inne-card-info">
+        <div class="inne-card-client">DIGITAL</div>
+        <div class="inne-card-name">BUDUJ CYFROWĄ FORMĘ</div>
+      </div>
+    </a>
+    <a href="buduj-cyfrowa-forme.html" class="inne-card reveal" style="transition-delay:0.08s">
+      <img class="inne-card-bg" src="assets/work_2.png" alt="Superbet">
+      <div class="inne-card-info">
+        <div class="inne-card-client">SUPERBET</div>
+        <div class="inne-card-name">MISTRZOSTWA W TWOICH RĘKACH</div>
+      </div>
+    </a>
+    <a href="buduj-cyfrowa-forme.html" class="inne-card reveal" style="transition-delay:0.16s">
+      <img class="inne-card-bg" src="assets/work_3.png" alt="Spokój ducha gratis">
+      <div class="inne-card-info">
+        <div class="inne-card-client">INSURANCE</div>
+        <div class="inne-card-name">SPOKÓJ DUCHA GRATIS</div>
+      </div>
+    </a>
+    <a href="buduj-cyfrowa-forme.html" class="inne-card reveal" style="transition-delay:0.08s">
+      <img class="inne-card-bg" src="assets/work_4.jpg" alt="Flamin Hot">
+      <div class="inne-card-info">
+        <div class="inne-card-client">FLAMIN' HOT</div>
+        <div class="inne-card-name">ARE NOT</div>
+      </div>
+    </a>
+    <a href="buduj-cyfrowa-forme.html" class="inne-card reveal" style="transition-delay:0.16s">
+      <img class="inne-card-bg" src="assets/work_5.png" alt="Vectra Netflix 1670">
+      <div class="inne-card-info">
+        <div class="inne-card-client">VECTRA × NETFLIX</div>
+        <div class="inne-card-name">1670 SEZON 2</div>
+      </div>
+    </a>
+    <a href="buduj-cyfrowa-forme.html" class="inne-card reveal" style="transition-delay:0.24s">
+      <img class="inne-card-bg" src="assets/work_6.png" alt="">
+      <div class="inne-card-info">
+        <div class="inne-card-client">DIGITAL</div>
+        <div class="inne-card-name">BUDUJ CYFROWĄ FORMĘ</div>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<section class="footer-cta">
+  <video class="footer-video" autoplay muted loop playsinline>
+    <source src="assets/footer.mp4" type="video/mp4"/>
+  </video>
+  <div class="footer-overlay"></div>
+  <img class="drip" style="right:3%;top:3%;width:clamp(90px,12vw,160px);" src="assets/yellow_element_5.png" alt="" aria-hidden="true">
+  <img class="drip" style="left:1.5%;bottom:6%;width:clamp(120px,18vw,240px);" src="assets/yellow_element_6.png" alt="" aria-hidden="true">
+  <div class="footer-content">
+    <div class="footer-avatar"><img src="assets/tomek_bottom.jpg" alt=""></div>
+    <h2 class="footer-title reveal">MASZ PYTANIA?<br/>NAPISZ LUB ZADZWOŃ!</h2>
+    <div class="footer-contacts reveal" style="transition-delay:0.2s">
+      <div>
+        <a href="tel:+48501218473">+48 501 218 473</a><br/>
+        <a href="mailto:tomek@weareendless.pl">tomek@weareendless.pl</a>
+      </div>
+      <div class="contact-sep"></div>
+      <address>al. Niepodległości 124<br/>00-608 Warszawa</address>
+    </div>
+    <div class="footer-socials reveal" style="transition-delay:0.35s">
+      <a href="https://www.linkedin.com/in/franek-toeplitz-b03a22165/" target="_blank" rel="noopener" class="social-btn" aria-label="LinkedIn"><img src="assets/icon_Linkedin.svg" alt="LinkedIn"></a>
+      <a href="https://www.instagram.com/endless_warsaw/" target="_blank" rel="noopener" class="social-btn" aria-label="Instagram"><img src="assets/icon_insta.svg" alt="Instagram"></a>
+      <a href="https://www.tiktok.com/@weareendless" target="_blank" rel="noopener" class="social-btn" aria-label="TikTok"><img src="assets/icon_tiktok.svg" alt="TikTok"></a>
+    </div>
+    <p class="footer-copy">Copyright© 2026 Endless. All Rights Reserved</p>
+  </div>
+</section>
+
+<script>
+const menuToggle = document.getElementById('menu-toggle');
+const menuOverlay = document.getElementById('menu-overlay');
+
+function openMenu() {
+  menuOverlay.classList.add('is-open');
+  menuOverlay.setAttribute('aria-hidden', 'false');
+  menuToggle.setAttribute('aria-expanded', 'true');
+  menuToggle.classList.add('menu-open');
+  document.body.classList.add('menu-open-state');
+}
+function closeMenu() {
+  menuOverlay.classList.remove('is-open');
+  menuOverlay.setAttribute('aria-hidden', 'true');
+  menuToggle.setAttribute('aria-expanded', 'false');
+  menuToggle.classList.remove('menu-open');
+  document.body.classList.remove('menu-open-state');
+}
+menuToggle.addEventListener('click', () => {
+  menuOverlay.classList.contains('is-open') ? closeMenu() : openMenu();
+});
+menuOverlay.addEventListener('click', e => { if (e.target === menuOverlay || e.target === menuOverlay.querySelector('.menu-shell')) closeMenu(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
+
+/* Reveal */
+const revealIO = new IntersectionObserver((entries) => {
+  entries.forEach(en => { if (en.isIntersecting) { en.target.classList.add('is-visible'); revealIO.unobserve(en.target); } });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(el => revealIO.observe(el));
+
+const isMobile = () => window.innerWidth <= 640;
+
+const phoneGrid = document.querySelector('.project-phone-grid');
+const phoneItems = Array.from(phoneGrid ? phoneGrid.querySelectorAll('.project-phone-item') : []);
+const maxStagger = [0, 180, 360];
+
+phoneItems.forEach(el => { el.style.transition = 'none'; });
+
+function updatePhones() {
+  if (!phoneGrid) return;
+  const rect = phoneGrid.getBoundingClientRect();
+  const vh = window.innerHeight;
+  const raw = 1 - rect.top / vh;
+  const progress = Math.max(0, Math.min(1, raw));
+  const fadeIn = Math.max(0, Math.min(1, progress / 0.2));
+
+  if (isMobile()) {
+    // на мобиле все едут одинаково вверх без лесенки
+    const offset = (1 - progress) * 60;
+    phoneItems.forEach(item => {
+      item.style.transform = `translateY(${offset}px)`;
+      item.style.opacity = fadeIn;
+    });
+  } else {
+    const alignProgress = Math.max(0, Math.min(1, (progress + 0.1) / 1.1));
+    phoneItems.forEach((item, i) => {
+      const stagger = maxStagger[i] * (1 - alignProgress);
+      item.style.transform = `translateY(${stagger}px)`;
+      item.style.opacity = fadeIn;
+    });
+  }
+}
+
+// ── Square grid stagger ──
+const squareGrid = document.querySelector('.project-square-grid');
+const squareItems = Array.from(squareGrid ? squareGrid.querySelectorAll('.project-square-item') : []);
+squareItems.forEach(el => { el.style.transition = 'none'; });
+
+function updateSquares() {
+  if (!squareGrid) return;
+  const rect = squareGrid.getBoundingClientRect();
+  const vh = window.innerHeight;
+  const progress = Math.max(0, Math.min(1, 1 - rect.top / vh));
+  const fadeIn = Math.max(0, Math.min(1, progress / 0.2));
+
+  if (isMobile()) {
+    const offset = (1 - progress) * 60;
+    squareItems.forEach(item => {
+      item.style.transform = `translateY(${offset}px)`;
+      item.style.opacity = fadeIn;
+    });
+  } else {
+    const alignProgress = Math.max(0, Math.min(1, (progress + 0.1) / 1.1));
+    squareItems.forEach((item, i) => {
+      const stagger = [0, 180, 360][i] * (1 - alignProgress);
+      item.style.transform = `translateY(${stagger}px)`;
+      item.style.opacity = fadeIn;
+    });
+  }
+}
+
+// ── Hero parallax ──
+const heroImg = document.querySelector('.project-hero-img');
+function updateHero() {
+  if (!heroImg) return;
+  heroImg.style.transform = `translateY(${window.scrollY * 0.55}px)`;
+}
+
+// ── Section parallax ──
+const parallaxSections = document.querySelectorAll('.project-big-heading, .project-text-section, .project-center-video-section, .project-team-quote');
+function updateSections() {
+  parallaxSections.forEach(el => {
+    const rect = el.getBoundingClientRect();
+    const vh = window.innerHeight;
+    const progress = Math.max(0, Math.min(1, 1 - rect.top / vh));
+    const offset = (1 - progress) * 90;
+    el.style.transform = `translateY(${offset}px)`;
+  });
+}
+
+function onScroll() {
+  updatePhones();
+  updateSquares();
+  updateHero();
+  updateSections();
+}
+
+window.addEventListener('scroll', onScroll, { passive: true });
+onScroll();
+
+const centerVideo = document.getElementById('centerVideo');
+const centerVideoWrap = document.getElementById('centerVideoWrap');
+const centerVideoPlay = document.getElementById('centerVideoPlay');
+centerVideoWrap.addEventListener('click', () => {
+  if (centerVideo.paused) {
+    centerVideo.play();
+    centerVideoWrap.classList.add('playing');
+  } else {
+    centerVideo.pause();
+    centerVideoWrap.classList.remove('playing');
+  }
+});
+centerVideo.addEventListener('ended', () => centerVideoWrap.classList.remove('playing'));
+</script>
+</body>
+</html>
