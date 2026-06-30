@@ -107,6 +107,8 @@
       .hero-content { margin-top: 22vh; }
       .hero-title img { display: none; } .hero-title { word-spacing: 0.12em; font-size: clamp(3.5rem, 18vw, 6rem); line-height: 0.78; }
       .mobile-br { display: block; }
+      .mob-news-reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.6s ease, transform 0.6s ease; }
+      .mob-news-visible { opacity: 1; transform: translateY(0); }
       .hero-sub { margin-top: 10rem; white-space: normal; padding: 0 8vw; text-align: center; }
       .hero-video { inset: auto !important; top: 50% !important; left: 0 !important; right: auto !important; bottom: auto !important; transform: translateY(-65%) !important; width: 130% !important; left: -15% !important; height: auto !important; object-fit: contain !important; filter: brightness(1.15) !important; }
       .hero-overlay { display: none; }
@@ -765,12 +767,11 @@ function initRowTops() {
 }
 
 function updateNewsStagger() {
-  if (!newsCards.length) return;
+  if (!newsCards.length || window.innerWidth <= 768) return;
   const vH = window.innerHeight;
   for (let r = 0; r < newsRowCount; r++) {
     const naturalTop = rowNaturalTops[r] || 0;
     const rowInView = naturalTop - window.scrollY;
-    // p=0: row at viewport bottom; p=1: row top at 20% from top
     const p = Math.max(0, Math.min(1, (vH - rowInView) / (vH * 0.8)));
     const ty = ROW_PUSH * (1 - p);
     for (let col = 0; col < 3; col++) {
@@ -786,6 +787,7 @@ let entranceDone = false;
 const ENTRANCE_DELAYS = [0, 180, 340]; // ms per column
 
 function runEntrance() {
+  if (window.innerWidth <= 768) return;
   const start = performance.now();
   const DURATION = 1000;
   const EXTRA = 140;
@@ -828,7 +830,7 @@ function runEntrance() {
 }
 
 function updateNewsStagger() {
-  if (!newsCards.length) return;
+  if (!newsCards.length || window.innerWidth <= 768) return;
   const vH = window.innerHeight;
   for (let r = 0; r < newsRowCount; r++) {
     const naturalTop = rowNaturalTops[r] || 0;
@@ -840,6 +842,25 @@ function updateNewsStagger() {
       if (card) card.style.transform = `translateY(${ty + COL_OFFSET[col] * (1 - p)}px)`;
     }
   }
+}
+
+function initMobileNewsReveal() {
+  if (window.innerWidth > 768) return;
+  const mobileIO = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('mob-news-visible');
+        mobileIO.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.08 });
+  newsCards.forEach(card => {
+    card.style.transform = '';
+    card.style.opacity = '';
+    card.style.removeProperty('transition-delay');
+    card.classList.add('mob-news-reveal');
+    mobileIO.observe(card);
+  });
 }
 
 /* News modal */
@@ -898,7 +919,7 @@ function updateNewsStagger() {
 
 window.addEventListener('scroll', updateNewsStagger, { passive: true });
 window.addEventListener('load', () => {
-  initRowTops(); runEntrance();
+  initRowTops(); runEntrance(); initMobileNewsReveal();
   const el = document.getElementById('press-yellow2');
   const hero = document.querySelector('.hero');
   if (el && hero) {
