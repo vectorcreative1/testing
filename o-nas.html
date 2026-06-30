@@ -125,11 +125,7 @@
       .card-overlay-title { font-size: 0.65rem !important; }
       .card-overlay-bio { font-size: 0.9rem !important; }
       .contact-sep { display: none !important; }
-      .parallax-text { font-size: clamp(2.8rem, 10vw, 4rem) !important; white-space: normal !important; }
-      .co-robimy-float { position: relative !important; top: auto !important; opacity: 1 !important; animation: none !important; padding: 0 1.5rem; }
       #co-robimy-spray-img { display: none !important; }
-      #txt-kluczowe { transform: none !important; display: block !important; }
-      .kluczowe-band { overflow: visible !important; }
       .footer-title { font-size: 30px !important; }
       .footer-contacts a, .footer-contacts address { font-size: 22px !important; text-align: center; }
       .footer-contacts { flex-direction: column; gap: 0.5rem; align-items: center; }
@@ -343,7 +339,7 @@
 
     /* ─── CO ROBIMY ─── */
     .robimy-section { background: var(--white); overflow: hidden; padding: clamp(2rem, 4vh, 3rem) 0 clamp(4rem, 8vh, 6rem); position: relative; margin-top: 10vh; }
-    .parallax-text-wrap { overflow: visible; pointer-events: none; }
+    .parallax-text-wrap { overflow: hidden; pointer-events: none; }
     .parallax-text-wrap.bottom-overlap {
       position: relative; z-index: 10;
       margin-bottom: clamp(-4rem, -6vw, -7rem);
@@ -355,7 +351,7 @@
     .co-robimy-float {
       position: absolute;
       left: 0; right: 0;
-      overflow: visible;
+      overflow: hidden;
       pointer-events: none;
       z-index: 5;
       opacity: 0;
@@ -1114,14 +1110,13 @@ function positionRobimy() {
 }
 
 function parallax() {
-  const mobile = window.innerWidth <= 640;
   const vH = window.innerHeight;
-  if (txRobimy && coRobimy && !mobile) {
+  if (txRobimy && coRobimy) {
     const r  = coRobimy.getBoundingClientRect();
     const p  = (vH - r.top) / (vH + r.height);
     txRobimy.style.marginLeft = `${-5 + p * 30}%`;
   }
-  if (txKluczowe && !mobile) {
+  if (txKluczowe) {
     const r = txKluczowe.parentElement.getBoundingClientRect();
     const p = (vH * 1.4 - r.top) / (vH + r.height);
     txKluczowe.style.transform = `translateX(${40 - p * 72}%)`;
