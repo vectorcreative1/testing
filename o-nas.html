@@ -653,7 +653,7 @@
 
 <!-- KLUCZOWE OSOBY band -->
 <div class="kluczowe-band">
-  <div class="parallax-text-wrap" style="margin-top: clamp(3rem, 5vw, 6rem)">
+  <div class="parallax-text-wrap" style="margin-top: 0">
     <span class="parallax-text red-text" id="txt-kluczowe">KLUCZOWE OSOBY</span>
   </div>
 </div>
@@ -1104,7 +1104,8 @@ function positionRobimy() {
   if (!coRobimy || !robimySection) return;
   const secTop = robimySection.getBoundingClientRect().top + window.scrollY;
   const textH  = coRobimy.offsetHeight || window.innerWidth * 0.2;
-  const topPx  = secTop - textH * 0.85;
+  const isMob = window.innerWidth <= 640;
+  const topPx  = secTop - textH * (isMob ? 0.85 : 0.3);
   coRobimy.style.top = topPx + 'px';
   if (sprayImg) sprayImg.style.top = (topPx - textH * 0.18) + 'px';
   updateGradient();
