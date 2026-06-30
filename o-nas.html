@@ -1105,7 +1105,7 @@ function positionRobimy() {
   const secTop = robimySection.getBoundingClientRect().top + window.scrollY;
   const textH  = coRobimy.offsetHeight || window.innerWidth * 0.2;
   const isMob = window.innerWidth <= 640;
-  const topPx  = secTop - textH * (isMob ? 0.85 : 0.3);
+  const topPx  = secTop - textH * (isMob ? 0.85 : 0.5);
   coRobimy.style.top = topPx + 'px';
   if (sprayImg) sprayImg.style.top = (topPx - textH * 0.18) + 'px';
   updateGradient();
