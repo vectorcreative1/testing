@@ -1136,18 +1136,18 @@ const robimyAnimIO = new IntersectionObserver(entries => {
 if (robimySection) robimyAnimIO.observe(robimySection);
 
 /* ── Mobile tap-to-reveal for team cards ── */
-if (window.matchMedia('(max-width: 640px)').matches) {
-  document.querySelectorAll('.flip-card').forEach(card => {
-    card.addEventListener('click', () => {
+document.querySelectorAll('.flip-card').forEach(card => {
+  card.addEventListener('click', (e) => {
+    if (!e.target.closest('a')) {
       if (card.classList.contains('tapped')) {
         card.classList.remove('tapped');
       } else {
         document.querySelectorAll('.flip-card.tapped').forEach(c => c.classList.remove('tapped'));
         card.classList.add('tapped');
       }
-    });
+    }
   });
-}
+});
 document.querySelectorAll(".project-card").forEach(card => { card.style.cursor = "pointer"; card.addEventListener("click", () => { window.location.href = "buduj-cyfrowa-forme.html"; }); });
 
 (function() {
