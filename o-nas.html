@@ -1139,9 +1139,12 @@ if (robimySection) robimyAnimIO.observe(robimySection);
 if (window.matchMedia('(max-width: 640px)').matches) {
   document.querySelectorAll('.flip-card').forEach(card => {
     card.addEventListener('click', () => {
-      const isOpen = card.classList.contains('tapped');
-      document.querySelectorAll('.flip-card.tapped').forEach(c => c.classList.remove('tapped'));
-      if (!isOpen) card.classList.add('tapped');
+      if (card.classList.contains('tapped')) {
+        card.classList.remove('tapped');
+      } else {
+        document.querySelectorAll('.flip-card.tapped').forEach(c => c.classList.remove('tapped'));
+        card.classList.add('tapped');
+      }
     });
   });
 }
